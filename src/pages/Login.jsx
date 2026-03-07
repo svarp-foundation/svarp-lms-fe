@@ -107,26 +107,6 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="relative flex py-5 items-center">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="flex-shrink-0 mx-4 text-gray-500 text-xs font-bold uppercase">
-            Other log in options
-          </span>
-          <div className="flex-grow border-t border-gray-300"></div>
-        </div>
-
-        {/* Social Buttons (Look-alike) */}
-        <div className="flex justify-center gap-4 mb-8">
-          <button className="w-12 h-12 border border-gray-900 flex items-center justify-center hover:bg-gray-100 transition">
-            <span className="text-xl font-bold text-gray-700">G</span>
-          </button>
-          <button className="w-12 h-12 border border-gray-900 flex items-center justify-center hover:bg-gray-100 transition">
-            <span className="text-xl font-bold text-blue-600">f</span>
-          </button>
-          <button className="w-12 h-12 border border-gray-900 flex items-center justify-center hover:bg-gray-100 transition">
-            <span className="text-xl font-bold text-gray-900"></span>
-          </button>
-        </div>
 
         <div className="text-center pt-4 border-t border-gray-200">
           <p className="text-sm text-gray-700">
@@ -138,12 +118,12 @@ const Login = () => {
               Sign up
             </a>
           </p>
-          <a
+          {/* <a
             href="#"
             className="block mt-4 text-sm font-bold text-secondary underline hover:text-accent"
           >
             Log in with your organization
-          </a>
+          </a> */}
         </div>
       </div>
     </div>
