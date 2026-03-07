@@ -182,7 +182,9 @@ export default function CoursePayment() {
               disabled={paying}
               className="w-full bg-primary text-white py-3 rounded-full font-bold hover:opacity-90 transition disabled:opacity-50 text-lg"
             >
-              {paying ? "Processing..." : `Pay ₹${course.price}`}
+              {paying
+                ? "Processing..."
+                : `Pay ₹${(course.price * 1.18).toFixed(2)}`}
             </button>
           </div>
 
@@ -201,12 +203,18 @@ export default function CoursePayment() {
               <div className="flex justify-between border-b pb-4">
                 <span>Price</span>
                 <span className="font-medium text-gray-900">
-                  ₹{course.price}
+                  ₹{course.price.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between border-b pb-4">
+                <span>GST (18%)</span>
+                <span className="font-medium text-gray-900">
+                  ₹{(course.price * 0.18).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between pt-2 text-lg font-bold text-gray-900">
                 <span>Total</span>
-                <span>₹{course.price}</span>
+                <span>₹{(course.price * 1.18).toFixed(2)}</span>
               </div>
             </div>
 
