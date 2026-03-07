@@ -20,6 +20,11 @@ const learnerLinks = [
     icon: <LayoutGrid size={18} />,
     exact: true,
   },
+  {
+    label: "Courses",
+    to: "/courses-catalog",
+    icon: <GraduationCap size={18} />,
+  },
   { label: "Wishlist", to: "/wishlist", icon: <Heart size={18} /> },
   { label: "History", to: "#", icon: <History size={18} /> },
   { label: "Settings", to: "#", icon: <Settings size={18} /> },

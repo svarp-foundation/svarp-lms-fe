@@ -11,6 +11,7 @@ import CoursePayment from "./pages/CoursePayment";
 import Users from "./pages/admin/Users";
 import Payments from "./pages/admin/Payments";
 import Wishlist from "./pages/learner/Wishlist";
+import AllCourses from "./pages/learner/AllCourses";
 import Navbar from "./components/Navbar";
 import { useAuth } from "./context/AuthContext";
 
@@ -28,6 +29,7 @@ function App() {
   const hideNavbar =
     location.pathname === "/dashboard" ||
     location.pathname === "/wishlist" ||
+    location.pathname === "/courses-catalog" ||
     location.pathname.startsWith("/admin") ||
     location.pathname.endsWith("/learn");
 
@@ -51,6 +53,14 @@ function App() {
           element={
             <PrivateRoute roles={["learner", "admin"]}>
               <Wishlist />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/courses-catalog"
+          element={
+            <PrivateRoute roles={["learner", "admin"]}>
+              <AllCourses />
             </PrivateRoute>
           }
         />
