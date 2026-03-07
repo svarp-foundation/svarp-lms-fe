@@ -1,0 +1,14 @@
+:root {
+  --color-primary: #9bcf9b;
+  --color-accent: #1f3b45;
+  --color-muted: #f4f7f6;
+  
+  --font-sans: 'Inter', sans-serif;
+  --font-script: 'Pacifico', cursive;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-primary);
+  background-color: var(--color-muted);
+}
