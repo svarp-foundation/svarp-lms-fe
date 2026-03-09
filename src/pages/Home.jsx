@@ -4,7 +4,27 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import API_URL from "../config";
 import CourseCard from "../components/CourseCard";
+import {
+  CheckCircle,
+  ShieldCheck,
+  Award,
+  Globe,
+  BarChart3,
+  Users,
+  Zap,
+  ChevronRight,
+  Search,
+  BookOpen,
+  Layout,
+  Clock,
+  ExternalLink,
+  Smartphone,
+  Languages,
+} from "lucide-react";
 
+/**
+ * Premium Landing Page for SVARP Global Academy
+ */
 const Home = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +36,7 @@ const Home = () => {
       if (user.role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/");
+        // Stay on home for now or go to dashboard
       }
     }
   }, [user, navigate]);
@@ -35,307 +55,820 @@ const Home = () => {
 
     fetchCourses();
   }, []);
+
+  const features = [
+    {
+      title: "Verified Learner Identity",
+      desc: "Complete government ID and photo validation ensures authenticity.",
+      icon: <ShieldCheck className="w-8 h-8 text-primary" />,
+    },
+    {
+      title: "Secure Certification",
+      desc: "QR-based, tamper-proof certificates with unique IDs and photos.",
+      icon: <Award className="w-8 h-8 text-primary" />,
+    },
+    {
+      title: "Advanced Assessments",
+      desc: "Structured tests with randomized questions and strict final exams.",
+      icon: <Zap className="w-8 h-8 text-primary" />,
+    },
+    {
+      title: "Global Verification",
+      desc: "Anyone can instantly verify certificates through our public portal.",
+      icon: <Globe className="w-8 h-8 text-primary" />,
+    },
+  ];
+
+  const membershipTypes = [
+    {
+      name: "Student",
+      price: "Flexible",
+      icon: <BookOpen />,
+      benefits: ["Course access", "Verified IDs"],
+    },
+    {
+      name: "Annual",
+      price: "$199/yr",
+      icon: <Clock />,
+      benefits: ["Full catalog", "Priority support"],
+    },
+    {
+      name: "Corporate",
+      price: "Custom",
+      icon: <Users />,
+      benefits: ["Batch enrollment", "Analytics"],
+    },
+    {
+      name: "Lifetime",
+      price: "$499",
+      icon: <Award />,
+      benefits: ["Permanent access", "All future updates"],
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-800">
+    <div className="min-h-screen bg-muted text-gray-900 overflow-x-hidden">
       {/* 1. HERO SECTION */}
-      <div className="bg-accent text-white py-16 px-6 md:px-12 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
-          <div className="w-full md:w-1/2 mb-10 md:mb-0">
-            <div className="bg-white text-gray-900 p-8 rounded-lg shadow-2xl max-w-lg">
-              <h1 className="text-4xl font-bold mb-4">
-                Your career companion is here
-              </h1>
-              <p className="text-lg mb-6 text-gray-700">
-                Get ahead with structured courses, interactive content, and
-                verifiable certifications — all in one place.
-              </p>
-              <div className="flex gap-4">
-                <Link
-                  to="/register"
-                  className="px-6 py-3 bg-accent text-white font-bold rounded hover:bg-opacity-90 transition-colors"
-                >
-                  Get Started
-                </Link>
-                <Link
-                  to="/login"
-                  className="px-6 py-3 border border-gray-900 text-gray-900 font-bold rounded hover:bg-gray-100 transition-colors"
-                >
-                  Log in
-                </Link>
-              </div>
+      <section className="relative pt-20 pb-16 md:pt-32 md:pb-32 px-6 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-full -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(155,207,155,0.1)_0%,transparent_50%)]"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex-1 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-accent font-medium text-sm mb-6 animate-float">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Verified Global Learning Platform</span>
             </div>
-          </div>
-          <div className="w-full md:w-1/2 flex justify-center">
-            {/* Abstract Hero Image Placeholder */}
-            <div className="w-96 h-96 bg-primary rounded-full opacity-20 blur-3xl absolute -top-10 -right-10"></div>
-            <div className="w-80 h-80 bg-white rounded-full opacity-10 blur-2xl absolute bottom-0 left-20"></div>
-            <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Student learning"
-              className="relative z-10 rounded-lg shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 2. TRUSTED BY SECTION */}
-      <div className="bg-muted py-10 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-gray-500 font-medium mb-6">
-            Trusted by leading companies around the world
-          </p>
-          {/* <div className="flex justify-center flex-wrap gap-8 md:gap-16 opacity-60 grayscale">
-            <span className="text-xl font-bold font-serif text-gray-600">
-              VolksWagen
-            </span>
-            <span className="text-xl font-bold font-sans text-gray-600">
-              SAMSUNG
-            </span>
-            <span className="text-xl font-bold font-mono text-gray-600">
-              Cisco
-            </span>
-            <span className="text-xl font-bold font-serif text-gray-600 italic">
-              Vimeo
-            </span>
-            <span className="text-xl font-bold font-sans text-gray-600">
-              P&G
-            </span>
-            <span className="text-xl font-bold font-mono text-gray-600">
-              Citi
-            </span>
-          </div> */}
-        </div>
-      </div>
-
-      {/* 3. COURSES SECTION (Skills to transform...) */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold mb-2 text-gray-900">
-          Skills to transform your career and life
-        </h2>
-        <p className="text-lg text-gray-600 mb-8">
-          From critical skills to technical topics, SVARP supports your
-          professional development.
-        </p>
-
-        {/* Fake Tabs */}
-        {/* <div className="flex gap-6 border-b border-gray-200 mb-8 overflow-x-auto pb-2">
-          <button className="font-bold text-gray-900 border-b-2 border-gray-900 pb-2 whitespace-nowrap">
-            Latest Courses
-          </button>
-          <button className="font-medium text-gray-500 hover:text-gray-900 pb-2 whitespace-nowrap">
-            IT Certifications
-          </button>
-          <button className="font-medium text-gray-500 hover:text-gray-900 pb-2 whitespace-nowrap">
-            Web Development
-          </button>
-          <button className="font-medium text-gray-500 hover:text-gray-900 pb-2 whitespace-nowrap">
-            Leadership
-          </button>
-        </div> */}
-
-        {loading ? (
-          <div className="flex justify-center p-12">
-            <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : courses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses.slice(0, 4).map((course) => (
-              <CourseCard key={course.id} course={course} isPublic={true} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-            <p className="text-gray-500 font-medium">
-              No courses available publicly right now.
+            <h1 className="text-5xl lg:text-7xl font-bold text-accent mb-6 leading-tight">
+              Empowering Excellence, <br />
+              <span className="text-primary italic">Verified</span> Achievement.
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              SVARP Global Academy ensures authentic identity, structured
+              learning, and tamper-proof certification for professionals and
+              institutions worldwide.
             </p>
-          </div>
-        )}
-
-        {courses.length > 0 && (
-          <div className="mt-8">
-            <Link
-              to="/login"
-              className="px-6 py-3 border border-gray-900 font-bold text-gray-900 hover:bg-gray-100 transition inline-block rounded"
-            >
-              Show all courses
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* 4. FEATURE SECTION (Dark) */}
-      <div className="bg-accent text-white py-16 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
-          <div className="w-full md:w-1/2">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
-                <div className="text-primary text-3xl mb-2">🚀</div>
-                <h3 className="font-bold mb-1">Career Growth</h3>
-                <p className="text-sm text-gray-300">
-                  Advance with premium content.
-                </p>
-              </div>
-              <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm mt-8">
-                <div className="text-primary text-3xl mb-2">🏆</div>
-                <h3 className="font-bold mb-1">Certified</h3>
-                <p className="text-sm text-gray-300">Earn recognized badges.</p>
-              </div>
-            </div>
-          </div>
-          <div className="w-full md:w-1/2">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Reimagine your career in the AI era
-            </h2>
-            <p className="text-lg text-gray-300 mb-8">
-              Future-proof your skills with our Personal Plan. Get access to a
-              variety of fresh content from real-world experts.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <div className="flex items-center gap-2">
-                <span className="bg-white text-accent rounded-full p-1 text-xs">
-                  ✓
-                </span>
-                <span className="font-medium">Learn AI and more</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="bg-white text-accent rounded-full p-1 text-xs">
-                  ✓
-                </span>
-                <span className="font-medium">Prep for a certification</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="bg-white text-accent rounded-full p-1 text-xs">
-                  ✓
-                </span>
-                <span className="font-medium">Practice with AI coaching</span>
-              </div>
-            </div>
-            <Link
-              to="/register"
-              className="px-8 py-3 bg-white text-accent font-bold rounded hover:bg-primary transition-colors"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* 5. TESTIMONIALS */}
-      <div className="bg-muted py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8 text-gray-900">
-            See what others are achieving through learning
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="bg-white p-6 rounded border border-gray-200 shadow-sm"
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+              <Link
+                to="/register"
+                className="px-8 py-4 bg-accent text-white font-bold rounded-xl hover-lift shadow-lg flex items-center gap-2 group"
               >
-                <div className="text-4xl text-gray-900 mb-4">“</div>
-                <p className="text-gray-700 mb-6">
-                  Because of this platform, I was able to clear my two
-                  interviews... Thanks for making such wonderful content.
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold">
-                    {String.fromCharCode(64 + i)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-gray-900">
-                      Learner {i}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Full Stack Developer
-                    </p>
+                Join the Academy
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                to="/courses-catalog"
+                className="px-8 py-4 bg-white border border-gray-200 text-accent font-bold rounded-xl hover-lift shadow-sm"
+              >
+                Browse Courses
+              </Link>
+            </div>
+            <div className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-sm text-gray-500 font-medium">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                <span>QR Verification</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                <span>LMS Analytics</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                <span>Strict Mode Exams</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 relative w-full max-w-xl lg:max-w-none">
+            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-8 border-white hover:scale-[1.02] transition-transform duration-500">
+              <img
+                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                alt="Digital Learning Platform"
+                className="w-full h-auto object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-accent/40 to-transparent"></div>
+
+              {/* Floating Stat Card */}
+              <div className="absolute bottom-6 left-6 right-6 glass p-4 rounded-xl flex items-center justify-between text-white">
+                <div>
+                  <p className="text-xs opacity-80 uppercase tracking-wider mb-1">
+                    Total Certificates Issued
+                  </p>
+                  <p className="text-2xl font-bold">128,450+</p>
+                </div>
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded-full border-2 border-white bg-gray-400"
+                    >
+                      <img
+                        src={`https://i.pravatar.cc/100?img=${i + 10}`}
+                        alt="avatar"
+                        className="rounded-full"
+                      />
+                    </div>
+                  ))}
+                  <div className="w-8 h-8 rounded-full border-2 border-white bg-primary text-[10px] flex items-center justify-center font-bold">
+                    +5k
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Background elements for image */}
+            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/10 rounded-full blur-[100px]"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. WHY CHOOSE SVARP */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4">
+              Why Choose SVARP Global Academy
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Our LMS ensures authentic learner identity, structured learning,
+              and tamper-proof certification.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((f, idx) => (
+              <div
+                key={idx}
+                className="p-8 rounded-2xl bg-muted border border-gray-100 hover-lift group"
+              >
+                <div className="mb-6 p-4 rounded-xl bg-white shadow-sm inline-block group-hover:bg-primary/10 transition-colors">
+                  {f.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-accent">
+                  {f.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">{f.desc}</p>
+              </div>
             ))}
           </div>
         </div>
-      </div>
-      {/* 6. FOOTER */}
-      <footer className="bg-gray-900 border-t border-gray-800 text-white py-12 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      </section>
+
+      {/* 3. SMART ASSESSMENT SYSTEM */}
+      <section className="py-24 px-6 bg-accent text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform origin-top translate-x-1/3"></div>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           <div>
-            <h3 className="text-xl font-bold mb-4">SVARP GLOBAL ACADEMY</h3>
-            <p className="text-gray-400 text-sm">
-              Empowering learners with dynamic progression and verifiable
-              achievements. The next generation of organizational learning.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4 text-gray-300">Platform</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li>
-                <Link to="/courses" className="hover:text-white transition">
-                  All Courses
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/certifications"
-                  className="hover:text-white transition"
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-primary font-bold text-sm mb-6">
+              <Zap className="w-5 h-5" />
+              <span>ADVANCED EXAMINATION ENGINE</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
+              Uncompromising Quality in <br />
+              <span className="text-primary italic">Continuous Assessment</span>
+            </h2>
+            <div className="space-y-6">
+              {[
+                {
+                  title: "Continuous Learning",
+                  desc: "Topic, Chapter, and Module level checks with instant feedback.",
+                },
+                {
+                  title: "Strict Mode Final Exams",
+                  desc: "Single attempt, time-limited, and screen-locked to prevent cheating.",
+                },
+                {
+                  title: "Intelligent Question Bank",
+                  desc: "50% Easy, 25% Moderate, 25% Difficult randomized selection.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="flex gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors"
                 >
-                  Certifications
-                </Link>
-              </li>
-              <li>
-                <Link to="/pricing" className="hover:text-white transition">
-                  Pricing Options
-                </Link>
-              </li>
-            </ul>
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                    {i + 1}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xl mb-1">{item.title}</h4>
+                    <p className="text-gray-300">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div>
-            <h4 className="font-bold mb-4 text-gray-300">Resources</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li>
-                <Link to="/blog" className="hover:text-white transition">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/help" className="hover:text-white transition">
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link to="/guides" className="hover:text-white transition">
-                  Learning Guides
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4 text-gray-300">Legal</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li>
-                <Link to="/privacy" className="hover:text-white transition">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="hover:text-white transition">
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <div className="aspect-square glass rounded-2xl flex flex-col items-center justify-center p-6 text-center animate-float">
+                <Search className="w-12 h-12 mb-4 text-primary" />
+                <h4 className="font-bold">Randomized Questions</h4>
+              </div>
+              <div className="aspect-[4/3] glass rounded-2xl flex flex-col items-center justify-center p-6 text-center">
+                <Clock className="w-12 h-12 mb-4 text-primary" />
+                <h4 className="font-bold">Time Limit Control</h4>
+              </div>
+            </div>
+            <div className="space-y-4 translate-y-8">
+              <div className="aspect-[3/4] glass rounded-2xl flex flex-col items-center justify-center p-6 text-center">
+                <ShieldCheck className="w-12 h-12 mb-4 text-primary" />
+                <h4 className="font-bold">Anti-Cheating Tech</h4>
+              </div>
+              <div className="aspect-square glass rounded-2xl flex flex-col items-center justify-center p-6 text-center animate-float delay-700">
+                <BarChart3 className="w-12 h-12 mb-4 text-primary" />
+                <h4 className="font-bold">Live Analytics</h4>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} SVARP. All rights reserved.</p>
-          <div className="flex gap-4 mt-4 md:mt-0">
-            <span className="cursor-pointer hover:text-white transition">
-              Twitter
-            </span>
-            <span className="cursor-pointer hover:text-white transition">
-              LinkedIn
-            </span>
-            <span className="cursor-pointer hover:text-white transition">
-              GitHub
-            </span>
+      </section>
+
+      {/* 4. COURSES & LEARNING MODEL */}
+      <section className="py-24 px-6 bg-muted">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="md:w-1/2">
+              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4">
+                Flexible Learning Model
+              </h2>
+              <p className="text-xl text-gray-600">
+                Courses tailored for students, professionals, and global
+                learners.
+              </p>
+            </div>
+            <Link
+              to="/courses-catalog"
+              className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all border-b-2 border-primary pb-1"
+            >
+              View All Courses <ChevronRight className="w-5 h-5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            {[
+              {
+                title: "Free Courses",
+                sub: "+ Free Certificate",
+                tag: "Open Access",
+                color: "bg-blue-500",
+                desc: "No-cost learning with basic verification.",
+              },
+              {
+                title: "Free Courses",
+                sub: "+ Paid Certificate",
+                tag: "Professional",
+                color: "bg-primary",
+                desc: "Study for free, pay only for official certification.",
+              },
+              {
+                title: "Paid Courses",
+                sub: "+ Paid Certificate",
+                tag: "Premium",
+                color: "bg-accent",
+                desc: "Full access to advanced modules and premium support.",
+              },
+            ].map((card, i) => (
+              <div
+                key={i}
+                className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-shadow relative overflow-hidden group"
+              >
+                <div
+                  className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-white text-xs font-bold ${card.color}`}
+                >
+                  {card.tag}
+                </div>
+                <h3 className="text-2xl font-bold mb-1 text-accent">
+                  {card.title}
+                </h3>
+                <p className="text-primary font-medium mb-6">{card.sub}</p>
+                <p className="text-gray-600 mb-8">{card.desc}</p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    "Course Completion",
+                    "Final Assessment Pass",
+                    "Identity Verified",
+                  ].map((item, j) => (
+                    <li
+                      key={j}
+                      className="flex items-center gap-2 text-sm text-gray-700"
+                    >
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center p-12">
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : courses.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {courses.slice(0, 4).map((course) => (
+                <CourseCard key={course.id} course={course} isPublic={true} />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {/* 5. CERTIFICATE SHOWCASE */}
+      <section className="py-24 px-6 bg-white border-y border-gray-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="relative group perspective-1000">
+                <div className="relative z-10 bg-white p-6 md:p-12 shadow-2xl rounded-lg border-2 border-gray-100 transform rotate-2 group-hover:rotate-0 transition-transform duration-700 overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+                  <div className="flex justify-between items-start mb-8">
+                    <div>
+                      <h3 className="text-2xl font-serif font-bold text-accent">
+                        Certificate of Achievement
+                      </h3>
+                      <p className="text-xs text-gray-500 tracking-widest mt-1">
+                        SVARP GLOBAL ACADEMY
+                      </p>
+                    </div>
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-[8px] text-gray-400">
+                      QR CODE
+                    </div>
+                  </div>
+
+                  <div className="text-center mb-10">
+                    <p className="text-gray-500 font-medium mb-4 italic">
+                      This is to certify that
+                    </p>
+                    <h4 className="text-3xl font-bold text-accent mb-2">
+                      John Doe
+                    </h4>
+                    <div className="w-32 h-32 mx-auto rounded-full bg-gray-200 border-2 border-primary/20 mb-4 overflow-hidden">
+                      <img
+                        src="https://i.pravatar.cc/150"
+                        alt="Verified Learner"
+                      />
+                    </div>
+                    <p className="text-gray-500 mb-1">
+                      has successfully completed the course
+                    </p>
+                    <h5 className="text-xl font-bold text-primary">
+                      Advanced Data Analytics
+                    </h5>
+                  </div>
+
+                  <div className="flex justify-between items-end border-t border-gray-100 pt-8">
+                    <div className="text-[10px] text-gray-400 uppercase">
+                      <p className="mb-1">ID: SV-2024-8849</p>
+                      <p>Date: March 9, 2026</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="w-24 border-b border-gray-300 mx-auto mb-2 signature-font italic">
+                        Dr. S. Varp
+                      </div>
+                      <p className="text-[10px] uppercase font-bold text-accent">
+                        authorized signatory
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                {/* Back side hint */}
+                <div className="absolute -bottom-8 -right-8 w-64 glass p-4 rounded-xl shadow-xl transform group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-700">
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2">
+                    <Layout className="w-4 h-4 text-primary" />
+                    Back-Side Details
+                  </h4>
+                  <ul className="text-[10px] space-y-1 text-gray-600">
+                    <li>• Major Topics Covered</li>
+                    <li>• Course Duration (Hours)</li>
+                    <li>• Assessment Type</li>
+                    <li>• Grading: Pass / With Honour</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-6">
+                Trusted Certificate System
+              </h2>
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                Our certificates meet elite professional standards. Every
+                credential is dual-purpose: a badge of honor for the learner and
+                a verifiable asset for the employer.
+              </p>
+              <div className="grid grid-cols-2 gap-4 mb-10">
+                {[
+                  "Learner Photograph",
+                  "QR Code Verification",
+                  "Unique Certificate ID",
+                  "Digital Signature",
+                  "Skill-based Grading",
+                  "Globally Verifiable",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                      <CheckCircle className="w-3 h-3" />
+                    </div>
+                    <span className="font-medium text-sm text-gray-700">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="p-6 rounded-2xl bg-muted border border-primary/20">
+                <h4 className="font-bold text-accent mb-2 flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-primary" />
+                  Public Verification Portal
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Verify instant credibility using Certificate ID or QR scan.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Enter Certificate ID"
+                    className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-primary outline-none"
+                  />
+                  <button className="px-4 py-2 bg-accent text-white rounded-lg text-sm font-bold">
+                    Verify
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. INSTITUTIONS & CORPORATES */}
+      <section className="py-24 px-6 bg-[#0f172a] text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              Built for Scale & Impact
+            </h2>
+            <p className="text-gray-400 text-xl max-w-2xl mx-auto">
+              Custom solutions for government institutions, corporate giants,
+              and training workshops.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            {[
+              {
+                title: "Institutional",
+                icon: <Globe />,
+                users: "Government / Schools",
+              },
+              {
+                title: "Enterprise",
+                icon: <ShieldCheck />,
+                users: "Corporates / HR Teams",
+              },
+              {
+                title: "SkillVerse",
+                icon: <Users />,
+                users: "Training Centers",
+              },
+            ].map((box, i) => (
+              <div
+                key={i}
+                className="bg-white/5 border border-white/10 p-10 rounded-3xl hover:bg-white/10 transition-colors"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary mb-8 animate-float">
+                  {React.cloneElement(box.icon, { className: "w-8 h-8" })}
+                </div>
+                <h3 className="text-2xl font-bold mb-2">{box.title}</h3>
+                <p className="text-gray-500 mb-8">{box.users}</p>
+                <ul className="space-y-4 mb-4">
+                  {[
+                    "Batch Enrollment",
+                    "Bulk Certification",
+                    "Learning Analytics",
+                    "Custom Branding",
+                  ].map((item, j) => (
+                    <li
+                      key={j}
+                      className="flex items-center gap-3 text-sm text-gray-300"
+                    >
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center border-t border-white/10 pt-20">
+            <div>
+              <p className="text-4xl font-bold text-primary mb-2">99.9%</p>
+              <p className="text-gray-500 text-sm">Platform Uptime</p>
+            </div>
+            <div>
+              <p className="text-4xl font-bold text-primary mb-2">GDPR</p>
+              <p className="text-gray-500 text-sm">Data Handling</p>
+            </div>
+            <div>
+              <p className="text-4xl font-bold text-primary mb-2">15+</p>
+              <p className="text-gray-500 text-sm">Languages Supported</p>
+            </div>
+            <div>
+              <p className="text-4xl font-bold text-primary mb-2">1M+</p>
+              <p className="text-gray-500 text-sm">Question Bank</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. MEMBERSHIP PROGRAMS */}
+      <section className="py-24 px-6 bg-white overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-1/2 bg-muted -z-10"></div>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4">
+              Unlock Premium Learning
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Choose a plan that fits your growth journey.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {membershipTypes.map((plan, i) => (
+              <div
+                key={i}
+                className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col hover-lift"
+              >
+                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-accent mb-6">
+                  {React.cloneElement(plan.icon, { className: "w-6 h-6" })}
+                </div>
+                <h3 className="text-xl font-bold text-accent mb-2">
+                  {plan.name} Membership
+                </h3>
+                <p className="text-3xl font-bold text-primary mb-6">
+                  {plan.price}
+                </p>
+                <ul className="space-y-4 mb-10 flex-grow">
+                  {plan.benefits.map((b, j) => (
+                    <li
+                      key={j}
+                      className="flex items-center gap-2 text-sm text-gray-600"
+                    >
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                      {b}
+                    </li>
+                  ))}
+                  <li className="flex items-center gap-2 text-sm text-gray-400">
+                    <CheckCircle className="w-4 h-4" />
+                    Discounted Fees
+                  </li>
+                </ul>
+                <button className="w-full py-3 px-4 bg-accent text-white font-bold rounded-xl hover:bg-opacity-90 transition-colors">
+                  Choose Plan
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-center gap-8 p-8 lg:p-12 rounded-3xl bg-primary text-accent">
+            <div className="flex-1">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                Multi-Language & Offline Learning
+              </h3>
+              <p className="font-medium opacity-90 leading-relaxed">
+                Study in your preferred language with localized content and
+                assessments. Offline workshop participants must also register,
+                upload ID, and pass the online assessment for standardized
+                certification.
+              </p>
+            </div>
+            <div className="flex gap-4">
+              <div className="bg-white/20 p-4 rounded-2xl flex flex-col items-center">
+                <Languages className="w-8 h-8 mb-2" />
+                <span className="text-sm font-bold">15+ Languages</span>
+              </div>
+              <div className="bg-white/20 p-4 rounded-2xl flex flex-col items-center">
+                <Smartphone className="w-8 h-8 mb-2" />
+                <span className="text-sm font-bold">Offline Ready</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. FINAL CTA */}
+      <section className="py-32 px-6 relative overflow-hidden text-white bg-accent">
+        <div className="absolute inset-0 opacity-20">
+          <img
+            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+            alt="Collaborative learning"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent/90 to-transparent"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10 text-center md:text-left">
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight">
+            Start Your Learning <br />
+            Journey <span className="text-primary italic">Today</span>.
+          </h2>
+          <p className="text-xl text-gray-300 mb-12 max-w-xl mx-auto md:mx-0 leading-relaxed">
+            Join thousands of professionals gaining verified skills and globally
+            trusted certifications.
+          </p>
+          <div className="flex flex-wrap justify-center md:justify-start gap-6">
+            <Link
+              to="/register"
+              className="px-10 py-4 bg-primary text-accent font-extrabold rounded-2xl shadow-2xl hover:bg-white transition-all transform hover:-translate-y-1"
+            >
+              Register Now
+            </Link>
+            <div className="flex flex-col justify-center">
+              <p className="font-bold flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5" />
+                Verified Credentials
+              </p>
+              <p className="text-xs text-gray-400">
+                Trusted by Global Institutions
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. FOOTER */}
+      <footer className="bg-[#0f172a] text-white pt-24 pb-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+            <div className="lg:col-span-1">
+              <div className="flex items-center gap-2 mb-8">
+                <span className="text-2xl font-bold text-white tracking-tighter">
+                  SVARP
+                </span>
+                <span className="text-2xl font-bold text-primary tracking-tighter italic">
+                  GLOBAL
+                </span>
+              </div>
+              <p className="text-gray-400 leading-relaxed mb-8">
+                Empowering learners, professionals, and institutions through
+                secure, skill-based online education backed by verified
+                certification.
+              </p>
+              <div className="flex gap-4">
+                {["Twitter", "LinkedIn", "Facebook", "YouTube"].map(
+                  (social) => (
+                    <div
+                      key={social}
+                      className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer group"
+                    >
+                      <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-primary" />
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-lg mb-8 uppercase tracking-widest text-primary">
+                Academy
+              </h4>
+              <ul className="space-y-4 text-gray-400">
+                <li>
+                  <Link
+                    to="/courses-catalog"
+                    className="hover:text-white transition"
+                  >
+                    All Courses
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/verification"
+                    className="hover:text-white transition"
+                  >
+                    Verification Portal
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/membership"
+                    className="hover:text-white transition"
+                  >
+                    Membership Plans
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/assessment"
+                    className="hover:text-white transition"
+                  >
+                    Smart Assessments
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-lg mb-8 uppercase tracking-widest text-primary">
+                Resources
+              </h4>
+              <ul className="space-y-4 text-gray-400">
+                <li>
+                  <Link to="/blog" className="hover:text-white transition">
+                    Platform Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/help" className="hover:text-white transition">
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/corporate" className="hover:text-white transition">
+                    For Institutions
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/guides" className="hover:text-white transition">
+                    Learning Guides
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-lg mb-8 uppercase tracking-widest text-primary">
+                Legal
+              </h4>
+              <ul className="space-y-4 text-gray-400">
+                <li>
+                  <Link to="/privacy" className="hover:text-white transition">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:text-white transition">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/compliance"
+                    className="hover:text-white transition"
+                  >
+                    GDPR Compliance
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col items-center md:items-start">
+              <p className="text-gray-500 text-sm mb-2">
+                © {new Date().getFullYear()} SVARP Global Academy. All rights
+                reserved.
+              </p>
+              <p className="text-gray-600 text-[10px] uppercase tracking-[0.2em] font-bold">
+                Powered by SVARP Foundation
+              </p>
+            </div>
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <Globe className="w-4 h-4" />
+                <span>English (Global)</span>
+              </div>
+              <div className="bg-primary/10 px-4 py-2 rounded-lg border border-primary/20">
+                <p className="text-xs text-primary font-bold">
+                  100% SECURE SYSTEM
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
