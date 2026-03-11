@@ -33,7 +33,7 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-6">
-            {!user && (
+            {/* {!user && (
               <>
                 <Link
                   to="/"
@@ -60,7 +60,7 @@ const Navbar = () => {
                   Courses
                 </Link>
               </>
-            )}
+            )} */}
 
             {user?.role === "admin" ? (
               // ADMIN LINKS
