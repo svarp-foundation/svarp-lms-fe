@@ -56,6 +56,27 @@ const Home = () => {
     fetchCourses();
   }, []);
 
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll(".reveal");
+    revealElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      revealElements.forEach((el) => observer.unobserve(el));
+    };
+  }, [loading, courses]);
+
   const features = [
     {
       title: "Verified Learner Identity",
@@ -107,9 +128,9 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-muted text-gray-900 overflow-x-hidden">
+    <div className="min-h-screen bg-muted text-gray-900 overflow-x-hidden selection:bg-primary/30">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-20 pb-16 md:pt-32 md:pb-32 px-6 overflow-hidden">
+      <section className="relative pt-20 pb-16 md:pt-10 md:pb-32 px-6 overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(155,207,155,0.1)_0%,transparent_50%)]"></div>
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
@@ -121,48 +142,51 @@ const Home = () => {
               <ShieldCheck className="w-4 h-4" />
               <span>Verified Global Learning Platform</span>
             </div>
-            <h1 className="text-5xl lg:text-7xl font-bold text-accent mb-6 leading-tight">
-              Empowering Excellence, <br />
-              <span className="text-primary italic">Verified</span> Achievement.
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              SVARP Global Academy ensures authentic identity, structured
-              learning, and tamper-proof certification for professionals and
-              institutions worldwide.
-            </p>
-            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <Link
-                to="/register"
-                className="px-8 py-4 bg-accent text-white font-bold rounded-xl hover-lift shadow-lg flex items-center gap-2 group"
-              >
-                Join the Academy
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/courses-catalog"
-                className="px-8 py-4 bg-white border border-gray-200 text-accent font-bold rounded-xl hover-lift shadow-sm"
-              >
-                Browse Courses
-              </Link>
+            <div className="reveal">
+              <h1 className="text-5xl lg:text-7xl font-bold text-accent mb-6 leading-tight">
+                Empowering Excellence, <br />
+                <span className="text-primary italic">Verified</span>{" "}
+                Achievement.
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                SVARP Global Academy ensures authentic identity, structured
+                learning, and tamper-proof certification for professionals and
+                institutions worldwide.
+              </p>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                <Link
+                  to="/register"
+                  className="px-8 py-4 bg-accent text-white font-bold rounded-xl hover-lift shadow-lg flex items-center gap-2 group transition-luxury"
+                >
+                  Join the Academy
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/courses-catalog"
+                  className="px-8 py-4 bg-white border border-gray-200 text-accent font-bold rounded-xl hover-lift shadow-sm transition-luxury"
+                >
+                  Browse Courses
+                </Link>
+              </div>
             </div>
-            <div className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-sm text-gray-500 font-medium">
-              <div className="flex items-center gap-2">
+            <div className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-sm text-gray-500 font-medium reveal reveal-delay-200">
+              <div className="flex items-center gap-2 hover:text-primary transition-colors cursor-default">
                 <CheckCircle className="w-4 h-4 text-primary" />
                 <span>QR Verification</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 hover:text-primary transition-colors cursor-default">
                 <CheckCircle className="w-4 h-4 text-primary" />
                 <span>LMS Analytics</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 hover:text-primary transition-colors cursor-default">
                 <CheckCircle className="w-4 h-4 text-primary" />
                 <span>Strict Mode Exams</span>
               </div>
             </div>
           </div>
 
-          <div className="flex-1 relative w-full max-w-xl lg:max-w-none">
-            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-8 border-white hover:scale-[1.02] transition-transform duration-500">
+          <div className="flex-1 relative w-full max-w-xl lg:max-w-none reveal reveal-delay-300">
+            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-8 border-white hover:scale-[1.03] transition-luxury">
               <img
                 src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
                 alt="Digital Learning Platform"
@@ -171,27 +195,27 @@ const Home = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-accent/40 to-transparent"></div>
 
               {/* Floating Stat Card */}
-              <div className="absolute bottom-6 left-6 right-6 glass p-4 rounded-xl flex items-center justify-between text-white">
+              <div className="absolute bottom-6 left-6 right-6 glass p-6 rounded-2xl flex items-center justify-between text-white transition-luxury hover:scale-105">
                 <div>
-                  <p className="text-xs opacity-80 uppercase tracking-wider mb-1">
+                  <p className="text-xs opacity-90 uppercase tracking-widest mb-1 font-bold">
                     Total Certificates Issued
                   </p>
-                  <p className="text-2xl font-bold">128,450+</p>
+                  <p className="text-3xl font-bold tracking-tight">128,450+</p>
                 </div>
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full border-2 border-white bg-gray-400"
+                      className="w-10 h-10 rounded-full border-2 border-white bg-gray-400 overflow-hidden hover:z-20 hover:scale-110 transition-transform"
                     >
                       <img
-                        src={`https://i.pravatar.cc/100?img=${i + 10}`}
+                        src={`https://i.pravatar.cc/100?img=${i + 15}`}
                         alt="avatar"
-                        className="rounded-full"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
-                  <div className="w-8 h-8 rounded-full border-2 border-white bg-primary text-[10px] flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-full border-2 border-white bg-primary text-xs flex items-center justify-center font-bold text-accent shadow-sm">
                     +5k
                   </div>
                 </div>
@@ -199,16 +223,16 @@ const Home = () => {
             </div>
 
             {/* Background elements for image */}
-            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/10 rounded-full blur-[100px]"></div>
+            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
           </div>
         </div>
       </section>
 
       {/* 2. WHY CHOOSE SVARP */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-24 px-6 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4">
+          <div className="text-center mb-16 reveal">
+            <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4 tracking-tight">
               Why Choose SVARP Global Academy
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -221,15 +245,17 @@ const Home = () => {
             {features.map((f, idx) => (
               <div
                 key={idx}
-                className="p-8 rounded-2xl bg-muted border border-gray-100 hover-lift group"
+                className={`p-8 rounded-3xl bg-muted border border-gray-100 hover-lift group reveal reveal-delay-${(idx % 4) * 100}`}
               >
-                <div className="mb-6 p-4 rounded-xl bg-white shadow-sm inline-block group-hover:bg-primary/10 transition-colors">
+                <div className="mb-6 p-4 rounded-2xl bg-white shadow-sm inline-block group-hover:bg-primary/20 transition-luxury">
                   {f.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-accent">
+                <h3 className="text-xl font-bold mb-3 text-accent group-hover:text-primary transition-colors">
                   {f.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">{f.desc}</p>
+                <p className="text-gray-600 leading-relaxed group-hover:text-gray-900 transition-colors">
+                  {f.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -241,14 +267,16 @@ const Home = () => {
         <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform origin-top translate-x-1/3"></div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-primary font-bold text-sm mb-6">
+          <div className="reveal">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 text-primary font-bold text-sm mb-6 border border-white/10">
               <Zap className="w-5 h-5" />
               <span>ADVANCED EXAMINATION ENGINE</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight tracking-tight">
               Uncompromising Quality in <br />
-              <span className="text-primary italic">Continuous Assessment</span>
+              <span className="text-primary italic underline decoration-primary/30 underline-offset-8">
+                Continuous Assessment
+              </span>
             </h2>
             <div className="space-y-6">
               {[
@@ -267,39 +295,51 @@ const Home = () => {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors"
+                  className={`flex gap-5 p-5 rounded-2xl hover:bg-white/5 transition-luxury border border-transparent hover:border-white/10 reveal reveal-delay-${(i + 1) * 100}`}
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-accent flex items-center justify-center font-extrabold shadow-lg shadow-primary/20">
                     {i + 1}
                   </div>
                   <div>
-                    <h4 className="font-bold text-xl mb-1">{item.title}</h4>
-                    <p className="text-gray-300">{item.desc}</p>
+                    <h4 className="font-bold text-xl mb-1 group-hover:text-primary">
+                      {item.title}
+                    </h4>
+                    <p className="text-gray-400 leading-relaxed font-medium">
+                      {item.desc}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-4">
-              <div className="aspect-square glass rounded-2xl flex flex-col items-center justify-center p-6 text-center animate-float">
-                <Search className="w-12 h-12 mb-4 text-primary" />
-                <h4 className="font-bold">Randomized Questions</h4>
+          <div className="grid grid-cols-2 gap-6 reveal reveal-delay-200">
+            <div className="space-y-6">
+              <div className="aspect-square glass rounded-3xl flex flex-col items-center justify-center p-8 text-center animate-float group hover:scale-105 transition-luxury">
+                <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
+                  <Search className="w-10 h-10 text-primary" />
+                </div>
+                <h4 className="font-bold text-lg">Randomized Questions</h4>
               </div>
-              <div className="aspect-[4/3] glass rounded-2xl flex flex-col items-center justify-center p-6 text-center">
-                <Clock className="w-12 h-12 mb-4 text-primary" />
-                <h4 className="font-bold">Time Limit Control</h4>
+              <div className="aspect-[4/3] glass rounded-3xl flex flex-col items-center justify-center p-8 text-center group hover:scale-105 transition-luxury">
+                <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
+                  <Clock className="w-10 h-10 text-primary" />
+                </div>
+                <h4 className="font-bold text-lg">Time Limit Control</h4>
               </div>
             </div>
-            <div className="space-y-4 translate-y-8">
-              <div className="aspect-[3/4] glass rounded-2xl flex flex-col items-center justify-center p-6 text-center">
-                <ShieldCheck className="w-12 h-12 mb-4 text-primary" />
-                <h4 className="font-bold">Anti-Cheating Tech</h4>
+            <div className="space-y-6 translate-y-12">
+              <div className="aspect-[3/4] glass rounded-3xl flex flex-col items-center justify-center p-8 text-center group hover:scale-105 transition-luxury">
+                <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
+                  <ShieldCheck className="w-10 h-10 text-primary" />
+                </div>
+                <h4 className="font-bold text-lg">Anti-Cheating Tech</h4>
               </div>
-              <div className="aspect-square glass rounded-2xl flex flex-col items-center justify-center p-6 text-center animate-float delay-700">
-                <BarChart3 className="w-12 h-12 mb-4 text-primary" />
-                <h4 className="font-bold">Live Analytics</h4>
+              <div className="aspect-square glass rounded-3xl flex flex-col items-center justify-center p-8 text-center animate-float delay-700 group hover:scale-105 transition-luxury">
+                <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
+                  <BarChart3 className="w-10 h-10 text-primary" />
+                </div>
+                <h4 className="font-bold text-lg">Live Analytics</h4>
               </div>
             </div>
           </div>
@@ -309,9 +349,9 @@ const Home = () => {
       {/* 4. COURSES & LEARNING MODEL */}
       <section className="py-24 px-6 bg-muted">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 reveal">
             <div className="md:w-1/2">
-              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4 tracking-tight">
                 Flexible Learning Model
               </h2>
               <p className="text-xl text-gray-600">
@@ -321,9 +361,10 @@ const Home = () => {
             </div>
             <Link
               to="/courses-catalog"
-              className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all border-b-2 border-primary pb-1"
+              className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-luxury border-b-2 border-primary pb-1 group"
             >
-              View All Courses <ChevronRight className="w-5 h-5" />
+              View All Courses{" "}
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
@@ -353,18 +394,18 @@ const Home = () => {
             ].map((card, i) => (
               <div
                 key={i}
-                className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-shadow relative overflow-hidden group"
+                className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-2xl transition-luxury relative overflow-hidden group reveal reveal-delay-100"
               >
                 <div
-                  className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-white text-xs font-bold ${card.color}`}
+                  className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-white text-xs font-bold ${card.color} group-hover:px-6 transition-luxury`}
                 >
                   {card.tag}
                 </div>
-                <h3 className="text-2xl font-bold mb-1 text-accent">
+                <h3 className="text-2xl font-bold mb-1 text-accent group-hover:text-primary transition-colors">
                   {card.title}
                 </h3>
-                <p className="text-primary font-medium mb-6">{card.sub}</p>
-                <p className="text-gray-600 mb-8">{card.desc}</p>
+                <p className="text-primary font-bold mb-6 italic">{card.sub}</p>
+                <p className="text-gray-600 mb-8 font-medium">{card.desc}</p>
                 <ul className="space-y-3 mb-8">
                   {[
                     "Course Completion",
@@ -373,13 +414,16 @@ const Home = () => {
                   ].map((item, j) => (
                     <li
                       key={j}
-                      className="flex items-center gap-2 text-sm text-gray-700"
+                      className="flex items-center gap-2 text-sm text-gray-700 hover:text-accent transition-colors cursor-default"
                     >
                       <CheckCircle className="w-4 h-4 text-primary" />
                       {item}
                     </li>
                   ))}
                 </ul>
+                <button className="w-full py-3 px-4 bg-muted text-accent font-bold rounded-xl group-hover:bg-primary group-hover:text-accent transition-luxury border border-transparent group-hover:border-primary/20">
+                  Learn More
+                </button>
               </div>
             ))}
           </div>
@@ -399,13 +443,13 @@ const Home = () => {
       </section>
 
       {/* 5. CERTIFICATE SHOWCASE */}
-      <section className="py-24 px-6 bg-white border-y border-gray-100">
+      <section className="py-24 px-6 bg-white border-y border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
+            <div className="order-2 lg:order-1 reveal">
               <div className="relative group perspective-1000">
-                <div className="relative z-10 bg-white p-6 md:p-12 shadow-2xl rounded-lg border-2 border-gray-100 transform rotate-2 group-hover:rotate-0 transition-transform duration-700 overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+                <div className="relative z-10 bg-white p-6 md:p-12 shadow-2xl rounded-2xl border-2 border-gray-50 transform rotate-2 group-hover:rotate-0 transition-luxury overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-accent"></div>
                   <div className="flex justify-between items-start mb-8">
                     <div>
                       <h3 className="text-2xl font-serif font-bold text-accent">
@@ -447,8 +491,8 @@ const Home = () => {
                       <p>Date: March 9, 2026</p>
                     </div>
                     <div className="text-right">
-                      <div className="w-24 border-b border-gray-300 mx-auto mb-2 signature-font italic">
-                        Dr. S. Varp
+                      <div className="w-auto border-b border-gray-300 mx-auto mb-2 signature-font italic">
+                        Mr. Vikash Kumar
                       </div>
                       <p className="text-[10px] uppercase font-bold text-accent">
                         authorized signatory
@@ -472,8 +516,8 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="order-1 lg:order-2">
-              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-6">
+            <div className="order-1 lg:order-2 reveal reveal-delay-200">
+              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-6 tracking-tight">
                 Trusted Certificate System
               </h2>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
@@ -490,31 +534,46 @@ const Home = () => {
                   "Skill-based Grading",
                   "Globally Verifiable",
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                  <div key={i} className="flex items-center gap-3 group/item">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover/item:bg-primary group-hover/item:text-accent transition-luxury">
                       <CheckCircle className="w-3 h-3" />
                     </div>
-                    <span className="font-medium text-sm text-gray-700">
+                    <span className="font-semibold text-sm text-gray-700 group-hover/item:text-accent transition-colors">
                       {item}
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="p-6 rounded-2xl bg-muted border border-primary/20">
+              <div className="p-8 rounded-3xl bg-muted border border-primary/20 hover:border-primary/40 transition-luxury shadow-inner">
                 <h4 className="font-bold text-accent mb-2 flex items-center gap-2">
                   <Globe className="w-5 h-5 text-primary" />
                   Public Verification Portal
                 </h4>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-gray-600 mb-6 font-medium">
                   Verify instant credibility using Certificate ID or QR scan.
                 </p>
                 <div className="flex gap-2">
                   <input
+                    id="manual-verify-input"
                     type="text"
                     placeholder="Enter Certificate ID"
-                    className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-primary outline-none"
+                    className="flex-1 px-5 py-3 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-primary outline-none transition-luxury"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const code = e.target.value.trim();
+                        if (code) navigate(`/verify/${code}`);
+                      }
+                    }}
                   />
-                  <button className="px-4 py-2 bg-accent text-white rounded-lg text-sm font-bold">
+                  <button
+                    className="px-6 py-3 bg-accent text-white rounded-xl text-sm font-bold hover:bg-primary hover:text-accent transition-luxury shadow-lg shadow-accent/10"
+                    onClick={() => {
+                      const code = document
+                        .getElementById("manual-verify-input")
+                        ?.value.trim();
+                      if (code) navigate(`/verify/${code}`);
+                    }}
+                  >
                     Verify
                   </button>
                 </div>
@@ -525,13 +584,14 @@ const Home = () => {
       </section>
 
       {/* 6. INSTITUTIONS & CORPORATES */}
-      <section className="py-24 px-6 bg-[#0f172a] text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+      <section className="py-24 px-6 bg-[#0f172a] text-white overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(155,207,155,0.05)_0%,transparent_50%)]"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 reveal">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
               Built for Scale & Impact
             </h2>
-            <p className="text-gray-400 text-xl max-w-2xl mx-auto">
+            <p className="text-gray-400 text-xl max-w-2xl mx-auto font-medium">
               Custom solutions for government institutions, corporate giants,
               and training workshops.
             </p>
@@ -557,13 +617,15 @@ const Home = () => {
             ].map((box, i) => (
               <div
                 key={i}
-                className="bg-white/5 border border-white/10 p-10 rounded-3xl hover:bg-white/10 transition-colors"
+                className={`bg-white/5 border border-white/10 p-10 rounded-[2rem] hover:bg-white/10 transition-luxury group reveal reveal-delay-${i * 100}`}
               >
-                <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary mb-8 animate-float">
+                <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary mb-8 animate-float group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-luxury">
                   {React.cloneElement(box.icon, { className: "w-8 h-8" })}
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{box.title}</h3>
-                <p className="text-gray-500 mb-8">{box.users}</p>
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                  {box.title}
+                </h3>
+                <p className="text-gray-400 mb-8 font-medium">{box.users}</p>
                 <ul className="space-y-4 mb-4">
                   {[
                     "Batch Enrollment",
@@ -573,7 +635,7 @@ const Home = () => {
                   ].map((item, j) => (
                     <li
                       key={j}
-                      className="flex items-center gap-3 text-sm text-gray-300"
+                      className="flex items-center gap-3 text-sm text-gray-300 group-hover:text-white transition-luxury cursor-default"
                     >
                       <CheckCircle className="w-4 h-4 text-primary" />
                       {item}
@@ -609,51 +671,51 @@ const Home = () => {
       <section className="py-24 px-6 bg-white overflow-hidden relative">
         <div className="absolute top-0 left-0 w-full h-1/2 bg-muted -z-10"></div>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4">
+          {/* <div className="text-center mb-16 reveal">
+            <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4 tracking-tight">
               Unlock Premium Learning
             </h2>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 text-lg font-medium">
               Choose a plan that fits your growth journey.
             </p>
-          </div>
+          </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {membershipTypes.map((plan, i) => (
               <div
                 key={i}
-                className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col hover-lift"
+                className={`bg-white p-8 rounded-[2rem] shadow-lg border border-gray-100 flex flex-col hover-lift reveal reveal-delay-${i * 100}`}
               >
-                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-accent mb-6">
-                  {React.cloneElement(plan.icon, { className: "w-6 h-6" })}
+                <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center text-accent mb-6 group-hover:scale-110 transition-luxury">
+                  {React.cloneElement(plan.icon, { className: "w-7 h-7" })}
                 </div>
-                <h3 className="text-xl font-bold text-accent mb-2">
+                <h3 className="text-xl font-bold text-accent mb-2 group-hover:text-primary transition-colors">
                   {plan.name} Membership
                 </h3>
-                <p className="text-3xl font-bold text-primary mb-6">
+                <p className="text-3xl font-extrabold text-primary mb-6 tracking-tight">
                   {plan.price}
                 </p>
                 <ul className="space-y-4 mb-10 flex-grow">
                   {plan.benefits.map((b, j) => (
                     <li
                       key={j}
-                      className="flex items-center gap-2 text-sm text-gray-600"
+                      className="flex items-center gap-3 text-sm text-gray-600 font-medium"
                     >
                       <CheckCircle className="w-4 h-4 text-primary" />
                       {b}
                     </li>
                   ))}
-                  <li className="flex items-center gap-2 text-sm text-gray-400">
-                    <CheckCircle className="w-4 h-4" />
+                  <li className="flex items-center gap-3 text-sm text-gray-400 font-medium italic">
+                    <CheckCircle className="w-4 h-4 opacity-30" />
                     Discounted Fees
                   </li>
                 </ul>
-                <button className="w-full py-3 px-4 bg-accent text-white font-bold rounded-xl hover:bg-opacity-90 transition-colors">
+                <button className="w-full py-4 px-4 bg-accent text-white font-bold rounded-2xl hover:bg-primary hover:text-accent transition-luxury shadow-lg shadow-accent/10">
                   Choose Plan
                 </button>
               </div>
             ))}
-          </div>
+          </div> */}
 
           <div className="flex flex-col lg:flex-row items-center gap-8 p-8 lg:p-12 rounded-3xl bg-primary text-accent">
             <div className="flex-1">
@@ -683,37 +745,37 @@ const Home = () => {
 
       {/* 8. FINAL CTA */}
       <section className="py-32 px-6 relative overflow-hidden text-white bg-accent">
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-30">
           <img
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             alt="Collaborative learning"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover scale-110 hover:scale-100 transition-luxury"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent/90 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent/80 to-transparent"></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 text-center md:text-left">
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight">
+        <div className="max-w-7xl mx-auto relative z-10 text-center md:text-left reveal">
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight tracking-tight">
             Start Your Learning <br />
             Journey <span className="text-primary italic">Today</span>.
           </h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-xl mx-auto md:mx-0 leading-relaxed">
+          <p className="text-xl text-gray-300 mb-12 max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">
             Join thousands of professionals gaining verified skills and globally
             trusted certifications.
           </p>
           <div className="flex flex-wrap justify-center md:justify-start gap-6">
             <Link
               to="/register"
-              className="px-10 py-4 bg-primary text-accent font-extrabold rounded-2xl shadow-2xl hover:bg-white transition-all transform hover:-translate-y-1"
+              className="px-10 py-5 bg-primary text-accent font-extrabold rounded-2xl shadow-2xl hover:bg-white transition-luxury transform hover:-translate-y-2"
             >
               Register Now
             </Link>
-            <div className="flex flex-col justify-center">
-              <p className="font-bold flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5" />
+            <div className="flex flex-col justify-center text-left">
+              <p className="font-bold flex items-center gap-2 text-primary">
+                <ShieldCheck className="w-6 h-6" />
                 Verified Credentials
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm text-gray-400 font-medium">
                 Trusted by Global Institutions
               </p>
             </div>

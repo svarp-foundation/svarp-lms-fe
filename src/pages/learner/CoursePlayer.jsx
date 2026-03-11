@@ -3,6 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import API_URL from "../../config";
 import { sanitizeHtml } from "../../lib/sanitize";
+import Navbar from "../../components/Navbar";
+import { useAuth } from "../../context/AuthContext";
+import Certificate from "../../components/Certificate";
 import {
   CheckCircle,
   Lock,
@@ -12,11 +15,13 @@ import {
   Download,
   ClipboardList,
   ArrowLeft,
+  Award,
 } from "lucide-react";
 
 const CoursePlayer = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [courseContent, setCourseContent] = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -291,7 +296,7 @@ const CoursePlayer = () => {
               <h2 className="text-xl font-bold">Your Course Certificate</h2>
               <div className="flex items-center gap-4">
                 <a
-                  href={getSecureVideoUrl(courseContent.certificate_pdf_url)}
+                  href={`${getSecureVideoUrl(courseContent.certificate_pdf_url)}&download=true`}
                   download="Certificate.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -307,12 +312,42 @@ const CoursePlayer = () => {
                 </button>
               </div>
             </div>
-            <div className="flex-1 overflow-hidden bg-gray-100">
-              <iframe
-                src={getSecureVideoUrl(courseContent.certificate_pdf_url)}
-                className="w-full h-full border-0"
-                title="Certificate Preview"
-              ></iframe>
+            <div className="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-12">
+              <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-inner overflow-hidden border border-gray-100">
+                <Certificate
+                  learnerName={
+                    user?.full_name || user?.username || "SVARP Learner"
+                  }
+                  courseName={courseContent.title}
+                  certificateId={
+                    courseContent.certificate_id ||
+                    `SV-${courseContent.id}-${user?.id || "PRO"}`
+                  }
+                  date={new Date().toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  isHonour={courseContent.progress >= 75}
+                  qrImageUrl={getSecureVideoUrl(
+                    courseContent.certificate_pdf_url.replace(".pdf", ".png"),
+                  )}
+                />
+              </div>
+
+              {/* Manual PDF Iframe (Bottom Optional) */}
+              <div className="mt-12 opacity-0 hover:opacity-100 transition-opacity">
+                <p className="text-center text-xs text-gray-400 mb-4 tracking-widest uppercase">
+                  Official PDF Verification Document Below
+                </p>
+                <div className="w-full h-[600px] border border-gray-200 rounded-lg overflow-hidden grayscale opacity-50">
+                  <iframe
+                    src={getSecureVideoUrl(courseContent.certificate_pdf_url)}
+                    className="w-full h-full border-0"
+                    title="Certificate PDF Backup"
+                  ></iframe>
+                </div>
+              </div>
             </div>
           </div>
         </div>

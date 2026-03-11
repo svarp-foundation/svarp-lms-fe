@@ -12,6 +12,7 @@ import Users from "./pages/admin/Users";
 import Payments from "./pages/admin/Payments";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
+import VerifyCertificate from "./pages/VerifyCertificate";
 import Navbar from "./components/Navbar";
 import { useAuth } from "./context/AuthContext";
 
@@ -40,6 +41,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/verify/:certificateCode"
+          element={<VerifyCertificate />}
+        />
         <Route
           path="/dashboard"
           element={

@@ -4,7 +4,7 @@ import { GraduationCap, PlayCircle, Info, CheckCircle } from "lucide-react";
 
 const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all border border-gray-100 flex flex-col h-full group">
+    <div className="bg-white rounded-[2rem] shadow-md overflow-hidden hover-lift transition-luxury border border-gray-100 flex flex-col h-full group">
       <div className="h-44 bg-gray-200 relative overflow-hidden">
         {course.thumbnail_url ? (
           <img
