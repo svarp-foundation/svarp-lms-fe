@@ -103,6 +103,7 @@ export default function CoursePayment() {
         prefill: {
           name: user?.full_name || "",
           email: user?.email || "",
+          contact: orderData.phone_number || "",
         },
         theme: {
           color: "#1f3b45",
