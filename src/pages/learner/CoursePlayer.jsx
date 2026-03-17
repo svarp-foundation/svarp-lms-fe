@@ -332,6 +332,7 @@ const CoursePlayer = () => {
                   qrImageUrl={getSecureVideoUrl(
                     courseContent.certificate_pdf_url.replace(".pdf", ".png"),
                   )}
+                  profilePictureUrl={courseContent.profile_picture_url}
                 />
               </div>
 

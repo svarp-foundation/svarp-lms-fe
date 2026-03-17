@@ -93,8 +93,23 @@ const VerifyCertificate = () => {
           {/* Left Side: Status & Badge */}
           <div className="bg-[#1f3b45] p-12 flex flex-col items-center justify-center text-center text-white md:w-1/3">
             <div className="relative mb-6">
-              <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center border-4 border-primary/30">
-                <ShieldCheck className="w-16 h-16 text-primary" />
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-white/10 flex items-center justify-center border-4 border-primary/30 shadow-2xl">
+                {verification.profile_picture_url ? (
+                  <img
+                    src={verification.profile_picture_url}
+                    alt={verification.student_name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = ""; // Clear to show fallback if image fails to load
+                    }}
+                  />
+                ) : (
+                  <ShieldCheck className="w-16 h-16 text-primary" />
+                )}
+                {!verification.profile_picture_url && (
+                  <ShieldCheck className="w-16 h-16 text-primary" />
+                )}
               </div>
               <div className="absolute -bottom-2 -right-2 bg-primary text-accent p-2 rounded-full shadow-lg">
                 <CheckCircle2 className="w-6 h-6" />

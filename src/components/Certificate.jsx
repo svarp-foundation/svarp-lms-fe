@@ -17,9 +17,11 @@ const Certificate = ({
   isHonour = false,
   qrValue = "https://svarp.com/verify",
   qrImageUrl = null,
+  profilePictureUrl = null,
 }) => {
-  // Default profile image
-  const defaultProfileImg = "https://i.pravatar.cc/150?u=svarp_default";
+  // Default profile image - using SVARP themed placeholder if none provided
+  const defaultProfileImg = "https://www.svarp.org/company/svarp-logo.webp";
+  const displayImg = profilePictureUrl || defaultProfileImg;
 
   return (
     <div className="relative group perspective-1000 max-w-4xl mx-auto my-8">
@@ -69,9 +71,13 @@ const Certificate = ({
           </h4>
           <div className="w-40 h-40 mx-auto rounded-full bg-muted border-4 border-primary/20 mb-8 overflow-hidden shadow-inner flex items-center justify-center">
             <img
-              src={defaultProfileImg}
+              src={displayImg}
               alt="Verified Learner"
-              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+              className="w-full h-full object-cover transition-all duration-500 hover:scale-110"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = defaultProfileImg;
+              }}
             />
           </div>
           <p className="text-gray-500 mb-2 font-medium">
