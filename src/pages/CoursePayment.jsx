@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
-import { ShieldCheck, BookOpen } from "lucide-react";
+import {
+  ShieldCheck,
+  BookOpen,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
 export default function CoursePayment() {
   const { courseId } = useParams();
@@ -16,6 +22,7 @@ export default function CoursePayment() {
   const [loading, setLoading] = useState(!state?.course);
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState("");
+  const [verificationData, setVerificationData] = useState(null);
 
   useEffect(() => {
     if (!state?.course) {
@@ -27,7 +34,6 @@ export default function CoursePayment() {
     }
   }, [courseId, state, navigate]);
 
-  // Redirect unauthenticated users to login
   useEffect(() => {
     if (!user) navigate("/login");
   }, [user, navigate]);
@@ -109,18 +115,28 @@ export default function CoursePayment() {
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (err) {
-      setError(
-        err.response?.data?.detail ||
-          "Failed to initiate payment. Please try again.",
-      );
+      if (
+        err.response?.status === 403 &&
+        err.response?.data?.detail?.readiness
+      ) {
+        setVerificationData(err.response.data.detail.readiness);
+        setError("Profile verification required before payment.");
+      } else {
+        setError(
+          err.response?.data?.detail ||
+            "Failed to initiate payment. Please try again.",
+        );
+      }
       setPaying(false);
     }
   };
 
+  const isReadyForPayment = !verificationData || verificationData.ready;
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 animate-pulse">Loading course details...</p>
       </div>
     );
   }
@@ -177,14 +193,74 @@ export default function CoursePayment() {
               </div>
             )}
 
+            {/* Verification Status Section */}
+            {!isReadyForPayment && verificationData && (
+              <div className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-2xl space-y-4">
+                <div className="flex items-center gap-3 text-amber-900 font-bold text-lg">
+                  <AlertCircle size={24} className="text-amber-500" />
+                  Profile Verification Required
+                </div>
+                <p className="text-amber-800 text-sm">
+                  Please complete the following details in your profile before
+                  you can proceed with the payment:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  {[
+                    { key: "has_full_name", label: "Full Name" },
+                    { key: "has_phone_number", label: "Phone Number" },
+                    { key: "has_pan_card", label: "PAN Card" },
+                    { key: "has_address", label: "Address" },
+                    { key: "has_city", label: "City" },
+                    { key: "has_state", label: "State" },
+                    { key: "has_government_id_doc", label: "Government ID" },
+                    {
+                      key: "has_profile_picture_doc",
+                      label: "Profile Picture",
+                    },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center gap-2">
+                      {verificationData[item.key] ? (
+                        <CheckCircle2
+                          size={16}
+                          className="text-green-500 flex-shrink-0"
+                        />
+                      ) : (
+                        <XCircle
+                          size={16}
+                          className="text-red-500 flex-shrink-0"
+                        />
+                      )}
+                      <span
+                        className={
+                          verificationData[item.key]
+                            ? "text-green-700"
+                            : "text-red-700"
+                        }
+                      >
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="w-full mt-2 bg-amber-100 text-amber-900 py-2 rounded-xl font-semibold hover:bg-amber-200 transition"
+                >
+                  Go to Profile Dashboard
+                </button>
+              </div>
+            )}
+
             <button
               onClick={handlePayment}
-              disabled={paying}
-              className="w-full bg-primary text-white py-3 rounded-full font-bold hover:opacity-90 transition disabled:opacity-50 text-lg"
+              disabled={paying || !isReadyForPayment}
+              className="w-full bg-primary text-white py-3 rounded-full font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg hover:shadow-xl active:scale-[0.98]"
             >
               {paying
                 ? "Processing..."
-                : `Pay ₹${(course.price * 1.18).toFixed(2)}`}
+                : isReadyForPayment
+                  ? `Pay ₹${(course.price * 1.18).toFixed(2)}`
+                  : "Complete Profile to Pay"}
             </button>
           </div>
 
