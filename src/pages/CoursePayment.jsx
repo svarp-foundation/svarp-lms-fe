@@ -48,6 +48,22 @@ export default function CoursePayment() {
       document.body.appendChild(script);
     });
 
+  const handleFreeEnrollment = async () => {
+    setError("");
+    setPaying(true);
+    try {
+      await api.post(`/learner/enroll/${courseId}`, {});
+      navigate(`/courses/${courseId}/learn`);
+    } catch (err) {
+      setError(
+        err.response?.data?.detail ||
+          "Failed to enroll in the course. Please try again.",
+      );
+    } finally {
+      setPaying(false);
+    }
+  };
+
   const handlePayment = async () => {
     setError("");
     setPaying(true);
@@ -253,14 +269,20 @@ export default function CoursePayment() {
             )}
 
             <button
-              onClick={handlePayment}
+              onClick={
+                course.discounted_price === 0
+                  ? handleFreeEnrollment
+                  : handlePayment
+              }
               disabled={paying || !isReadyForPayment}
               className="w-full bg-primary text-white py-3 rounded-full font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg hover:shadow-xl active:scale-[0.98]"
             >
               {paying
                 ? "Processing..."
                 : isReadyForPayment
-                  ? `Pay ₹${(course.price * 1.18).toFixed(2)}`
+                  ? course.discounted_price === 0
+                    ? "Enroll for Free"
+                    : `Pay ₹${(course.price * 1.18).toFixed(2)}`
                   : "Complete Profile to Pay"}
             </button>
           </div>
@@ -283,15 +305,29 @@ export default function CoursePayment() {
                   ₹{course.price.toFixed(2)}
                 </span>
               </div>
+              {course.discounted_price === 0 && (
+                <div className="flex justify-between border-b pb-4 text-green-600 font-medium">
+                  <span>Member Discount</span>
+                  <span>-₹{course.price.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between border-b pb-4">
                 <span>GST (18%)</span>
                 <span className="font-medium text-gray-900">
-                  ₹{(course.price * 0.18).toFixed(2)}
+                  ₹
+                  {course.discounted_price === 0
+                    ? "0.00"
+                    : (course.price * 0.18).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between pt-2 text-lg font-bold text-gray-900">
                 <span>Total</span>
-                <span>₹{(course.price * 1.18).toFixed(2)}</span>
+                <span>
+                  ₹
+                  {course.discounted_price === 0
+                    ? "0.00"
+                    : (course.price * 1.18).toFixed(2)}
+                </span>
               </div>
             </div>
 

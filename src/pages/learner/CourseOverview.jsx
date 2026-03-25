@@ -16,7 +16,8 @@ const CourseOverview = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
-  const isMember = user && user.membership;
+  const isMember =
+    (user && user.membership) || (course && course.discounted_price === 0);
   const showDiscount = isMember && course.is_paid;
 
   const handleEnrollOrGo = async () => {
