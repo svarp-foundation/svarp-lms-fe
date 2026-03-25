@@ -10,9 +10,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ReactLenis root>
-          <App />
-        </ReactLenis>
+        <App />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
