@@ -149,15 +149,25 @@ const CoursePlayer = () => {
           <p className="text-sm text-gray-500 mt-1">
             {courseContent.progress}% Completed
           </p>
-          {courseContent.certificate_pdf_url && (
+          {courseContent.certificate_pdf_url ? (
             <div className="mt-4 pt-4 border-t flex flex-col gap-2">
               <button
                 onClick={() => setShowCertificate(true)}
                 className="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded flex items-center justify-center gap-2"
               >
+                <Award size={16} />
                 View Certificate
               </button>
             </div>
+          ) : (
+            courseContent.progress === 100 &&
+            courseContent.require_final_assignment && (
+              <div className="mt-4 pt-4 border-t">
+                <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-100 italic">
+                  Certificate will be available after final assignment approval.
+                </p>
+              </div>
+            )
           )}
         </div>
 
@@ -205,6 +215,40 @@ const CoursePlayer = () => {
               </ul>
             </div>
           ))}
+
+          {/* Final Assignment Section */}
+          {courseContent.require_final_assignment &&
+            courseContent.final_assignment && (
+              <div className="pt-4 border-t mt-4">
+                <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2 px-2">
+                  Final Completion
+                </h4>
+                <div
+                  onClick={() => {
+                    if (courseContent.progress === 100) {
+                      setActiveLesson({
+                        ...courseContent.final_assignment,
+                        lesson_type: "assignment",
+                        isFinal: true,
+                      });
+                    }
+                  }}
+                  className={`
+                    p-3 rounded-lg flex items-center gap-3 cursor-pointer transition-colors
+                    ${activeLesson?.isFinal ? "bg-purple-100 text-purple-700 font-medium" : "hover:bg-gray-100 text-gray-700"}
+                    ${courseContent.progress < 100 ? "opacity-50 cursor-not-allowed hover:bg-transparent" : ""}
+                  `}
+                >
+                  <Award size={18} className="text-purple-600 shrink-0" />
+                  <span className="text-sm font-semibold">
+                    Final Assignment
+                  </span>
+                  {courseContent.progress < 100 && (
+                    <Lock size={14} className="text-gray-400 ml-auto" />
+                  )}
+                </div>
+              </div>
+            )}
         </div>
       </div>
 
@@ -228,7 +272,8 @@ const CoursePlayer = () => {
 
             {activeLesson.lesson_type === "assignment" ? (
               <AssignmentPlayer
-                lesson={activeLesson}
+                lesson={activeLesson.isFinal ? null : activeLesson}
+                initialAssignment={activeLesson.isFinal ? activeLesson : null}
                 courseId={courseId}
                 onComplete={fetchCourseContent}
               />
@@ -361,8 +406,13 @@ export default CoursePlayer;
 
 // ─── Assignment Player Component ────────────────────────────────────────────
 
-const AssignmentPlayer = ({ lesson, courseId, onComplete }) => {
-  const [assignment, setAssignment] = useState(null);
+const AssignmentPlayer = ({
+  lesson,
+  initialAssignment,
+  courseId,
+  onComplete,
+}) => {
+  const [assignment, setAssignment] = useState(initialAssignment);
   const [answers, setAnswers] = useState({}); // { question_id: { answer_text, selected_option_id } }
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -371,21 +421,29 @@ const AssignmentPlayer = ({ lesson, courseId, onComplete }) => {
 
   useEffect(() => {
     fetchAssignment();
-  }, [lesson.id]);
+  }, [lesson?.id, initialAssignment?.id]);
 
   const fetchAssignment = async () => {
     setLoading(true);
     setResult(null);
     setAnswers({});
     try {
-      // Find assignment linked to this lesson
-      const res = await api.get(`/learner/assignments/by-lesson/${lesson.id}`);
-      setAssignment(res.data);
+      if (lesson) {
+        // Find assignment linked to this lesson
+        const res = await api.get(
+          `/learner/assignments/by-lesson/${lesson.id}`,
+        );
+        setAssignment(res.data);
+      } else if (initialAssignment) {
+        setAssignment(initialAssignment);
+      }
+      const currentAsgn = initialAssignment || assignment;
+      if (!currentAsgn) return;
 
       // Check for prior submission
       try {
         const priorRes = await api.get(
-          `/learner/assignments/${res.data.id}/submission`,
+          `/learner/assignments/${currentAsgn.id}/submission`,
         );
         setResult(priorRes.data);
       } catch (_) {
