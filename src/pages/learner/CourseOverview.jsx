@@ -16,14 +16,17 @@ const CourseOverview = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
+  const isMember = user && user.membership;
+  const showDiscount = isMember && course.is_paid;
+
   const handleEnrollOrGo = async () => {
     if (!user) {
       navigate("/login");
       return;
     }
 
-    // If the course is paid and user isn't already enrolled, go to payment page
-    if (course.is_paid) {
+    // If the course is paid and user isn't already enrolled, go to payment page UNLESS they are a member
+    if (course.is_paid && !isMember) {
       // Check existing enrollment first
       try {
         const enrollRes = await api.get(`/learner/courses`);
@@ -251,10 +254,22 @@ const CourseOverview = () => {
             </div>
             {/* Price Display */}
             {course.is_paid && (
-              <div className="mb-4 text-center">
-                <span className="text-3xl font-bold text-primary">
-                  ₹{course.price}
-                </span>
+              <div className="mb-4 text-center flex flex-col items-center">
+                {showDiscount ? (
+                  <>
+                    <span className="text-sm text-gray-400 line-through">
+                      ₹{course.price}
+                    </span>
+                    <span className="text-3xl font-bold text-primary">₹0</span>
+                    <span className="text-xs text-green-600 font-bold mt-1 bg-green-50 px-2 py-0.5 rounded-full">
+                      Free for Members
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-3xl font-bold text-primary">
+                    ₹{course.price}
+                  </span>
+                )}
               </div>
             )}
             <div className="space-y-4">
@@ -276,11 +291,11 @@ const CourseOverview = () => {
                   >
                     {enrolling
                       ? "Loading..."
-                      : course.is_paid
+                      : course.is_paid && !isMember
                         ? `Enroll — ₹${course.price}`
                         : "Enroll for Free"}
                   </button>
-                  {!course.is_paid && (
+                  {(!course.is_paid || isMember) && (
                     <p className="text-xs text-center text-gray-500">
                       Free — Full lifetime access
                     </p>

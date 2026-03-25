@@ -10,6 +10,16 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get("/users/me");
+      setUser(res.data);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      // If profile fetch fails, we still have the decoded JWT user (sub, role etc)
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const refresh = localStorage.getItem("refreshToken");
@@ -22,6 +32,7 @@ export const AuthProvider = ({ children }) => {
         } else {
           setUser(decoded);
           api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          fetchProfile(); // Get full profile with membership
         }
       } catch (error) {
         logout();
@@ -57,7 +68,9 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("refreshToken", newRefresh);
 
             api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-            setUser(jwtDecode(newToken));
+            const decoded = jwtDecode(newToken);
+            setUser(decoded);
+            fetchProfile(); // Refresh profile after token refresh
 
             originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
             return api(originalRequest);
@@ -82,6 +95,7 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(token);
     setUser(decoded);
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    fetchProfile(); // Fetch profile on login
   };
 
   const logout = () => {

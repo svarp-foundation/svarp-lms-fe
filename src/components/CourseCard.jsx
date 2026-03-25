@@ -20,7 +20,13 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
 
         {/* Price / Free badge */}
         <span className="absolute top-3 left-3 px-2 py-1 rounded text-xs font-bold shadow-sm bg-white text-gray-800">
-          {course.is_paid ? `₹${course.price}` : "Free"}
+          {course.discounted_price === 0 ? (
+            <span className="text-primary">₹0 (Member)</span>
+          ) : course.is_paid ? (
+            `₹${course.price}`
+          ) : (
+            "Free"
+          )}
         </span>
 
         <span className="absolute bottom-4 right-4 bg-white px-3 py-1 rounded text-xs font-bold text-gray-800 shadow-sm">
@@ -87,7 +93,11 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
               to={`/courses/${course.id}`}
               className="flex items-center justify-center gap-2 bg-primary text-white py-2 rounded-lg font-bold hover:bg-opacity-90 transition shadow-sm text-sm"
             >
-              {course.is_paid ? `Enroll ₹${course.price}` : "Enroll Free"}
+              {course.discounted_price === 0
+                ? "Enroll Free"
+                : course.is_paid
+                  ? `Enroll ₹${course.price}`
+                  : "Enroll Free"}
             </Link>
           )}
         </div>
