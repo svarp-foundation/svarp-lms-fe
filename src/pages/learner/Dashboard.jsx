@@ -31,17 +31,22 @@ const Dashboard = () => {
   return (
     <LearnerLayout>
       {/* Welcome banner */}
-      <div className="w-full bg-accent text-white px-8 py-6">
-        <h1 className="text-2xl font-bold">
-          Welcome back
-          {user?.full_name ? `, ${user.full_name.split(" ")[0]}` : ""}! 👋
-        </h1>
-        <p className="text-gray-300 text-sm mt-1">
-          Pick up where you left off or explore new courses.
-        </p>
+      <div className="w-full bg-accent text-white px-6 py-8 md:px-12 md:py-12 relative overflow-hidden">
+        {/* Background Accent */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+        
+        <div className="relative z-10">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            Welcome back,
+            {user?.full_name ? ` ${user.full_name.split(" ")[0]}` : " Learner"}! 👋
+          </h1>
+          <p className="text-gray-300 text-base mt-2 max-w-md">
+            Your progress is looking great. Ready to dive back in?
+          </p>
+        </div>
       </div>
 
-      <div className="p-8 max-w-7xl mx-auto">
+      <div className="p-4 md:p-8 max-w-7xl mx-auto">
         {/* SECTION 1: In Progress */}
         <section className="mb-12">
           <h2 className="text-xl font-bold text-gray-800 mb-6">
