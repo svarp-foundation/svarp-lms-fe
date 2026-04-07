@@ -31,39 +31,36 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-6">
-            {/* {!user && (
-              <>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  About
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  Our Team
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  Services
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  Courses
-                </Link>
-              </>
-            )} */}
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="relative w-12 h-12 flex items-center justify-center text-primary hover:text-white transition-luxury focus:outline-none z-50"
+              aria-label="Toggle menu"
+            >
+              <div className="relative w-6 h-5 flex items-center justify-center">
+                <span 
+                  className={`absolute h-[2px] bg-primary transition-all duration-300 ease-in-out ${
+                    isOpen ? "w-6 rotate-45" : "w-6 -translate-y-2"
+                  }`} 
+                />
+                <span 
+                  className={`absolute h-[2px] bg-primary transition-all duration-300 ease-in-out ${
+                    isOpen ? "opacity-0" : "w-6 opacity-100"
+                  }`} 
+                />
+                <span 
+                  className={`absolute h-[2px] bg-primary transition-all duration-300 ease-in-out ${
+                    isOpen ? "w-6 -rotate-45" : "w-6 translate-y-2"
+                  }`} 
+                />
+              </div>
+            </button>
+          </div>
 
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-6">
             {user?.role === "admin" ? (
-              // ADMIN LINKS
               <>
                 <Link
                   to="/admin"
@@ -85,7 +82,6 @@ const Navbar = () => {
                 </Link>
               </>
             ) : user ? (
-              // LEARNER LINKS
               <>
                 <Link
                   to="/dashboard"
@@ -128,6 +124,100 @@ const Navbar = () => {
                   Connect
                 </Link>
               </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Drawer */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out bg-accent/95 backdrop-blur-md border-t border-gray-800 ${
+          isOpen ? "max-h-[500px] opacity-100 py-6" : "max-h-0 opacity-0 py-0"
+        }`}
+      >
+        <div className="px-6 flex flex-col gap-4">
+          {user?.role === "admin" ? (
+            <>
+              <Link
+                to="/admin"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800"
+              >
+                Admin Overview
+              </Link>
+              <Link
+                to="/admin/courses"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800"
+              >
+                Manage Courses
+              </Link>
+              <Link
+                to="/admin/users"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800"
+              >
+                Manage Users
+              </Link>
+            </>
+          ) : user ? (
+            <>
+              <Link
+                to="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800"
+              >
+                Browse
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800"
+              >
+                Home
+              </Link>
+            </>
+          )}
+
+          <div className="mt-4 pt-4 border-t border-gray-800">
+            {user ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary text-accent flex items-center justify-center font-bold text-sm">
+                    {user.full_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                  <span className="text-gray-300 font-medium truncate max-w-[150px]">
+                    {user.full_name || user.email}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="text-sm font-bold text-red-400 hover:text-red-300 p-2"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="block text-center bg-primary text-accent font-bold py-3 rounded-xl hover:bg-white transition-all shadow-lg"
+              >
+                Connect Wallet
+              </Link>
             )}
           </div>
         </div>

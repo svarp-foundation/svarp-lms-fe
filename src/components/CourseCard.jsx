@@ -45,8 +45,8 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
         <h3 className="font-bold text-lg text-gray-900 mb-1 leading-tight line-clamp-2 group-hover:text-primary transition-colors">
           {course.title}
         </h3>
-        <p className="text-xs text-gray-500 mb-3">SVARP GLOBAL ACADEMY</p>
-        <p className="text-sm text-gray-600 line-clamp-3 mb-6 flex-grow">
+        <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-3 font-semibold">SVARP GLOBAL ACADEMY</p>
+        <p className="text-sm text-gray-600 line-clamp-3 mb-6 flex-grow leading-relaxed">
           {course.description}
         </p>
 

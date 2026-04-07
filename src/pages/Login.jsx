@@ -64,7 +64,7 @@ const Login = () => {
 
       {/* 2. RIGHT COLUMN: Login Form */}
       <div className="flex-1 max-w-md w-full p-4">
-        <h2 className="text-2xl font-bold mb-8 text-gray-900">
+        <h2 className="fluid-h3 font-bold mb-8 text-gray-900 leading-tight">
           Log in to continue your learning journey
         </h2>
 

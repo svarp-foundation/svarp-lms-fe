@@ -132,7 +132,7 @@ const Home = () => {
     <ReactLenis root>
       <div className="min-h-screen bg-muted text-gray-900 overflow-x-hidden selection:bg-primary/30">
         {/* 1. HERO SECTION */}
-        <section className="relative pt-20 pb-16 md:pt-10 md:pb-32 px-6 overflow-hidden">
+        <section className="relative section-padding px-6 overflow-hidden min-h-[80vh] flex items-center">
           {/* Animated Background Elements */}
           <div className="absolute top-0 left-0 w-full h-full -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(155,207,155,0.1)_0%,transparent_50%)]"></div>
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
@@ -145,12 +145,12 @@ const Home = () => {
                 <span>Verified Global Learning Platform</span>
               </div>
               <div className="reveal">
-                <h1 className="text-5xl lg:text-7xl font-bold text-accent mb-6 leading-tight">
+                <h1 className="fluid-h1 font-bold text-accent mb-6 leading-tight">
                   Empowering Excellence, <br />
                   <span className="text-primary italic">Verified</span>{" "}
                   Achievement.
                 </h1>
-                <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                <p className="fluid-p text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                   SVARP Global Academy ensures authentic identity, structured
                   learning, and tamper-proof certification for professionals and
                   institutions worldwide.
@@ -233,13 +233,13 @@ const Home = () => {
         </section>
 
         {/* 2. WHY CHOOSE SVARP */}
-        <section className="py-24 px-6 bg-white overflow-hidden">
+        <section className="section-padding px-6 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16 reveal">
-              <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4 tracking-tight">
+              <h2 className="fluid-h2 font-bold text-accent mb-4 tracking-tight">
                 Why Choose SVARP Global Academy
               </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              <p className="fluid-p text-gray-600 max-w-3xl mx-auto">
                 Our LMS ensures authentic learner identity, structured learning,
                 and tamper-proof certification.
               </p>
@@ -267,7 +267,7 @@ const Home = () => {
         </section>
 
         {/* 3. SMART ASSESSMENT SYSTEM */}
-        <section className="py-24 px-6 bg-accent text-white relative overflow-hidden">
+        <section className="section-padding px-6 bg-accent text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform origin-top translate-x-1/3"></div>
 
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
@@ -276,7 +276,7 @@ const Home = () => {
                 <Zap className="w-5 h-5" />
                 <span>ADVANCED EXAMINATION ENGINE</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight tracking-tight">
+              <h2 className="fluid-h2 font-bold mb-8 leading-tight tracking-tight">
                 Uncompromising Quality in <br />
                 <span className="text-primary italic underline decoration-primary/30 underline-offset-8">
                   Continuous Assessment
@@ -351,14 +351,14 @@ const Home = () => {
         </section>
 
         {/* 4. COURSES & LEARNING MODEL */}
-        <section className="py-24 px-6 bg-muted">
+        <section className="section-padding px-6 bg-muted">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 reveal">
               <div className="md:w-1/2">
-                <h2 className="text-3xl md:text-5xl font-bold text-accent mb-4 tracking-tight">
+                <h2 className="fluid-h2 font-bold text-accent mb-4 tracking-tight">
                   Flexible Learning Model
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="fluid-p text-gray-600">
                   Courses tailored for students, professionals, and global
                   learners.
                 </p>
@@ -449,7 +449,7 @@ const Home = () => {
         </section>
 
         {/* 5. CERTIFICATE SHOWCASE */}
-        <section className="py-24 px-6 bg-white border-y border-gray-100 overflow-hidden">
+        <section className="section-padding px-6 bg-white border-y border-gray-100 overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="order-2 lg:order-1 reveal">
@@ -523,10 +523,10 @@ const Home = () => {
               </div>
 
               <div className="order-1 lg:order-2 reveal reveal-delay-200">
-                <h2 className="text-3xl md:text-5xl font-bold text-accent mb-6 tracking-tight">
+                <h2 className="fluid-h2 font-bold text-accent mb-6 tracking-tight">
                   Trusted Certificate System
                 </h2>
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                <p className="fluid-p text-gray-600 mb-8 leading-relaxed">
                   Our certificates meet elite professional standards. Every
                   credential is dual-purpose: a badge of honor for the learner
                   and a verifiable asset for the employer.
@@ -590,14 +590,14 @@ const Home = () => {
         </section>
 
         {/* 6. INSTITUTIONS & CORPORATES */}
-        <section className="py-24 px-6 bg-[#0f172a] text-white overflow-hidden relative">
+        <section className="section-padding px-6 bg-[#0f172a] text-white overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(155,207,155,0.05)_0%,transparent_50%)]"></div>
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mb-16 reveal">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
+              <h2 className="fluid-h2 font-bold mb-6 tracking-tight">
                 Built for Scale & Impact
               </h2>
-              <p className="text-gray-400 text-xl max-w-2xl mx-auto font-medium">
+              <p className="text-gray-400 fluid-p max-w-2xl mx-auto font-medium">
                 Custom solutions for government institutions, corporate giants,
                 and training workshops.
               </p>
@@ -750,7 +750,7 @@ const Home = () => {
         </section>
 
         {/* 8. FINAL CTA */}
-        <section className="py-32 px-6 relative overflow-hidden text-white bg-accent">
+        <section className="section-padding px-6 relative overflow-hidden text-white bg-accent">
           <div className="absolute inset-0 opacity-30">
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
@@ -761,11 +761,11 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent/80 to-transparent"></div>
 
           <div className="max-w-7xl mx-auto relative z-10 text-center md:text-left reveal">
-            <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight tracking-tight">
+            <h2 className="fluid-h1 font-bold mb-8 leading-tight tracking-tight">
               Start Your Learning <br />
               Journey <span className="text-primary italic">Today</span>.
             </h2>
-            <p className="text-xl text-gray-300 mb-12 max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">
+            <p className="fluid-p text-gray-300 mb-12 max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">
               Join thousands of professionals gaining verified skills and
               globally trusted certifications.
             </p>

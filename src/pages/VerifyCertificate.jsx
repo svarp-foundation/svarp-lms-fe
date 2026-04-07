@@ -47,7 +47,7 @@ const VerifyCertificate = () => {
     return (
       <div className="min-h-screen bg-muted flex flex-col items-center justify-center p-6 text-center">
         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <h2 className="text-2xl font-bold text-accent">
+        <h2 className="fluid-h2 font-bold text-accent">
           Verifying Certificate...
         </h2>
         <p className="text-gray-500 mt-2">
@@ -129,10 +129,10 @@ const VerifyCertificate = () => {
 
             <div className="relative z-10">
               <div className="mb-8">
-                <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+                <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2">
                   Certificate of Achievement
                 </p>
-                <h1 className="text-3xl font-bold text-accent leading-tight">
+                <h1 className="fluid-h2 font-bold text-accent leading-tight">
                   Authentic Credential Verified
                 </h1>
               </div>
