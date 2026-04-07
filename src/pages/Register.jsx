@@ -54,78 +54,96 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center text-primary">
-          Register
+    <div className="min-h-screen bg-white flex flex-col md:flex-row items-center justify-center p-6 md:p-12">
+      {/* 1. LEFT COLUMN: Hero Image */}
+      <div className="hidden md:flex flex-1 justify-center items-center p-8">
+        <img
+          src="https://frontends.udemycdn.com/components/auth/desktop-illustration-step-2-x2.webp"
+          alt="Registration Illustration"
+          className="max-w-lg w-full object-contain"
+        />
+      </div>
+
+      {/* 2. RIGHT COLUMN: Registration Form */}
+      <div className="flex-1 max-w-md w-full p-4">
+        <h2 className="fluid-h3 font-bold mb-8 text-gray-900 leading-tight">
+          Join SVARP Global Academy and start learning
         </h2>
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Full Name
-            </label>
             <input
               type="text"
               name="full_name"
+              placeholder="Full Name"
               value={formData.full_name}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border rounded-xl focus:ring-accent focus:border-accent"
+              className="w-full px-4 py-3 text-gray-800 border border-gray-900 rounded-none focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder-gray-600 font-medium"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
             <input
               type="email"
               name="email"
+              placeholder="Email"
               value={formData.email}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border rounded-xl focus:ring-accent focus:border-accent"
+              className="w-full px-4 py-3 text-gray-800 border border-gray-900 rounded-none focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder-gray-600 font-medium"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
             <input
               type="password"
               name="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border rounded-xl focus:ring-accent focus:border-accent"
+              className="w-full px-4 py-3 text-gray-800 border border-gray-900 rounded-none focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder-gray-600 font-medium"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
             <input
               type="password"
               name="confirmPassword"
+              placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border rounded-xl focus:ring-accent focus:border-accent"
+              className="w-full px-4 py-3 text-gray-800 border border-gray-900 rounded-none focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder-gray-600 font-medium"
               required
             />
           </div>
+
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 rounded-full hover:bg-opacity-90 transition font-bold"
+            className="w-full bg-accent text-white py-3 font-bold hover:bg-opacity-90 transition shadow-sm text-center"
           >
-            Sign Up
+            Create Account
           </button>
         </form>
-        <p className="mt-4 text-center text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-primary hover:underline">
-            Login
-          </Link>
-        </p>
+
+        <div className="text-center pt-4 border-t border-gray-200 mt-6">
+          <p className="text-sm text-gray-700">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-bold text-secondary underline hover:text-accent"
+            >
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

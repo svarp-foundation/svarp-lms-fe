@@ -116,12 +116,18 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-4 ml-4">
+              <div className="flex items-center gap-4">
                 <Link
                   to="/login"
-                  className="bg-primary text-accent font-bold px-6 py-2 rounded-full hover:bg-white hover:text-accent transition-all shadow-md text-sm"
+                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
                 >
-                  Connect
+                  Log In
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-primary text-accent font-bold px-6 py-2 rounded-full hover:bg-white transition-all shadow-md text-sm"
+                >
+                  Sign Up
                 </Link>
               </div>
             )}
@@ -211,13 +217,22 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="block text-center bg-primary text-accent font-bold py-3 rounded-xl hover:bg-white transition-all shadow-lg"
-              >
-                Connect Wallet
-              </Link>
+              <div className="flex flex-col gap-3">
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center bg-transparent border border-primary text-primary font-bold py-3 rounded-xl hover:bg-primary hover:text-accent transition-all"
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center bg-primary text-accent font-bold py-3 rounded-xl hover:bg-white transition-all shadow-lg"
+                >
+                  Sign Up
+                </Link>
+              </div>
             )}
           </div>
         </div>
