@@ -15,6 +15,7 @@ import AllCourses from "./pages/learner/AllCourses";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import Navbar from "./components/Navbar";
 import { useAuth } from "./context/AuthContext";
+import CertificateSearch from "./pages/CertificateSearch";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
@@ -41,6 +42,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify" element={<CertificateSearch />} />
         <Route
           path="/verify/:certificateCode"
           element={<VerifyCertificate />}

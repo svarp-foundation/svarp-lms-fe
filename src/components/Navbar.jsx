@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShieldCheck } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -60,6 +60,13 @@ const Navbar = () => {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-6">
+            <Link
+              to="/verify"
+              className="text-sm font-medium text-gray-300 hover:text-white transition-colors flex items-center gap-2"
+            >
+              <ShieldCheck size={16} className="text-primary" />
+              Verify Certificate
+            </Link>
             {user?.role === "admin" ? (
               <>
                 <Link
@@ -185,6 +192,14 @@ const Navbar = () => {
             </>
           ) : (
             <>
+              <Link
+                to="/verify"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-primary hover:text-white transition-colors py-2 border-b border-gray-800 flex items-center gap-3"
+              >
+                <ShieldCheck size={20} />
+                Verify Certificate
+              </Link>
               <Link
                 to="/"
                 onClick={() => setIsOpen(false)}
