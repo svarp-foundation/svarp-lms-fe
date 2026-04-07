@@ -191,3 +191,21 @@ body {
   background: rgba(155, 207, 155, 0.3);
   color: inherit;
 }
+
+/* Accessibility & Content Contrast */
+.accessibility-text, 
+.accessibility-text * {
+  color: #1f2937 !important; /* Force dark gray for readability */
+}
+
+.accessibility-text h1, 
+.accessibility-text h2, 
+.accessibility-text h3 {
+  color: #1f3b45 !important; /* Force accent color */
+  font-weight: 800 !important;
+}
+
+.accessibility-text a {
+  color: #9bcf9b !important;
+  text-decoration: underline !important;
+}

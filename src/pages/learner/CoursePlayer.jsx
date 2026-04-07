@@ -16,6 +16,7 @@ import {
   ClipboardList,
   ArrowLeft,
   Award,
+  Menu,
 } from "lucide-react";
 
 const CoursePlayer = () => {
@@ -28,6 +29,8 @@ const CoursePlayer = () => {
   const [completing, setCompleting] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
 
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
   useEffect(() => {
     fetchCourseContent();
   }, [courseId]);
@@ -37,12 +40,9 @@ const CoursePlayer = () => {
       const response = await api.get(`/learner/courses/${courseId}/content`);
       setCourseContent(response.data);
 
-      // Select first unlocked lesson if none active
       if (!activeLesson && response.data.modules.length > 0) {
-        // Find first module with lessons
         for (const module of response.data.modules) {
           if (module.lessons.length > 0) {
-            // Find first unlocked lesson (usually the first one)
             const firstLesson = module.lessons.find((l) => !l.locked);
             if (firstLesson) {
               setActiveLesson(firstLesson);
@@ -64,13 +64,13 @@ const CoursePlayer = () => {
   const handleLessonSelect = (lesson) => {
     if (lesson.locked) return;
     setActiveLesson(lesson);
+    setMobileSidebarOpen(false); // Close on mobile after selection
   };
 
   const handleLessonComplete = async () => {
     if (!activeLesson || completing) return;
     setCompleting(true);
 
-    // Optimistic update — flip the button to "Completed" immediately
     setActiveLesson((prev) => ({ ...prev, completed: true }));
 
     try {
@@ -79,21 +79,40 @@ const CoursePlayer = () => {
         {},
       );
 
-      // Refetch to sync sidebar progress + unlock next lesson
       const response = await api.get(`/learner/courses/${courseId}/content`);
       setCourseContent(response.data);
 
-      // Sync the activeLesson state with the freshly fetched data
-      for (const module of response.data.modules) {
-        const updated = module.lessons.find((l) => l.id === activeLesson.id);
-        if (updated) {
-          setActiveLesson(updated);
-          break;
+      // Find the next lesson automatically
+      let foundActive = false;
+      let nextLesson = null;
+
+      for (const m of response.data.modules) {
+        for (const l of m.lessons) {
+          if (foundActive && !l.locked) {
+            nextLesson = l;
+            break;
+          }
+          if (l.id === activeLesson.id) {
+            foundActive = true;
+          }
+        }
+        if (nextLesson) break;
+      }
+
+      if (nextLesson) {
+        setActiveLesson(nextLesson);
+      } else {
+        // Fallback: Just sync current lesson status if no next found
+        for (const module of response.data.modules) {
+          const updated = module.lessons.find((l) => l.id === activeLesson.id);
+          if (updated) {
+            setActiveLesson(updated);
+            break;
+          }
         }
       }
     } catch (error) {
       console.error("Error marking lesson complete:", error);
-      // Roll back optimistic update on failure
       setActiveLesson((prev) => ({ ...prev, completed: false }));
     } finally {
       setCompleting(false);
@@ -103,11 +122,8 @@ const CoursePlayer = () => {
   const getSecureVideoUrl = (url) => {
     if (!url) return "";
     const token = localStorage.getItem("token") || "";
-    // Migrate legacy static URLs to the new secure media endpoint
     let secureUrl = url.replace("/static/uploads/", "/media/");
 
-    // If the URL is relative (starts with /), prepend the API_URL
-    // Make sure we don't accidentally prepend it if it's already an absolute URL (starts with http)
     if (secureUrl.startsWith("/")) {
       secureUrl = `${API_URL}${secureUrl}`;
     } else if (!secureUrl.startsWith("http")) {
@@ -122,146 +138,145 @@ const CoursePlayer = () => {
     return <div className="p-8">Course not found or access denied.</div>;
 
   return (
-    <div className="min-h-screen flex bg-white">
-      {/* Sidebar */}
-      <div className="w-80 bg-gray-50 border-r p-4 hidden md:flex flex-col overflow-y-auto max-h-screen">
-        {/* Back navigation */}
+    <div className="min-h-screen flex flex-col md:flex-row bg-white relative overflow-hidden">
+      {/* ── Mobile Header ── */}
+      <header className="md:hidden h-14 bg-accent text-white flex items-center px-4 justify-between sticky top-0 z-40 shadow-lg">
         <button
           onClick={() => navigate("/dashboard")}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors mb-4 group"
+          className="p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors"
         >
-          <ArrowLeft
-            size={16}
-            className="group-hover:-translate-x-1 transition-transform"
-          />
-          Back to Dashboard
+          <ArrowLeft size={20} />
         </button>
-        <h3 className="text-accent font-bold text-lg mb-4">
+        <h2 className="text-sm font-bold truncate px-2">
           {courseContent.title}
-        </h3>
-        <div className="mb-4">
-          <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-green-500 transition-all duration-500"
-              style={{ width: `${courseContent.progress}%` }}
+        </h2>
+        <button
+          onClick={() => setMobileSidebarOpen(true)}
+          className="p-2 -mr-2 hover:bg-white/10 rounded-lg transition-colors"
+        >
+          <Menu size={20} />
+        </button>
+      </header>
+
+      {/* ── Backdrop for Mobile Sidebar ── */}
+      {mobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 md:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
+
+      {/* ── Sidebar (Drawer on mobile, persistent on desktop) ── */}
+      <div className={`
+        w-80 bg-gray-50 border-r flex flex-col flex-shrink-0 z-[60]
+        fixed inset-y-0 right-0 transform transition-transform duration-300 md:relative md:translate-x-0
+        ${mobileSidebarOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
+      `}>
+        <div className="p-4 flex flex-col h-full overflow-y-auto">
+          {/* Back navigation (Desktop only) */}
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="hidden md:flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors mb-4 group"
+          >
+            <ArrowLeft
+              size={16}
+              className="group-hover:-translate-x-1 transition-transform"
             />
+            Back to Dashboard
+          </button>
+          
+          <div className="flex items-center justify-between mb-4 md:block">
+            <h3 className="text-accent font-bold text-lg leading-tight">
+              {courseContent.title}
+            </h3>
+            <button 
+              onClick={() => setMobileSidebarOpen(false)}
+              className="md:hidden p-2 text-gray-400 hover:text-accent"
+            >
+              <X size={20} />
+            </button>
           </div>
-          <p className="text-sm text-gray-500 mt-1">
-            {courseContent.progress}% Completed
-          </p>
-          {courseContent.certificate_pdf_url ? (
-            <div className="mt-4 pt-4 border-t flex flex-col gap-2">
-              <button
-                onClick={() => setShowCertificate(true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded flex items-center justify-center gap-2"
-              >
-                <Award size={16} />
-                View Certificate
-              </button>
+
+          <div className="mb-6">
+            <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-500 transition-all duration-500"
+                style={{ width: `${courseContent.progress}%` }}
+              />
             </div>
-          ) : (
-            courseContent.progress === 100 &&
-            courseContent.require_final_assignment && (
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-100 italic">
-                  Certificate will be available after final assignment approval.
-                </p>
-              </div>
-            )
-          )}
-        </div>
-
-        <div className="space-y-4">
-          {courseContent.modules.map((module) => (
-            <div key={module.id}>
-              <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2 px-2">
-                {module.title}
-              </h4>
-              <ul className="space-y-1">
-                {module.lessons.map((lesson) => (
-                  <li
-                    key={lesson.id}
-                    onClick={() => handleLessonSelect(lesson)}
-                    className={`
-                        p-3 rounded-lg flex items-center gap-3 cursor-pointer transition-colors
-                        ${activeLesson?.id === lesson.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-gray-100"}
-                        ${lesson.locked ? "opacity-50 cursor-not-allowed hover:bg-transparent" : ""}
-                    `}
-                  >
-                    {lesson.completed ? (
-                      <CheckCircle
-                        size={18}
-                        className="text-green-500 shrink-0"
-                      />
-                    ) : lesson.locked ? (
-                      <Lock size={18} className="text-gray-400 shrink-0" />
-                    ) : lesson.lesson_type === "video" ? (
-                      <PlayCircle
-                        size={18}
-                        className="text-gray-500 shrink-0"
-                      />
-                    ) : lesson.lesson_type === "assignment" ? (
-                      <ClipboardList
-                        size={18}
-                        className="text-purple-500 shrink-0"
-                      />
-                    ) : (
-                      <FileText size={18} className="text-gray-500 shrink-0" />
-                    )}
-
-                    <span className="text-sm truncate">{lesson.title}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Final Assignment Section */}
-          {courseContent.require_final_assignment &&
-            courseContent.final_assignment && (
-              <div className="pt-4 border-t mt-4">
-                <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2 px-2">
-                  Final Completion
-                </h4>
-                <div
-                  onClick={() => {
-                    if (courseContent.progress === 100) {
-                      setActiveLesson({
-                        ...courseContent.final_assignment,
-                        lesson_type: "assignment",
-                        isFinal: true,
-                      });
-                    }
-                  }}
-                  className={`
-                    p-3 rounded-lg flex items-center gap-3 cursor-pointer transition-colors
-                    ${activeLesson?.isFinal ? "bg-purple-100 text-purple-700 font-medium" : "hover:bg-gray-100 text-gray-700"}
-                    ${courseContent.progress < 100 ? "opacity-50 cursor-not-allowed hover:bg-transparent" : ""}
-                  `}
+            <p className="text-xs text-gray-500 mt-1.5 font-medium">
+              {courseContent.progress}% Course Completed
+            </p>
+            {courseContent.certificate_pdf_url ? (
+              <div className="mt-4">
+                <button
+                  onClick={() => setShowCertificate(true)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-600/20 transition-all"
                 >
-                  <Award size={18} className="text-purple-600 shrink-0" />
-                  <span className="text-sm font-semibold">
-                    Final Assignment
-                  </span>
-                  {courseContent.progress < 100 && (
-                    <Lock size={14} className="text-gray-400 ml-auto" />
-                  )}
-                </div>
+                  <Award size={16} />
+                  View Certificate
+                </button>
               </div>
+            ) : (
+              courseContent.progress === 100 &&
+              courseContent.require_final_assignment && (
+                <div className="mt-4">
+                  <p className="text-[10px] text-blue-600 bg-blue-50 p-2 rounded-lg border border-blue-100 font-medium">
+                    Certificate pending final assignment review.
+                  </p>
+                </div>
+              )
             )}
+          </div>
+
+          <div className="space-y-6 flex-1">
+            {courseContent.modules.map((module) => (
+              <div key={module.id}>
+                <h4 className="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-3 px-1">
+                  {module.title}
+                </h4>
+                <ul className="space-y-1">
+                  {module.lessons.map((lesson) => (
+                    <li
+                      key={lesson.id}
+                      onClick={() => handleLessonSelect(lesson)}
+                      className={`
+                          p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-all
+                          ${activeLesson?.id === lesson.id ? "bg-primary text-accent font-bold shadow-md shadow-primary/20" : "text-gray-600 hover:bg-gray-100 hover:text-accent"}
+                          ${lesson.locked ? "opacity-40 cursor-not-allowed hover:bg-transparent" : ""}
+                      `}
+                    >
+                      {lesson.completed ? (
+                        <CheckCircle
+                          size={18}
+                          className={activeLesson?.id === lesson.id ? "text-accent" : "text-green-500"}
+                        />
+                      ) : lesson.locked ? (
+                        <Lock size={16} className="text-gray-400" />
+                      ) : (
+                        <PlayCircle size={18} className={activeLesson?.id === lesson.id ? "text-accent" : "text-gray-400"} />
+                      )}
+
+                      <span className="text-sm truncate font-medium">{lesson.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 overflow-y-auto max-h-screen">
+      <div className="flex-1 bg-white overflow-y-auto w-full">
         {activeLesson ? (
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-accent text-3xl font-bold mb-6">
+          <div className="max-w-4xl mx-auto px-6 py-10 md:px-12 md:py-16">
+            <h1 className="text-accent text-3xl md:text-4xl font-black mb-8 leading-tight tracking-tight">
               {activeLesson.title}
             </h1>
 
             {activeLesson.lesson_type === "video" && activeLesson.video_url && (
-              <div className="aspect-video bg-black rounded-xl mb-8 overflow-hidden">
+              <div className="aspect-video bg-black rounded-2xl mb-10 overflow-hidden shadow-2xl ring-1 ring-white/10">
                 <video
                   src={getSecureVideoUrl(activeLesson.video_url)}
                   controls
@@ -278,120 +293,94 @@ const CoursePlayer = () => {
                 onComplete={fetchCourseContent}
               />
             ) : (
-              <>
-                <div className="prose max-w-none mb-8">
-                  {activeLesson.content ? (
-                    <div
-                      className="whitespace-pre-wrap"
-                      dangerouslySetInnerHTML={{
-                        __html: sanitizeHtml(activeLesson.content),
-                      }}
-                    />
-                  ) : (
-                    <p className="text-gray-500 italic">
-                      No text content for this lesson.
-                    </p>
-                  )}
-                </div>
+              <article className="prose prose-slate max-w-none mb-12 prose-headings:text-accent prose-p:text-gray-800 prose-p:leading-relaxed prose-li:text-gray-800">
+                {activeLesson.content ? (
+                  <div
+                    className="whitespace-pre-wrap text-gray-800 font-medium leading-relaxed accessibility-text"
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHtml(activeLesson.content),
+                    }}
+                  />
+                ) : (
+                  <p className="text-gray-400 italic">
+                    This lesson doesn't have any text content.
+                  </p>
+                )}
+              </article>
+            )}
 
-                <div className="border-t pt-8 flex justify-end">
-                  {!activeLesson.completed ? (
-                    <button
-                      onClick={handleLessonComplete}
-                      disabled={completing}
-                      className={
-                        completing
-                          ? "bg-green-500 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 opacity-80 cursor-not-allowed"
-                          : "bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 flex items-center gap-2 transition-all"
-                      }
-                    >
-                      {completing ? (
-                        <>
-                          <CheckCircle size={20} className="animate-bounce" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          Mark as Complete <CheckCircle size={20} />
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <div className="bg-green-100 text-green-800 px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all">
-                      <CheckCircle size={20} className="text-green-600" />
-                      Lesson Completed!
-                    </div>
-                  )}
-                </div>
-              </>
+            {activeLesson.lesson_type !== "assignment" && (
+              <div className="border-t border-gray-100 pt-10 flex justify-end">
+                {!activeLesson.completed ? (
+                  <button
+                    onClick={handleLessonComplete}
+                    disabled={completing}
+                    className="bg-primary text-accent px-8 py-4 rounded-2xl font-bold hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center gap-2 group/btn active:scale-95 disabled:opacity-50"
+                  >
+                    {completing ? (
+                      <>
+                        <CheckCircle size={20} className="animate-spin" />
+                        Saving Progress...
+                      </>
+                    ) : (
+                      <>
+                        Mark as Complete 
+                        <CheckCircle size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <div className="bg-green-50 text-green-700 px-8 py-4 rounded-2xl font-bold flex items-center gap-3 border border-green-100 shadow-sm">
+                    <CheckCircle size={22} className="text-green-600" />
+                    Lesson Completed!
+                  </div>
+                )}
+              </div>
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Select a lesson to start learning
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 p-10 text-center">
+            <PlayCircle size={64} className="mb-4 opacity-10" />
+            <h3 className="text-lg font-bold text-gray-300">Select a lesson to start learning</h3>
           </div>
         )}
       </div>
 
       {/* Certificate Modal */}
       {showCertificate && courseContent?.certificate_pdf_url && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4 md:p-8">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden relative">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-xl font-bold">Your Course Certificate</h2>
-              <div className="flex items-center gap-4">
-                <a
-                  href={`${getSecureVideoUrl(courseContent.certificate_pdf_url)}&download=true`}
-                  download="Certificate.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-primary text-white px-4 py-2 rounded font-medium hover:bg-opacity-90 transition flex items-center gap-2"
-                >
-                  <Download size={18} /> Download PDF
-                </a>
-                <button
-                  onClick={() => setShowCertificate(false)}
-                  className="text-gray-500 hover:text-gray-800 focus:outline-none flex items-center justify-center"
-                >
-                  <X size={24} />
-                </button>
-              </div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
+          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden relative">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-xl font-bold text-accent">Your Course Certificate</h2>
+              <button
+                onClick={() => setShowCertificate(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <X size={24} />
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-12">
-              <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-inner overflow-hidden border border-gray-100">
+              <div className="max-w-4xl mx-auto">
                 <Certificate
-                  learnerName={
-                    user?.full_name || user?.username || "SVARP Learner"
-                  }
+                  learnerName={user?.full_name || user?.username || "SVARP Learner"}
                   courseName={courseContent.title}
-                  certificateId={
-                    courseContent.certificate_id ||
-                    `SV-${courseContent.id}-${user?.id || "PRO"}`
-                  }
-                  date={new Date().toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  certificateId={courseContent.certificate_id || `SV-${courseContent.id}-${user?.id || "PRO"}`}
+                  date={new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                   isHonour={courseContent.progress >= 75}
-                  qrImageUrl={getSecureVideoUrl(
-                    courseContent.certificate_pdf_url.replace(".pdf", ".png"),
-                  )}
+                  qrImageUrl={getSecureVideoUrl(courseContent.certificate_pdf_url.replace(".pdf", ".png"))}
                   profilePictureUrl={courseContent.profile_picture_url}
                 />
-              </div>
-
-              {/* Manual PDF Iframe (Bottom Optional) */}
-              <div className="mt-12 opacity-0 hover:opacity-100 transition-opacity">
-                <p className="text-center text-xs text-gray-400 mb-4 tracking-widest uppercase">
-                  Official PDF Verification Document Below
-                </p>
-                <div className="w-full h-[600px] border border-gray-200 rounded-lg overflow-hidden grayscale opacity-50">
-                  <iframe
-                    src={getSecureVideoUrl(courseContent.certificate_pdf_url)}
-                    className="w-full h-full border-0"
-                    title="Certificate PDF Backup"
-                  ></iframe>
+                
+                <div className="mt-12 text-center">
+                   <a
+                    href={`${getSecureVideoUrl(courseContent.certificate_pdf_url)}&download=true`}
+                    download="Certificate.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-accent/20 hover:bg-primary hover:text-accent transition-luxury"
+                  >
+                    <Download size={20} /> Download Official PDF
+                  </a>
                 </div>
               </div>
             </div>
