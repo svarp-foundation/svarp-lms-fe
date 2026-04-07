@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../lib/api";
 import { useAuth } from "../context/AuthContext";
-import API_URL from "../config";
 import CourseCard from "../components/CourseCard";
 import {
   CheckCircle,
@@ -44,11 +43,24 @@ const Home = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      // The backend requires authentication even for the public courses endpoint.
+      // To avoid 401 console errors for guests, only fetch if user is present.
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await axios.get(`${API_URL}/public/courses`);
+        const response = await api.get("/public/courses");
         setCourses(response.data);
       } catch (error) {
-        console.error("Error fetching public courses:", error);
+        // Silently handle 401 or auth errors for public endpoint
+        if (
+          error.response?.status !== 401 &&
+          error.message !== "No refresh token"
+        ) {
+          console.error("Error fetching public courses:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -507,7 +519,7 @@ const Home = () => {
                     </div>
                   </div>
                   {/* Back side hint */}
-                  <div className="absolute -bottom-8 -right-8 w-64 glass p-4 rounded-xl shadow-xl transform group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-700">
+                  <div className="absolute -bottom-8 -right-8 w-64 glass p-4 rounded-xl shadow-xl transform group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-700 z-20">
                     <h4 className="font-bold text-sm mb-2 flex items-center gap-2">
                       <Layout className="w-4 h-4 text-primary" />
                       Back-Side Details

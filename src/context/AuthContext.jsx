@@ -49,7 +49,8 @@ export const AuthProvider = ({ children }) => {
           error.response &&
           error.response.status === 401 &&
           !originalRequest._retry &&
-          originalRequest.url !== "/refresh"
+          originalRequest.url !== "/refresh" &&
+          !originalRequest.url.startsWith("/public")
         ) {
           originalRequest._retry = true;
           try {

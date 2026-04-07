@@ -179,6 +179,13 @@ body {
 .fluid-h3 { font-size: var(--text-3xl); line-height: 1.2; }
 .fluid-p { font-size: var(--text-base); line-height: 1.6; }
 
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 /* Selection fix for premium look */
 ::selection {
   background: rgba(155, 207, 155, 0.3);
