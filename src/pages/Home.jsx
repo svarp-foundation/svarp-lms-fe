@@ -329,33 +329,42 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 reveal reveal-delay-200">
+            <div className="grid grid-cols-2 gap-6 reveal reveal-delay-200 mb-4">
               <div className="space-y-6">
-                <div className="aspect-square glass rounded-3xl flex flex-col items-center justify-center p-8 text-center animate-float group hover:scale-105 transition-luxury">
-                  <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
-                    <Search className="w-10 h-10 text-primary" />
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 text-center group hover:bg-white/10 hover:border-primary/50 transition-all duration-500 cursor-default shadow-xl">
+                  <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-all duration-500 shadow-lg shadow-primary/10">
+                    <Search className="w-8 h-8" />
                   </div>
-                  <h4 className="font-bold text-lg">Randomized Questions</h4>
+                  <h4 className="font-bold text-lg text-white group-hover:text-primary transition-colors">
+                    Randomized Questions
+                  </h4>
                 </div>
-                <div className="aspect-[4/3] glass rounded-3xl flex flex-col items-center justify-center p-8 text-center group hover:scale-105 transition-luxury">
-                  <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
-                    <Clock className="w-10 h-10 text-primary" />
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 text-center group hover:bg-white/10 hover:border-primary/50 transition-all duration-500 cursor-default shadow-xl">
+                  <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-all duration-500 shadow-lg shadow-primary/10">
+                    <Clock className="w-8 h-8" />
                   </div>
-                  <h4 className="font-bold text-lg">Time Limit Control</h4>
+                  <h4 className="font-bold text-lg text-white group-hover:text-primary transition-colors">
+                    Time Limit Control
+                  </h4>
                 </div>
               </div>
-              <div className="space-y-6 translate-y-12">
-                <div className="aspect-[3/4] glass rounded-3xl flex flex-col items-center justify-center p-8 text-center group hover:scale-105 transition-luxury">
-                  <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
-                    <ShieldCheck className="w-10 h-10 text-primary" />
+
+              <div className="space-y-6 lg:translate-y-12">
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 text-center group hover:bg-white/10 hover:border-primary/50 transition-all duration-500 cursor-default shadow-xl">
+                  <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-all duration-500 shadow-lg shadow-primary/10">
+                    <ShieldCheck className="w-8 h-8" />
                   </div>
-                  <h4 className="font-bold text-lg">Anti-Cheating Tech</h4>
+                  <h4 className="font-bold text-lg text-white group-hover:text-primary transition-colors">
+                    Anti-Cheating Tech
+                  </h4>
                 </div>
-                <div className="aspect-square glass rounded-3xl flex flex-col items-center justify-center p-8 text-center animate-float delay-700 group hover:scale-105 transition-luxury">
-                  <div className="bg-primary/20 p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
-                    <BarChart3 className="w-10 h-10 text-primary" />
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 text-center group hover:bg-white/10 hover:border-primary/50 transition-all duration-500 cursor-default shadow-xl">
+                  <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-all duration-500 shadow-lg shadow-primary/10">
+                    <BarChart3 className="w-8 h-8" />
                   </div>
-                  <h4 className="font-bold text-lg">Live Analytics</h4>
+                  <h4 className="font-bold text-lg text-white group-hover:text-primary transition-colors">
+                    Live Analytics
+                  </h4>
                 </div>
               </div>
             </div>
@@ -615,7 +624,7 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {[
                 {
                   title: "Institutional",
@@ -635,16 +644,16 @@ const Home = () => {
               ].map((box, i) => (
                 <div
                   key={i}
-                  className={`bg-white/5 border border-white/10 p-10 rounded-[2rem] hover:bg-white/10 transition-luxury group reveal reveal-delay-${i * 100}`}
+                  className={`bg-white/5 border border-white/10 p-7 rounded-[2rem] hover:bg-white/10 transition-luxury group reveal reveal-delay-${i * 100}`}
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary mb-8 animate-float group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-luxury">
-                    {React.cloneElement(box.icon, { className: "w-8 h-8" })}
+                  <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary mb-5 animate-float group-hover:scale-110 group-hover:bg-primary group-hover:text-accent transition-luxury">
+                    {React.cloneElement(box.icon, { className: "w-7 h-7" })}
                   </div>
-                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">
                     {box.title}
                   </h3>
-                  <p className="text-gray-400 mb-8 font-medium">{box.users}</p>
-                  <ul className="space-y-4 mb-4">
+                  <p className="text-gray-400 mb-5 font-medium">{box.users}</p>
+                  <ul className="grid grid-cols-2 gap-y-3.5 gap-x-2">
                     {[
                       "Batch Enrollment",
                       "Bulk Certification",
@@ -653,10 +662,10 @@ const Home = () => {
                     ].map((item, j) => (
                       <li
                         key={j}
-                        className="flex items-center gap-3 text-sm text-gray-300 group-hover:text-white transition-luxury cursor-default"
+                        className="flex items-center gap-2 text-[11px] text-gray-300 group-hover:text-white transition-luxury cursor-default"
                       >
-                        <CheckCircle className="w-4 h-4 text-primary" />
-                        {item}
+                        <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                        <span className="leading-tight">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -664,7 +673,7 @@ const Home = () => {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center border-t border-white/10 pt-20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center border-t border-white/10 pt-12">
               <div>
                 <p className="text-4xl font-bold text-primary mb-2">99.9%</p>
                 <p className="text-gray-500 text-sm">Platform Uptime</p>
@@ -802,155 +811,223 @@ const Home = () => {
         </section>
 
         {/* 9. FOOTER */}
-        <footer className="bg-[#0f172a] text-white pt-24 pb-12 px-6">
+        {/* 9. FOOTER */}
+        <footer className="bg-[#0b1222] text-white pt-16 pb-8 px-6 border-t border-white/5">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
-              <div className="lg:col-span-1">
-                <div className="flex items-center gap-2 mb-8">
-                  <span className="text-2xl font-bold text-white tracking-tighter">
+            {/* Main Footer Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-8 text-center sm:text-left">
+              <div className="col-span-2 lg:col-span-1 flex flex-col items-center sm:items-start mb-8 lg:mb-0">
+                <div className="flex items-center gap-2 mb-6 group cursor-default">
+                  <span className="text-2xl font-bold text-white tracking-tighter group-hover:text-primary transition-colors">
                     SVARP
                   </span>
                   <span className="text-2xl font-bold text-primary tracking-tighter italic">
-                    GLOBAL
+                    GLOBAL ACADEMY
                   </span>
                 </div>
-                <p className="text-gray-400 leading-relaxed mb-8">
-                  Empowering learners, professionals, and institutions through
-                  secure, skill-based online education backed by verified
+                <p className="text-gray-400 leading-relaxed max-w-sm font-sans">
+                  Empowering professionals and institutions through secure,
+                  skill-based online education backed by verified, tamper-proof
                   certification.
                 </p>
-                <div className="flex gap-4">
-                  {["Twitter", "LinkedIn", "Facebook", "YouTube"].map(
-                    (social) => (
-                      <div
-                        key={social}
-                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer group"
-                      >
-                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-primary" />
-                      </div>
-                    ),
-                  )}
-                </div>
+                {/* <div className="flex gap-4">
+                  {["X", "LinkedIn", "Facebook", "YouTube"].map((social) => (
+                    <div
+                      key={social}
+                      className="w-11 h-11 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center hover:bg-primary hover:text-accent hover:scale-110 transition-all cursor-pointer group shadow-sm"
+                      title={social}
+                    >
+                      <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-accent" />
+                    </div>
+                  ))}
+                </div> */}
               </div>
 
-              <div>
-                <h4 className="font-bold text-lg mb-8 uppercase tracking-widest text-primary">
+              <div className="space-y-6">
+                <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">
                   Academy
                 </h4>
-                <ul className="space-y-4 text-gray-400">
+                <ul className="space-y-4 text-gray-400 font-medium">
                   <li>
                     <Link
                       to="/courses-catalog"
-                      className="hover:text-white transition"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
                     >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       All Courses
                     </Link>
                   </li>
                   <li>
                     <Link
-                      to="/verification"
-                      className="hover:text-white transition"
+                      to="/verify"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
                     >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Verification Portal
                     </Link>
                   </li>
                   <li>
                     <Link
                       to="/membership"
-                      className="hover:text-white transition"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
                     >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Membership Plans
                     </Link>
                   </li>
                   <li>
                     <Link
                       to="/assessment"
-                      className="hover:text-white transition"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
                     >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Smart Assessments
                     </Link>
                   </li>
                 </ul>
               </div>
 
-              <div>
-                <h4 className="font-bold text-lg mb-8 uppercase tracking-widest text-primary">
+              <div className="space-y-6">
+                <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">
                   Resources
                 </h4>
-                <ul className="space-y-4 text-gray-400">
+                <ul className="space-y-4 text-gray-400 font-medium">
                   <li>
-                    <Link to="/blog" className="hover:text-white transition">
+                    <Link
+                      to="/blog"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Platform Blog
                     </Link>
                   </li>
                   <li>
-                    <Link to="/help" className="hover:text-white transition">
+                    <Link
+                      to="/help"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Help Center
                     </Link>
                   </li>
                   <li>
                     <Link
                       to="/corporate"
-                      className="hover:text-white transition"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
                     >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       For Institutions
                     </Link>
                   </li>
                   <li>
-                    <Link to="/guides" className="hover:text-white transition">
+                    <Link
+                      to="/guides"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Learning Guides
                     </Link>
                   </li>
                 </ul>
               </div>
 
-              <div>
-                <h4 className="font-bold text-lg mb-8 uppercase tracking-widest text-primary">
-                  Legal
+              <div className="space-y-6">
+                <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">
+                  Legal & Compliance
                 </h4>
-                <ul className="space-y-4 text-gray-400">
+                <ul className="space-y-4 text-gray-400 font-medium">
                   <li>
-                    <Link to="/privacy" className="hover:text-white transition">
+                    <Link
+                      to="/privacy"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Privacy Policy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/terms" className="hover:text-white transition">
+                    <Link
+                      to="/terms"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       Terms of Service
                     </Link>
                   </li>
                   <li>
                     <Link
                       to="/compliance"
-                      className="hover:text-white transition"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
                     >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
                       GDPR Compliance
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-6">
+                <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">
+                  Support
+                </h4>
+                <ul className="space-y-4 text-gray-400 font-medium">
+                  <li>
+                    <Link
+                      to="/contact"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
+                      Contact Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/faq"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
+                      FAQs
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/status"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
+                      System Status
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/feedback"
+                      className="hover:text-primary transition-all flex items-center justify-center sm:justify-start gap-2 group"
+                    >
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all"></span>
+                      Give Feedback
                     </Link>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex flex-col items-center md:items-start">
-                <p className="text-gray-500 text-sm mb-2">
+            {/* Bottom Copyright Section */}
+            <div className="pt-6 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8">
+              <div className="flex flex-col items-center lg:items-start text-center lg:text-left order-2 lg:order-1">
+                <p className="text-gray-500 text-sm mb-2 font-medium">
                   © {new Date().getFullYear()} SVARP Global Academy. All rights
                   reserved.
                 </p>
-                <p className="text-gray-600 text-[10px] uppercase tracking-[0.2em] font-bold">
-                  Powered by SVARP Foundation
-                </p>
-              </div>
-              <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Globe className="w-4 h-4" />
-                  <span>English (Global)</span>
-                </div>
-                <div className="bg-primary/10 px-4 py-2 rounded-lg border border-primary/20">
-                  <p className="text-xs text-primary font-bold">
-                    100% SECURE SYSTEM
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-[1px] bg-primary/30"></span>
+                  <p className="text-gray-600 text-[9px] uppercase tracking-[0.3em] font-bold">
+                    Powered by SVARP Foundation
                   </p>
                 </div>
+              </div>
+
+              <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-10 order-1 lg:order-2">
+                {/* Status, Language, and Secure badge removed by user request */}
               </div>
             </div>
           </div>
