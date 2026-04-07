@@ -11,6 +11,11 @@ import {
   ChevronUp,
   ClipboardList,
   Pencil,
+  BookOpen,
+  LayoutGrid,
+  CheckSquare,
+  GripVertical,
+  Search,
 } from "lucide-react";
 import API_URL from "../../config";
 
@@ -148,20 +153,32 @@ const CourseManager = () => {
 
   return (
     <AdminLayout>
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Course Management</h1>
+      <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+        {/* Page Header Banner */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-3">
+              <span className="p-2.5 bg-violet-100 rounded-2xl text-violet-600 shadow-sm">
+                <BookOpen size={24} className="stroke-[2.5]" />
+              </span>
+              Course Management
+            </h1>
+            <p className="mt-2 text-sm text-gray-500 font-medium">
+              Create, curate, and publish high-impact learning experiences.
+            </p>
+          </div>
+
           {!selectedCourse && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() =>
                   document.getElementById("course-file-upload").click()
                 }
-                className={`bg-gray-100 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-200 flex items-center gap-2 transition-all ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`px-5 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm flex items-center gap-2 ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
                 disabled={uploading}
               >
-                <Upload size={20} />{" "}
-                {uploading ? "Uploading..." : "Upload Course File"}
+                <Upload size={18} />
+                {uploading ? "Uploading..." : "Bulk Upload"}
               </button>
               <input
                 type="file"
@@ -172,191 +189,244 @@ const CourseManager = () => {
               />
               <button
                 onClick={handleCreateClick}
-                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 flex items-center gap-2"
+                className="px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-opacity-90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2"
               >
-                <Plus size={20} /> New Course
+                <Plus size={18} /> New Course
               </button>
             </div>
           )}
         </div>
 
         {selectedCourse ? (
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="border-b border-gray-200">
-              <div className="flex">
+          /* ── Course Editor Interface ── */
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/80 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="border-b border-gray-100 bg-gray-50/30 p-2">
+              <div className="flex flex-wrap items-center gap-1">
                 <button
                   onClick={() => setActiveTab("info")}
-                  className={`px-6 py-4 font-medium ${activeTab === "info" ? "text-primary border-b-2 border-primary" : "text-gray-500 hover:text-gray-700"}`}
+                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === "info" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"}`}
                 >
-                  Basic Info
+                  <FileText size={16} /> Basic Info
                 </button>
                 <button
                   onClick={() => setActiveTab("curriculum")}
                   disabled={!selectedCourse.id}
-                  className={`px-6 py-4 font-medium ${activeTab === "curriculum" ? "text-primary border-b-2 border-primary" : "text-gray-500 hover:text-gray-700"} ${!selectedCourse.id ? "opacity-50 cursor-not-allowed" : ""}`}
-                  title={
-                    !selectedCourse.id
-                      ? "Save course first to add curriculum"
-                      : ""
-                  }
+                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === "curriculum" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"} ${!selectedCourse.id ? "opacity-40 cursor-not-allowed" : ""}`}
                 >
-                  Curriculum
+                  <LayoutGrid size={16} /> Curriculum
                 </button>
                 <button
                   onClick={() => setSelectedCourse(null)}
-                  className="ml-auto px-6 py-4 text-gray-500 hover:text-red-500"
+                  className="ml-auto px-6 py-3 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors"
                 >
-                  Close
+                  Back to List
                 </button>
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 md:p-10">
               {activeTab === "info" ? (
                 <form
                   onSubmit={handleCourseSubmit}
-                  className="max-w-2xl mx-auto space-y-4"
+                  className="max-w-3xl mx-auto space-y-8"
                 >
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Title
-                    </label>
-                    <input
-                      type="text"
-                      value={courseForm.title}
-                      onChange={(e) =>
-                        setCourseForm({ ...courseForm, title: e.target.value })
-                      }
-                      className="w-full border p-2 rounded focus:ring-2 focus:ring-primary"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Description
-                    </label>
-                    <textarea
-                      value={courseForm.description}
-                      onChange={(e) =>
-                        setCourseForm({
-                          ...courseForm,
-                          description: e.target.value,
-                        })
-                      }
-                      className="w-full border p-2 rounded focus:ring-2 focus:ring-primary"
-                      rows={4}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Thumbnail URL
-                    </label>
-                    <input
-                      type="text"
-                      value={courseForm.thumbnail_url}
-                      onChange={(e) =>
-                        setCourseForm({
-                          ...courseForm,
-                          thumbnail_url: e.target.value,
-                        })
-                      }
-                      className="w-full border p-2 rounded focus:ring-2 focus:ring-primary"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Status
-                    </label>
-                    <select
-                      value={courseForm.status}
-                      onChange={(e) =>
-                        setCourseForm({ ...courseForm, status: e.target.value })
-                      }
-                      className="w-full border p-2 rounded focus:ring-2 focus:ring-primary"
-                    >
-                      <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                      <option value="archived">Archived</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Passing Score (%)
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="100"
-                      value={courseForm.passing_score}
-                      onChange={(e) =>
-                        setCourseForm({
-                          ...courseForm,
-                          passing_score: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full border p-2 rounded focus:ring-2 focus:ring-primary"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mt-4 cursor-pointer">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                        Course Title
+                      </label>
                       <input
-                        type="checkbox"
-                        checked={courseForm.require_all_lessons_completed}
+                        type="text"
+                        value={courseForm.title}
                         onChange={(e) =>
                           setCourseForm({
                             ...courseForm,
-                            require_all_lessons_completed: e.target.checked,
+                            title: e.target.value,
                           })
                         }
-                        className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
+                        placeholder="e.g. Mastering Advanced React Patterns"
+                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-medium placeholder:text-gray-300 focus:ring-2 focus:ring-primary transition-all shadow-inner"
+                        required
                       />
-                      Require All Lessons Completed
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mt-2 mb-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={courseForm.require_assignment_approval}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                        Course Description
+                      </label>
+                      <textarea
+                        value={courseForm.description}
                         onChange={(e) =>
                           setCourseForm({
                             ...courseForm,
-                            require_assignment_approval: e.target.checked,
+                            description: e.target.value,
                           })
                         }
-                        className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
+                        placeholder="Provide a compelling overview of what students will learn..."
+                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-medium placeholder:text-gray-300 focus:ring-2 focus:ring-primary transition-all shadow-inner"
+                        rows={5}
+                        required
                       />
-                      Require Assignment Approval
-                    </label>
-                  </div>
-                  {/* Paid Course Toggle */}
-                  <div className="border-t border-gray-200 pt-4 mt-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                        Thumbnail URL
+                      </label>
                       <input
-                        type="checkbox"
-                        checked={courseForm.is_paid}
+                        type="text"
+                        value={courseForm.thumbnail_url}
                         onChange={(e) =>
                           setCourseForm({
                             ...courseForm,
-                            is_paid: e.target.checked,
-                            price: e.target.checked ? courseForm.price || 0 : 0,
+                            thumbnail_url: e.target.value,
                           })
                         }
-                        className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
+                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-primary transition-all shadow-inner"
                       />
-                      This is a Paid Course
-                    </label>
-                    {courseForm.is_paid && (
-                      <div className="mt-3">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Course Price (₹)
-                        </label>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                        Publication Status
+                      </label>
+                      <select
+                        value={courseForm.status}
+                        onChange={(e) =>
+                          setCourseForm({
+                            ...courseForm,
+                            status: e.target.value,
+                          })
+                        }
+                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-primary transition-all shadow-inner cursor-pointer"
+                      >
+                        <option value="draft">Draft (Private)</option>
+                        <option value="published">Published (Public)</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                        Passing Score (%)
+                      </label>
+                      <div className="relative">
                         <input
                           type="number"
                           min="1"
-                          step="1"
+                          max="100"
+                          value={courseForm.passing_score}
+                          onChange={(e) =>
+                            setCourseForm({
+                              ...courseForm,
+                              passing_score: parseInt(e.target.value),
+                            })
+                          }
+                          className="w-full bg-gray-50 border-none pl-5 pr-12 py-4 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-primary transition-all shadow-inner"
+                          required
+                        />
+                        <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold">
+                          %
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer border border-transparent hover:border-primary/10 group">
+                      <div className="relative w-6 h-6 flex-shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={courseForm.require_all_lessons_completed}
+                          onChange={(e) =>
+                            setCourseForm({
+                              ...courseForm,
+                              require_all_lessons_completed: e.target.checked,
+                            })
+                          }
+                          className="peer absolute inset-0 opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="w-6 h-6 rounded-lg bg-white border-2 border-gray-200 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center text-white">
+                          <Plus size={14} className="stroke-[4]" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-700">
+                          Linear Learning
+                        </p>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                          Require all lessons
+                        </p>
+                      </div>
+                    </label>
+
+                    <label className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer border border-transparent hover:border-primary/10 group">
+                      <div className="relative w-6 h-6 flex-shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={courseForm.require_assignment_approval}
+                          onChange={(e) =>
+                            setCourseForm({
+                              ...courseForm,
+                              require_assignment_approval: e.target.checked,
+                            })
+                          }
+                          className="peer absolute inset-0 opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="w-6 h-6 rounded-lg bg-white border-2 border-gray-200 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center text-white">
+                          <Plus size={14} className="stroke-[4]" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-700">
+                          Strict Assessment
+                        </p>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                          Require manual approval
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Pricing Section */}
+                  <div className="p-6 rounded-3xl bg-violet-50/50 border border-violet-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-12 h-6 flex-shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={courseForm.is_paid}
+                          onChange={(e) =>
+                            setCourseForm({
+                              ...courseForm,
+                              is_paid: e.target.checked,
+                              price: e.target.checked
+                                ? courseForm.price || 0
+                                : 0,
+                            })
+                          }
+                          className="peer absolute inset-0 opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="w-12 h-6 rounded-full bg-gray-200 peer-checked:bg-violet-500 transition-all relative">
+                          <div className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-all peer-checked:translate-x-6" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-violet-900">
+                          Premium Access
+                        </p>
+                        <p className="text-xs text-violet-600 font-medium">
+                          Set a price for this course
+                        </p>
+                      </div>
+                    </div>
+
+                    {courseForm.is_paid && (
+                      <div className="relative w-full md:w-48">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-400 font-bold">
+                          ₹
+                        </span>
+                        <input
+                          type="number"
                           value={courseForm.price}
                           onChange={(e) =>
                             setCourseForm({
@@ -364,19 +434,20 @@ const CourseManager = () => {
                               price: parseFloat(e.target.value) || 0,
                             })
                           }
-                          className="w-full border p-2 rounded focus:ring-2 focus:ring-primary"
+                          className="w-full bg-white border-none pl-10 pr-5 py-3 rounded-xl text-gray-900 font-bold focus:ring-2 focus:ring-violet-400 transition-all shadow-sm"
+                          placeholder="Price"
                           required
-                          placeholder="e.g. 499"
                         />
                       </div>
                     )}
                   </div>
-                  <div className="pt-4">
+
+                  <div className="flex justify-end pt-4 border-t border-gray-100">
                     <button
                       type="submit"
-                      className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90"
+                      className="px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary/20 transition-all"
                     >
-                      Save Changes
+                      {selectedCourse.id ? "Update Course" : "Create Course"}
                     </button>
                   </div>
                 </form>
@@ -386,44 +457,72 @@ const CourseManager = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          /* ── Course Grid ── */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {courses.length === 0 && !loading && (
+              <div className="col-span-full py-20 text-center text-gray-400">
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <div className="w-20 h-20 rounded-3xl bg-gray-50 flex items-center justify-center text-gray-200">
+                    <BookOpen size={48} />
+                  </div>
+                  <p className="font-bold text-gray-500">
+                    No courses yet. Click "New Course" to get started.
+                  </p>
+                </div>
+              </div>
+            )}
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all"
+                className="bg-white rounded-3xl p-6 border border-gray-100/80 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all group"
               >
-                <h3 className="font-bold text-lg mb-2">{course.title}</h3>
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex items-center gap-2">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex gap-2">
                     <span
-                      className={`px-2 py-1 rounded text-xs ${course.status === "published" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+                        course.status === "published"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                          : "bg-amber-50 text-amber-700 border-amber-100"
+                      }`}
                     >
                       {course.status}
                     </span>
                     {course.is_paid ? (
-                      <span className="px-2 py-1 rounded text-xs bg-purple-100 text-purple-800 font-semibold">
+                      <span className="px-3 py-1 rounded-lg text-xs bg-violet-50 text-violet-700 border border-violet-100 font-bold">
                         ₹{course.price}
                       </span>
                     ) : (
-                      <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+                      <span className="px-3 py-1 rounded-lg text-xs bg-blue-50 text-blue-700 border border-blue-100 font-bold">
                         Free
                       </span>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditClick(course)}
-                      className="text-primary font-medium hover:underline"
-                    >
-                      Manage
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCourse(course.id)}
-                      className="text-red-500 font-medium hover:underline"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                  <button
+                    onClick={() => handleDeleteCourse(course.id)}
+                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    title="Delete Course"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+
+                <h3 className="font-bold text-xl text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors">
+                  {course.title}
+                </h3>
+                <p className="text-sm text-gray-400 line-clamp-2 mb-8 font-medium">
+                  {course.description}
+                </p>
+
+                <div className="flex items-center justify-between border-t border-gray-50 pt-5">
+                  <div className="flex items-center text-xs text-gray-400 font-bold uppercase tracking-wider">
+                    Course ID: {course.id}
                   </div>
+                  <button
+                    onClick={() => handleEditClick(course)}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-50 text-accent text-sm font-bold hover:bg-primary hover:text-white transition-all shadow-sm"
+                  >
+                    Manage <Pencil size={14} />
+                  </button>
                 </div>
               </div>
             ))}
@@ -473,41 +572,49 @@ const CurriculumEditor = ({ courseId }) => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-8">
-        <form onSubmit={handleAddModule} className="flex gap-2">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-4xl mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Curriculum</h2>
+          <p className="text-sm text-gray-400 font-medium font-sans">Organize modules and lessons to build the learning path.</p>
+        </div>
+      </div>
+
+      <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100 shadow-inner group">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 ml-1">Quick Add Module</h3>
+        <form onSubmit={handleAddModule} className="flex flex-col sm:flex-row gap-4">
           <input
             type="text"
-            placeholder="New Section Title"
+            placeholder="e.g. Introduction to SVARP"
             value={newModuleTitle}
             onChange={(e) => setNewModuleTitle(e.target.value)}
-            className="flex-1 border p-2 rounded focus:ring-2 focus:ring-primary"
+            className="flex-1 bg-white border-none px-5 py-3 rounded-2xl text-gray-900 font-medium placeholder:text-gray-300 focus:ring-2 focus:ring-primary transition-all shadow-sm"
             required
-          />
-          <input
-            type="text"
-            placeholder="New Section Description (Optional)"
-            value={newModuleDescription}
-            onChange={(e) => setNewModuleDescription(e.target.value)}
-            className="flex-1 border p-2 rounded focus:ring-2 focus:ring-primary"
           />
           <button
             type="submit"
-            className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 border border-gray-300 font-medium"
+            className="px-6 py-3 bg-primary text-white rounded-2xl font-bold hover:bg-opacity-90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
           >
-            Add Section
+            <Plus size={18} /> Add Section
           </button>
         </form>
       </div>
 
-      <div className="space-y-4">
-        {modules.map((module) => (
+      <div className="space-y-6">
+        {modules.map((module, index) => (
           <ModuleItem
             key={module.id}
             module={module}
             onUpdate={fetchCurriculum}
+            index={index}
           />
         ))}
+        {modules.length === 0 && !loading && (
+          <div className="py-12 text-center border-2 border-dashed border-gray-100 rounded-3xl">
+             <LayoutGrid size={40} className="mx-auto text-gray-200 mb-3" />
+             <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">No modules created yet</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -701,43 +808,54 @@ const ModuleItem = ({ module, onUpdate }) => {
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden group/module animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div
-        className="p-4 bg-gray-50 flex items-center justify-between cursor-pointer hover:bg-gray-100"
+        className="p-5 bg-gray-50/50 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          {module.title}
-        </h4>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">
-            {module.lessons ? module.lessons.length : 0} lessons
-          </span>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowAddLesson(!showAddLesson);
-              setEditingLessonId(null);
-              setLessonForm({
-                title: "",
-                type: "video",
-                content: "",
-                file: null,
-              });
-              setIsExpanded(true);
-            }}
-            className="text-primary text-sm font-medium hover:underline"
-          >
-            + Add Content
-          </button>
-          <button
-            onClick={handleDeleteModule}
-            className="text-gray-400 hover:text-red-500 p-1 rounded hover:bg-red-50 transition-colors"
-            title="Delete Section"
-          >
-            <Trash2 size={16} />
-          </button>
+        <div className="flex items-center gap-4">
+          <div className="p-2 text-gray-300 group-hover/module:text-gray-400 transition-colors">
+            <GripVertical size={20} />
+          </div>
+          <h4 className="font-bold text-gray-900 flex items-center gap-3">
+            <span className="w-8 h-8 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[10px] font-mono text-gray-400 group-hover/module:border-primary/20 group-hover/module:text-primary transition-all">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            {module.title}
+          </h4>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white rounded-lg border border-gray-100 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+            <LayoutGrid size={12} />
+            {module.lessons ? module.lessons.length : 0} Lessons
+          </div>
+          
+          <div className="flex items-center gap-1 opacity-40 group-hover/module:opacity-100 transition-opacity">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAddLesson(!showAddLesson);
+                setEditingLessonId(null);
+                setLessonForm({ title: "", type: "video", content: "", file: null });
+                setIsExpanded(true);
+              }}
+              className="p-2.5 bg-white border border-gray-100 text-primary rounded-xl hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm"
+              title="Add Lesson"
+            >
+              <Plus size={18} />
+            </button>
+            <button
+              onClick={handleDeleteModule}
+              className="p-2.5 bg-white border border-gray-100 text-gray-400 rounded-xl hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm"
+              title="Delete Section"
+            >
+              <Trash2 size={18} />
+            </button>
+            <div className="ml-2 p-1 text-gray-400">
+              {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1001,54 +1119,56 @@ const ModuleItem = ({ module, onUpdate }) => {
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {module.lessons &&
-              module.lessons.map((lesson) => (
+              module.lessons.map((lesson, idx) => (
                 <div
                   key={lesson.id}
-                  className="flex items-center justify-between p-2 hover:bg-gray-50 rounded group"
+                  className="flex items-center justify-between p-3.5 bg-white border border-gray-100 rounded-2xl hover:border-primary/20 hover:shadow-sm transition-all group/lesson"
                 >
                   <div className="flex items-center gap-3">
-                    {lesson.lesson_type === "video" ? (
-                      <VideoIcon size={16} className="text-gray-400" />
-                    ) : lesson.lesson_type === "assignment" ? (
-                      <ClipboardList size={16} className="text-purple-400" />
-                    ) : (
-                      <FileText size={16} className="text-gray-400" />
-                    )}
-                    <span className="text-sm font-medium text-gray-700">
-                      {lesson.title}
-                    </span>
-                    {lesson.lesson_type === "assignment" && (
-                      <span className="text-xs px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">
-                        Assignment
-                      </span>
-                    )}
+                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover/lesson:bg-primary/5 group-hover/lesson:text-primary transition-colors">
+                      {lesson.lesson_type === "video" ? (
+                        <VideoIcon size={16} />
+                      ) : lesson.lesson_type === "assignment" ? (
+                        <ClipboardList size={16} />
+                      ) : (
+                        <FileText size={16} />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-700">
+                        {lesson.title}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                        {lesson.lesson_type} {lesson.lesson_type === "assignment" ? "• Manual Review" : ""}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 opacity-0 group-hover/lesson:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditLesson(lesson);
                       }}
-                      className="text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                      className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                       title="Edit Lesson"
                     >
                       <Pencil size={14} />
                     </button>
                     <button
                       onClick={(e) => handleDeleteLesson(e, lesson.id)}
-                      className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                       title="Delete Lesson"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
               ))}
             {(!module.lessons || module.lessons.length === 0) && (
-              <div className="text-xs text-gray-400 italic text-center py-2">
-                No lessons in this section
+              <div className="py-8 text-center border-2 border-dashed border-gray-50/50 rounded-2xl">
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">No content in this section</p>
               </div>
             )}
           </div>

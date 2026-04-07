@@ -8,6 +8,8 @@ import {
   Users,
   Bell,
   IndianRupee,
+  Menu,
+  GraduationCap,
 } from "lucide-react";
 
 const adminLinks = [
@@ -38,7 +40,7 @@ const AdminLayout = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -52,19 +54,22 @@ const AdminLayout = ({ children }) => {
         .join("")
         .slice(0, 2)
         .toUpperCase()
-    : (user?.email?.[0]?.toUpperCase() ?? "A");
+    : user?.email?.[0]?.toUpperCase() ?? "A";
 
   const isActive = (link) =>
     link.exact
       ? location.pathname === link.to
       : location.pathname.startsWith(link.to);
 
+  const currentLabel = adminLinks.find((l) => isActive(l))?.label ?? "Admin";
+
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
-      {/* ── Sidebar ── */}
+    <div className="flex h-screen overflow-hidden bg-gray-50 font-sans selection:bg-primary/20">
+      {/* ── Sidebar (Drawer on mobile) ── */}
       <AppSidebar
         open={sidebarOpen}
         setOpen={setSidebarOpen}
+        brandIcon={<GraduationCap size={20} className="text-primary" />}
         brandText1="SGA"
         brandText2="ADMIN"
         brandLink="/admin"
@@ -73,32 +78,43 @@ const AdminLayout = ({ children }) => {
       />
 
       {/* ── Main area ── */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0 relative">
         {/* Top bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center px-6 gap-4 flex-shrink-0">
+        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center px-4 md:px-8 gap-4 flex-shrink-0 z-30 sticky top-0">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden p-2 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
+          >
+            <Menu size={20} />
+          </button>
+
           <div className="flex-1">
-            <h2 className="text-sm font-medium text-gray-500">
-              {adminLinks.find((l) => isActive(l))?.label ?? "Admin"}
+            <h2 className="text-base font-bold text-accent md:text-sm md:font-medium md:text-gray-500">
+              {currentLabel}
             </h2>
           </div>
 
-          <button className="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-500">
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 transition text-gray-500">
+              <Bell size={18} />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
+            </button>
 
-          <div className="flex items-center gap-2 pl-4 border-l border-gray-200">
-            <div className="w-8 h-8 rounded-full bg-primary text-accent flex items-center justify-center font-bold text-sm">
-              {initials}
+            <div className="flex items-center gap-2 pl-3 border-l border-gray-200 group">
+              <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all">
+                {initials}
+              </div>
+              <span className="text-sm font-bold text-gray-700 hidden lg:block">
+                {user?.full_name || "Admin"}
+              </span>
             </div>
-            <span className="text-sm font-medium text-gray-700 hidden md:block">
-              {user?.full_name || user?.email}
-            </span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-gray-50/50">
+          {children}
+        </main>
       </div>
     </div>
   );
