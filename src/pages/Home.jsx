@@ -817,7 +817,7 @@ const Home = () => {
             {/* Main Footer Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-8 text-center sm:text-left">
               <div className="col-span-2 lg:col-span-1 flex flex-col items-center sm:items-start mb-8 lg:mb-0">
-                <div className="flex items-center gap-2 mb-6 group cursor-default">
+                <div className="flex items-center gap-2 mb-6 group cursor-default lg:flex-col">
                   <span className="text-2xl font-bold text-white tracking-tighter group-hover:text-primary transition-colors">
                     SVARP
                   </span>
@@ -1012,8 +1012,8 @@ const Home = () => {
             </div>
 
             {/* Bottom Copyright Section */}
-            <div className="pt-6 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8">
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left order-2 lg:order-1">
+            <div className="pt-6 border-t border-white/5 flex flex-col justify-between items-center gap-8">
+              <div className="flex flex-col items-center text-center lg:text-left order-2 lg:order-1">
                 <p className="text-gray-500 text-sm mb-2 font-medium">
                   © {new Date().getFullYear()} SVARP Global Academy. All rights
                   reserved.
