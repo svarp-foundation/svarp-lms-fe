@@ -43,15 +43,8 @@ const Home = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      // The backend requires authentication even for the public courses endpoint.
-      // To avoid 401 console errors for guests, only fetch if user is present.
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await api.get("/public/courses");
+        const response = await api.get("/public/featured-courses");
         setCourses(response.data);
       } catch (error) {
         // Silently handle 401 or auth errors for public endpoint
@@ -244,8 +237,49 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 2. WHY CHOOSE SVARP */}
-        <section className="section-padding px-6 bg-white overflow-hidden">
+        {/* 2. FEATURED COURSES SECTION */}
+        <section className="section-padding px-6 bg-white relative overflow-hidden">
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 reveal">
+              <div className="md:w-1/2">
+                <h2 className="fluid-h2 font-bold text-accent mb-4 tracking-tight">
+                  Featured Courses
+                </h2>
+                <p className="fluid-p text-gray-600">
+                  Explore our most popular and professionally vetted programs.
+                </p>
+              </div>
+              <Link
+                to="/courses-catalog"
+                className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-luxury border-b-2 border-primary pb-1 group"
+              >
+                View Catalog{" "}
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center p-12">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : courses.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
+                {courses.map((course) => (
+                  <CourseCard key={course.id} course={course} isPublic={true} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center p-12 bg-white/50 backdrop-blur-sm rounded-3xl border border-dashed border-gray-300">
+                <p className="text-gray-500 italic">
+                  Fresh courses arriving soon.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 3. WHY CHOOSE SVARP */}
+        <section className="section-padding px-6  overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16 reveal">
               <h2 className="fluid-h2 font-bold text-accent mb-4 tracking-tight">
@@ -278,7 +312,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 3. SMART ASSESSMENT SYSTEM */}
+        {/* 4. SMART ASSESSMENT SYSTEM */}
         <section className="section-padding px-6 bg-accent text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform origin-top translate-x-1/3"></div>
 
@@ -371,7 +405,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 4. COURSES & LEARNING MODEL */}
+        {/* 5. COURSES & LEARNING MODEL */}
         <section className="section-padding px-6 bg-muted">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 reveal">
@@ -384,13 +418,6 @@ const Home = () => {
                   learners.
                 </p>
               </div>
-              <Link
-                to="/courses-catalog"
-                className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-luxury border-b-2 border-primary pb-1 group"
-              >
-                View All Courses{" "}
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
@@ -454,18 +481,6 @@ const Home = () => {
                 </div>
               ))}
             </div>
-
-            {loading ? (
-              <div className="flex justify-center p-12">
-                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            ) : courses.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {courses.slice(0, 4).map((course) => (
-                  <CourseCard key={course.id} course={course} isPublic={true} />
-                ))}
-              </div>
-            ) : null}
           </div>
         </section>
 
