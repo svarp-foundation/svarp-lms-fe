@@ -576,13 +576,20 @@ const CurriculumEditor = ({ courseId }) => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Curriculum</h2>
-          <p className="text-sm text-gray-400 font-medium font-sans">Organize modules and lessons to build the learning path.</p>
+          <p className="text-sm text-gray-400 font-medium font-sans">
+            Organize modules and lessons to build the learning path.
+          </p>
         </div>
       </div>
 
       <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100 shadow-inner group">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 ml-1">Quick Add Module</h3>
-        <form onSubmit={handleAddModule} className="flex flex-col sm:flex-row gap-4">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 ml-1">
+          Quick Add Module
+        </h3>
+        <form
+          onSubmit={handleAddModule}
+          className="flex flex-col sm:flex-row gap-4"
+        >
           <input
             type="text"
             placeholder="e.g. Introduction to SVARP"
@@ -611,8 +618,10 @@ const CurriculumEditor = ({ courseId }) => {
         ))}
         {modules.length === 0 && !loading && (
           <div className="py-12 text-center border-2 border-dashed border-gray-100 rounded-3xl">
-             <LayoutGrid size={40} className="mx-auto text-gray-200 mb-3" />
-             <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">No modules created yet</p>
+            <LayoutGrid size={40} className="mx-auto text-gray-200 mb-3" />
+            <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">
+              No modules created yet
+            </p>
           </div>
         )}
       </div>
@@ -620,7 +629,7 @@ const CurriculumEditor = ({ courseId }) => {
   );
 };
 
-const ModuleItem = ({ module, onUpdate }) => {
+const ModuleItem = ({ module, onUpdate, index }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAddLesson, setShowAddLesson] = useState(false);
   const [lessonForm, setLessonForm] = useState({
@@ -824,20 +833,25 @@ const ModuleItem = ({ module, onUpdate }) => {
             {module.title}
           </h4>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white rounded-lg border border-gray-100 text-[10px] font-bold uppercase tracking-wider text-gray-400">
             <LayoutGrid size={12} />
             {module.lessons ? module.lessons.length : 0} Lessons
           </div>
-          
+
           <div className="flex items-center gap-1 opacity-40 group-hover/module:opacity-100 transition-opacity">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowAddLesson(!showAddLesson);
                 setEditingLessonId(null);
-                setLessonForm({ title: "", type: "video", content: "", file: null });
+                setLessonForm({
+                  title: "",
+                  type: "video",
+                  content: "",
+                  file: null,
+                });
                 setIsExpanded(true);
               }}
               className="p-2.5 bg-white border border-gray-100 text-primary rounded-xl hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm"
@@ -1141,7 +1155,10 @@ const ModuleItem = ({ module, onUpdate }) => {
                         {lesson.title}
                       </p>
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                        {lesson.lesson_type} {lesson.lesson_type === "assignment" ? "• Manual Review" : ""}
+                        {lesson.lesson_type}{" "}
+                        {lesson.lesson_type === "assignment"
+                          ? "• Manual Review"
+                          : ""}
                       </p>
                     </div>
                   </div>
@@ -1168,7 +1185,9 @@ const ModuleItem = ({ module, onUpdate }) => {
               ))}
             {(!module.lessons || module.lessons.length === 0) && (
               <div className="py-8 text-center border-2 border-dashed border-gray-50/50 rounded-2xl">
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">No content in this section</p>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+                  No content in this section
+                </p>
               </div>
             )}
           </div>
