@@ -1036,7 +1036,7 @@ const Home = () => {
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-[1px] bg-primary/30"></span>
                   <p className="text-gray-600 text-[9px] uppercase tracking-[0.3em] font-bold">
-                    Powered by SVARP Foundation
+                    Powered by SVARP Global
                   </p>
                 </div>
               </div>

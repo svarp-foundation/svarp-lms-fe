@@ -63,7 +63,7 @@ const CertificateSearch = () => {
           </h1>
           
           <p className="fluid-p text-gray-600 mb-8 max-w-md">
-            Enter a unique Certificate ID to instantly validate the authenticity of credentials issued by SVARP Foundation.
+            Enter a unique Certificate ID to instantly validate the authenticity of credentials issued by SVARP Global.
           </p>
 
           <div className="space-y-4">
