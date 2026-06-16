@@ -132,19 +132,40 @@ body {
   transition-delay: 300ms;
 }
 
-/* Custom Scrollbar (Optional, for better aesthetics) */
+/* Hide scrollbar for the entire application by default */
 ::-webkit-scrollbar {
-  width: 10px;
+  display: none;
+  width: 0px;
+  height: 0px;
 }
-::-webkit-scrollbar-track {
-  background: var(--color-muted);
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 5px;
+
+/* Enable scrollbar specifically on the home page */
+.home-page-scrollbar::-webkit-scrollbar,
+.home-page-scrollbar *::-webkit-scrollbar {
+  display: block !important;
+  width: 10px !important;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+.home-page-scrollbar::-webkit-scrollbar-track,
+.home-page-scrollbar *::-webkit-scrollbar-track {
+  background: var(--color-muted) !important;
+}
+.home-page-scrollbar::-webkit-scrollbar-thumb,
+.home-page-scrollbar *::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 5px !important;
+}
+.home-page-scrollbar::-webkit-scrollbar-thumb:hover,
+.home-page-scrollbar *::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
+}
+.home-page-scrollbar,
+.home-page-scrollbar * {
+  scrollbar-width: auto !important;
+  -ms-overflow-style: auto !important;
 }
 
 /* Smooth Transitions for Interactivity */

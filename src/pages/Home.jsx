@@ -135,7 +135,7 @@ const Home = () => {
 
   return (
     <ReactLenis root>
-      <div className="min-h-screen bg-muted text-gray-900 overflow-x-hidden selection:bg-primary/30">
+      <div className="min-h-screen bg-muted text-gray-900 overflow-x-hidden selection:bg-primary/30 home-page-scrollbar">
         {/* 1. HERO SECTION */}
         <section className="relative section-padding px-6 overflow-hidden min-h-[80vh] flex items-center">
           {/* Animated Background Elements */}

@@ -38,7 +38,7 @@ const Dashboard = () => {
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
             Welcome back,
-            {user?.full_name ? ` ${user.full_name.split(" ")[0]}` : " Learner"}! 👋
+            {user?.full_name ? ` ${user.full_name.split(" ")[0]}` : " Learner"}!
           </h1>
           <p className="text-gray-300 text-base mt-2 max-w-md">
             Your progress is looking great. Ready to dive back in?
