@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { LogOut, Menu, X, ChevronRight } from "lucide-react";
+import { usePwa } from "../context/PwaContext";
+import { LogOut, Menu, X, ChevronRight, Download } from "lucide-react";
 
 const AppSidebar = ({
   open,
@@ -14,6 +15,7 @@ const AppSidebar = ({
   onLogout,
 }) => {
   const { user } = useAuth();
+  const { isInstallable, installApp } = usePwa();
   const location = useLocation();
 
   const initials = user?.full_name
@@ -108,6 +110,28 @@ const AppSidebar = ({
               </Link>
             );
           })}
+
+          {isInstallable && (
+            <div className="pt-4 mt-4 border-t border-white/10">
+              {open ? (
+                <button
+                  onClick={installApp}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium bg-primary/20 hover:bg-primary/30 text-primary transition-all shadow-sm"
+                >
+                  <Download size={18} className="flex-shrink-0" />
+                  <span className="flex-1 text-left">Install App</span>
+                </button>
+              ) : (
+                <button
+                  onClick={installApp}
+                  title="Install App"
+                  className="mx-auto w-10 h-10 flex items-center justify-center rounded-xl bg-primary/20 hover:bg-primary/30 text-primary transition-all"
+                >
+                  <Download size={18} />
+                </button>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* Bottom: user profile */}

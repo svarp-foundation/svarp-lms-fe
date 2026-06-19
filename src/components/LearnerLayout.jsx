@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { usePwa } from "../context/PwaContext";
 import {
   Home,
   Heart,
   Bell,
   GraduationCap,
   LogOut,
+  Download,
 } from "lucide-react";
 
 const learnerLinks = [
@@ -21,6 +23,7 @@ const learnerLinks = [
 
 const LearnerLayout = ({ children, isPlayerPage = false }) => {
   const { user, logout } = useAuth();
+  const { isInstallable, installApp } = usePwa();
   const navigate = useNavigate();
   const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
@@ -106,6 +109,18 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
               );
             })}
           </nav>
+
+          {isInstallable && (
+            <div className="px-2 mt-4">
+              <button
+                onClick={installApp}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary/10 hover:bg-primary/20 text-accent font-bold text-sm transition-all shadow-sm"
+              >
+                <Download size={18} className="text-accent" />
+                <span>Install Web App</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Profile / Logout */}
@@ -230,6 +245,15 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
 
         {/* Actions */}
         <div className="flex flex-col gap-3">
+          {isInstallable && (
+            <button
+              onClick={installApp}
+              className="w-full bg-primary/20 hover:bg-primary/30 text-accent font-bold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
+            >
+              <Download size={18} />
+              Install Web App
+            </button>
+          )}
           <button
             onClick={handleLogout}
             className="w-full text-red-600 font-bold py-3.5 rounded-2xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"

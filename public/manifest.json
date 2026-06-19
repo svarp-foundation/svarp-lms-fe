@@ -1,0 +1,37 @@
+{
+  "name": "SVARP Global Academy",
+  "short_name": "SVARP Academy",
+  "description": "Access safety leadership, EHS compliance, and training courses directly from your device.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f4f7f6",
+  "theme_color": "#1f3b45",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/company/svarp-logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/company/svarp-logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/company/svarp-logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/company/svarp-logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "maskable"
+    }
+  ]
+}

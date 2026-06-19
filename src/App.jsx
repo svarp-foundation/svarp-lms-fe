@@ -12,6 +12,7 @@ import Payments from "./pages/admin/Payments";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
 import { useAuth } from "./context/AuthContext";
+import PwaInstallBanner from "./components/PwaInstallBanner";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
@@ -24,6 +25,7 @@ const PrivateRoute = ({ children, roles }) => {
 function App() {
   return (
     <div className="min-h-screen bg-muted text-primary">
+      <PwaInstallBanner />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/login" element={<Login />} />
