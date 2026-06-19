@@ -1,8 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { usePwa } from "../context/PwaContext";
-import { LogOut, Menu, X, ChevronRight, Download } from "lucide-react";
+import { LogOut, Menu, X, ChevronRight } from "lucide-react";
 
 const AppSidebar = ({
   open,
@@ -15,7 +14,6 @@ const AppSidebar = ({
   onLogout,
 }) => {
   const { user } = useAuth();
-  const { isInstallable, installApp } = usePwa();
   const location = useLocation();
 
   const initials = user?.full_name
@@ -47,7 +45,9 @@ const AppSidebar = ({
 
       <aside
         className={`fixed md:relative flex flex-col bg-accent text-white flex-shrink-0 transition-all duration-300 h-full z-50 ${
-          open ? "w-64 translate-x-0" : "w-16 md:translate-x-0 -translate-x-full"
+          open
+            ? "w-64 translate-x-0"
+            : "w-16 md:translate-x-0 -translate-x-full"
         }`}
       >
         {/* Brand + Toggle */}
@@ -99,7 +99,9 @@ const AppSidebar = ({
                 <span className="flex-shrink-0">{link.icon}</span>
                 <span
                   className={`flex-1 transition-all duration-300 ${
-                    open ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none md:hidden"
+                    open
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 -translate-x-4 pointer-events-none md:hidden"
                   }`}
                 >
                   {link.label}
@@ -110,33 +112,13 @@ const AppSidebar = ({
               </Link>
             );
           })}
-
-          {isInstallable && (
-            <div className="pt-4 mt-4 border-t border-white/10">
-              {open ? (
-                <button
-                  onClick={installApp}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium bg-primary/20 hover:bg-primary/30 text-primary transition-all shadow-sm"
-                >
-                  <Download size={18} className="flex-shrink-0" />
-                  <span className="flex-1 text-left">Install App</span>
-                </button>
-              ) : (
-                <button
-                  onClick={installApp}
-                  title="Install App"
-                  className="mx-auto w-10 h-10 flex items-center justify-center rounded-xl bg-primary/20 hover:bg-primary/30 text-primary transition-all"
-                >
-                  <Download size={18} />
-                </button>
-              )}
-            </div>
-          )}
         </nav>
 
         {/* Bottom: user profile */}
         <div className="border-t border-white/10 p-3 flex-shrink-0 bg-accent/50 backdrop-blur-md">
-          <div className={`flex items-center gap-3 transition-all duration-300 ${open ? "px-1" : "justify-center"}`}>
+          <div
+            className={`flex items-center gap-3 transition-all duration-300 ${open ? "px-1" : "justify-center"}`}
+          >
             <div className="w-9 h-9 rounded-full bg-primary text-accent flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-inner">
               {initials}
             </div>
@@ -161,13 +143,13 @@ const AppSidebar = ({
             )}
           </div>
           {!open && (
-             <button
-             onClick={onLogout}
-             title="Log out"
-             className="hidden md:flex mx-auto mt-2 w-8 h-8 items-center justify-center rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition"
-           >
-             <LogOut size={15} />
-           </button>
+            <button
+              onClick={onLogout}
+              title="Log out"
+              className="hidden md:flex mx-auto mt-2 w-8 h-8 items-center justify-center rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition"
+            >
+              <LogOut size={15} />
+            </button>
           )}
         </div>
       </aside>

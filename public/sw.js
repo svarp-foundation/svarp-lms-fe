@@ -2,7 +2,8 @@ const CACHE_NAME = "svarp-lms-cache-v1";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
-  "/company/svarp-logo.webp"
+  "/company/svarp-logo-192.webp",
+  "/company/svarp-logo-512.webp"
 ];
 
 // Install Event

@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { usePwa } from "../context/PwaContext";
-import {
-  Home,
-  Heart,
-  Bell,
-  GraduationCap,
-  LogOut,
-  Download,
-} from "lucide-react";
+import { Home, Heart, Bell, GraduationCap, LogOut } from "lucide-react";
 
 const learnerLinks = [
   { label: "Home", to: "/dashboard", icon: <Home size={18} />, exact: true },
@@ -23,7 +15,6 @@ const learnerLinks = [
 
 const LearnerLayout = ({ children, isPlayerPage = false }) => {
   const { user, logout } = useAuth();
-  const { isInstallable, installApp } = usePwa();
   const navigate = useNavigate();
   const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
@@ -47,11 +38,14 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
         .join("")
         .slice(0, 2)
         .toUpperCase()
-    : user?.email?.[0]?.toUpperCase() ?? "U";
+    : (user?.email?.[0]?.toUpperCase() ?? "U");
 
   const isActive = (link) => {
     if (link.to === "#") return false;
-    if (link.to === "/courses-catalog" && location.pathname.startsWith("/courses")) {
+    if (
+      link.to === "/courses-catalog" &&
+      location.pathname.startsWith("/courses")
+    ) {
       return true;
     }
     return link.exact
@@ -75,7 +69,6 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans selection:bg-primary/20">
-      
       {/* ── Left Sidebar Navigation (Desktop only) ── */}
       <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed inset-y-0 left-0 z-40 justify-between p-6 shadow-sm">
         <div className="flex flex-col gap-8">
@@ -98,8 +91,8 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
                   key={link.to + "-side"}
                   to={link.to}
                   className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all font-bold text-sm ${
-                    active 
-                      ? "bg-primary/15 text-accent shadow-sm" 
+                    active
+                      ? "bg-primary/15 text-accent shadow-sm"
                       : "text-gray-500 hover:text-gray-800 hover:bg-gray-100/60"
                   }`}
                 >
@@ -109,18 +102,6 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
               );
             })}
           </nav>
-
-          {isInstallable && (
-            <div className="px-2 mt-4">
-              <button
-                onClick={installApp}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary/10 hover:bg-primary/20 text-accent font-bold text-sm transition-all shadow-sm"
-              >
-                <Download size={18} className="text-accent" />
-                <span>Install Web App</span>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Profile / Logout */}
@@ -130,8 +111,12 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
               {initials}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-gray-900 truncate">{user?.full_name || "Learner"}</span>
-              <span className="text-xs text-gray-500 truncate">{user?.email}</span>
+              <span className="text-sm font-bold text-gray-900 truncate">
+                {user?.full_name || "Learner"}
+              </span>
+              <span className="text-xs text-gray-500 truncate">
+                {user?.email}
+              </span>
             </div>
           </div>
           <button
@@ -147,7 +132,6 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
 
       {/* ── Main Content Area ── */}
       <div className="flex-grow flex flex-col md:pl-64 min-h-screen min-w-0">
-        
         {/* Top bar (Mobile only) */}
         {!isPlayerPage && (
           <header className="md:hidden h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center px-6 gap-4 flex-shrink-0 z-30 sticky top-0">
@@ -161,7 +145,7 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
             </div>
 
             <div className="flex items-center">
-              <button 
+              <button
                 onClick={() => setProfileOpen(true)}
                 className="flex items-center group"
               >
@@ -195,7 +179,9 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
                   key={link.to + "-bottom"}
                   to={link.to}
                   className={`flex flex-col items-center gap-1 transition-all ${
-                    active ? "text-primary scale-105 font-semibold" : "text-gray-400 hover:text-gray-600"
+                    active
+                      ? "text-primary scale-105 font-semibold"
+                      : "text-gray-400 hover:text-gray-600"
                   }`}
                 >
                   {React.cloneElement(link.icon, { size: active ? 22 : 20 })}
@@ -211,14 +197,16 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
 
       {/* ── Profile Slide-Up Bottom Sheet (Mobile only) ── */}
       {profileOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
           onClick={() => setProfileOpen(false)}
         />
       )}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] p-6 pb-8 z-[60] border-t border-gray-200 transition-transform duration-300 shadow-[0_-10px_25px_rgba(0,0,0,0.1)] ${
-        profileOpen ? "translate-y-0" : "translate-y-full"
-      }`}>
+      <div
+        className={`md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] p-6 pb-8 z-[60] border-t border-gray-200 transition-transform duration-300 shadow-[0_-10px_25px_rgba(0,0,0,0.1)] ${
+          profileOpen ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         {/* Drag Handle */}
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
 
@@ -227,7 +215,9 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
           <div className="w-20 h-20 rounded-full bg-accent text-white flex items-center justify-center font-bold text-2xl shadow-lg ring-4 ring-primary/20 mb-3">
             {initials}
           </div>
-          <h3 className="text-xl font-bold text-gray-900">{user?.full_name || "Learner"}</h3>
+          <h3 className="text-xl font-bold text-gray-900">
+            {user?.full_name || "Learner"}
+          </h3>
           <p className="text-sm text-gray-500 font-medium">{user?.email}</p>
         </div>
 
@@ -235,25 +225,20 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
         <div className="space-y-4 mb-6">
           <div className="flex justify-between items-center py-2 border-b border-gray-100 text-sm">
             <span className="text-gray-500 font-medium">Role</span>
-            <span className="text-gray-900 font-bold capitalize">{user?.role || "Learner"}</span>
+            <span className="text-gray-900 font-bold capitalize">
+              {user?.role || "Learner"}
+            </span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-100 text-sm">
             <span className="text-gray-500 font-medium">Membership</span>
-            <span className="text-primary font-bold">{getMembershipLabel()}</span>
+            <span className="text-primary font-bold">
+              {getMembershipLabel()}
+            </span>
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex flex-col gap-3">
-          {isInstallable && (
-            <button
-              onClick={installApp}
-              className="w-full bg-primary/20 hover:bg-primary/30 text-accent font-bold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
-            >
-              <Download size={18} />
-              Install Web App
-            </button>
-          )}
           <button
             onClick={handleLogout}
             className="w-full text-red-600 font-bold py-3.5 rounded-2xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"

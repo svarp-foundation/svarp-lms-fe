@@ -11,9 +11,9 @@ export const PwaProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    // 1. Register Service Worker
+    // 1. Register Service Worker (check state to avoid missing the window load event)
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
+      const registerSW = () => {
         navigator.serviceWorker
           .register("/sw.js")
           .then((registration) => {
@@ -22,16 +22,20 @@ export const PwaProvider = ({ children }) => {
           .catch((error) => {
             console.error("Service Worker registration failed:", error);
           });
-      });
+      };
+
+      if (document.readyState === "complete" || document.readyState === "interactive") {
+        registerSW();
+      } else {
+        window.addEventListener("load", registerSW);
+        return () => window.removeEventListener("load", registerSW);
+      }
     }
 
     // 2. Listen for installation prompt
     const handleBeforeInstallPrompt = (e) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later
       setDeferredPrompt(e);
-      // Update UI notify the user they can install the PWA
       setIsInstallable(true);
       console.log("PWA install prompt is ready");
     };
@@ -74,14 +78,11 @@ export const PwaProvider = ({ children }) => {
   const installApp = async () => {
     if (!deferredPrompt) return false;
 
-    // Show the install prompt
     deferredPrompt.prompt();
 
-    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
     console.log(`User response to install prompt: ${outcome}`);
 
-    // Reset the deferred prompt variable
     setDeferredPrompt(null);
     setIsInstallable(false);
 
@@ -97,7 +98,7 @@ export const PwaProvider = ({ children }) => {
 
 export const usePwa = () => {
   const context = useContext(PwaContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("usePwa must be used within a PwaProvider");
   }
   return context;

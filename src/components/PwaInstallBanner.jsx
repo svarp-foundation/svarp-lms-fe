@@ -52,7 +52,7 @@ const PwaInstallBanner = () => {
         <div className="flex gap-4 items-start pr-6">
           <div className="w-12 h-12 rounded-xl bg-accent p-1 flex items-center justify-center flex-shrink-0 shadow-md ring-4 ring-primary/10">
             <img
-              src="/company/svarp-logo.webp"
+              src="/company/svarp-logo-192.webp"
               alt="SVARP Logo"
               className="w-full h-full object-contain rounded-lg"
             />

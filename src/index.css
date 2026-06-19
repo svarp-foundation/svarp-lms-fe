@@ -25,7 +25,7 @@ html.lenis body {
   --color-accent: #1f3b45;
   --color-muted: #f4f7f6;
   --color-secondary: #1f3b45;
- 
+
   /* Glassmorphism Tokens */
   --surface-glass: rgba(255, 255, 255, 0.4);
   --border-glass: rgba(255, 255, 255, 0.2);
@@ -49,7 +49,7 @@ html.lenis body {
   --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
   --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
   --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
-  --text-xl: clamp(1. 2rem, 1.15rem + 0.5vw, 1.4rem);
+  --text-xl: clamp(1 2rem, 1.15rem + 0.5vw, 1.4rem);
   --text-2xl: clamp(1.4rem, 1.35rem + 0.75vw, 1.7rem);
   --text-3xl: clamp(1.7rem, 1.65rem + 1.1vw, 2.2rem);
   --text-4xl: clamp(2.1rem, 1.9rem + 1.7vw, 2.8rem);
@@ -301,27 +301,3 @@ body {
     flex-shrink: 0 !important;
   }
 }
-
-/* PWA Animations */
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: translateY(50px) scale(0.9);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(-10px) scale(1.02);
-  }
-  80% {
-    transform: translateY(2px) scale(0.98);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-bounce-in {
-  animation: bounceIn 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
-}
-
-
