@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import API_URL from "../../config";
 import { sanitizeHtml } from "../../lib/sanitize";
-import Navbar from "../../components/Navbar";
 import { useAuth } from "../../context/AuthContext";
 import Certificate from "../../components/Certificate";
+import LearnerLayout from "../../components/LearnerLayout";
 import {
   CheckCircle,
   Lock,
@@ -133,26 +133,46 @@ const CoursePlayer = () => {
     return `${secureUrl}${secureUrl.includes("?") ? "&" : "?"}token=${token}`;
   };
 
-  if (loading) return <div className="p-8">Loading course content...</div>;
+  if (loading)
+    return (
+      <LearnerLayout isPlayerPage={true}>
+        <div className="flex h-[calc(100vh-4rem)] md:h-screen bg-white items-center justify-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </LearnerLayout>
+    );
+
   if (!courseContent)
-    return <div className="p-8">Course not found or access denied.</div>;
+    return (
+      <LearnerLayout isPlayerPage={true}>
+        <div className="flex h-[calc(100vh-4rem)] md:h-screen bg-white items-center justify-center text-center p-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Course not found or access denied.</h2>
+            <button onClick={() => navigate("/dashboard")} className="text-primary mt-4 inline-block font-bold">
+              Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </LearnerLayout>
+    );
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white relative overflow-hidden">
+    <LearnerLayout isPlayerPage={true}>
+      <div className="h-[calc(100vh-4rem)] md:h-screen flex flex-col md:flex-row bg-white relative overflow-hidden">
       {/* ── Mobile Header ── */}
-      <header className="md:hidden h-14 bg-accent text-white flex items-center px-4 justify-between sticky top-0 z-40 shadow-lg">
+      <header className="md:hidden h-16 bg-white border-b border-gray-200 flex items-center px-6 justify-between sticky top-0 z-40">
         <button
           onClick={() => navigate("/dashboard")}
-          className="p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors"
+          className="p-2 -ml-2 hover:bg-gray-100 rounded-xl transition-colors text-accent animate-luxury"
         >
           <ArrowLeft size={20} />
         </button>
-        <h2 className="text-sm font-bold truncate px-2">
+        <h2 className="text-sm font-extrabold truncate px-2 text-accent uppercase tracking-wider">
           {courseContent.title}
         </h2>
         <button
           onClick={() => setMobileSidebarOpen(true)}
-          className="p-2 -mr-2 hover:bg-white/10 rounded-lg transition-colors"
+          className="p-2 -mr-2 hover:bg-gray-100 rounded-xl transition-colors text-accent"
         >
           <Menu size={20} />
         </button>
@@ -161,14 +181,14 @@ const CoursePlayer = () => {
       {/* ── Backdrop for Mobile Sidebar ── */}
       {mobileSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 md:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
       {/* ── Sidebar (Drawer on mobile, persistent on desktop) ── */}
       <div className={`
-        w-80 bg-gray-50 border-r flex flex-col flex-shrink-0 z-[60]
+        w-80 bg-white border-r border-gray-100 flex flex-col flex-shrink-0 z-[60]
         fixed inset-y-0 right-0 transform transition-transform duration-300 md:relative md:translate-x-0
         ${mobileSidebarOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
       `}>
@@ -186,7 +206,7 @@ const CoursePlayer = () => {
           </button>
           
           <div className="flex items-center justify-between mb-4 md:block">
-            <h3 className="text-accent font-bold text-lg leading-tight">
+            <h3 className="text-accent font-extrabold text-lg leading-tight">
               {courseContent.title}
             </h3>
             <button 
@@ -211,7 +231,7 @@ const CoursePlayer = () => {
               <div className="mt-4">
                 <button
                   onClick={() => setShowCertificate(true)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-600/20 transition-all"
+                  className="w-full bg-accent hover:bg-opacity-90 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all"
                 >
                   <Award size={16} />
                   View Certificate
@@ -241,8 +261,8 @@ const CoursePlayer = () => {
                       key={lesson.id}
                       onClick={() => handleLessonSelect(lesson)}
                       className={`
-                          p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-all
-                          ${activeLesson?.id === lesson.id ? "bg-primary text-accent font-bold shadow-md shadow-primary/20" : "text-gray-600 hover:bg-gray-100 hover:text-accent"}
+                          p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-all font-semibold
+                          ${activeLesson?.id === lesson.id ? "bg-primary/25 text-accent shadow-sm" : "text-gray-500 hover:bg-gray-50 hover:text-accent"}
                           ${lesson.locked ? "opacity-40 cursor-not-allowed hover:bg-transparent" : ""}
                       `}
                     >
@@ -268,22 +288,23 @@ const CoursePlayer = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 bg-white overflow-y-auto w-full">
+      <div className="flex-1 bg-white overflow-y-auto w-full page-container-context">
         {activeLesson ? (
-          <div className="max-w-4xl mx-auto px-6 py-10 md:px-12 md:py-16">
-            <h1 className="text-accent text-3xl md:text-4xl font-black mb-8 leading-tight tracking-tight">
-              {activeLesson.title}
-            </h1>
+          <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-10">
+            <div className="w-full mb-8">
+              <h1 className="text-accent text-2xl md:text-3xl font-bold mb-6 leading-tight tracking-tight">
+                {activeLesson.title}
+              </h1>
 
-            {activeLesson.lesson_type === "video" && activeLesson.video_url && (
-              <div className="aspect-video bg-black rounded-2xl mb-10 overflow-hidden shadow-2xl ring-1 ring-white/10">
-                <video
-                  src={getSecureVideoUrl(activeLesson.video_url)}
-                  controls
-                  className="w-full h-full"
-                />
-              </div>
-            )}
+              {activeLesson.lesson_type === "video" && activeLesson.video_url && (
+                <div className="aspect-video bg-black rounded-2xl mb-6 overflow-hidden shadow-md ring-1 ring-white/10">
+                  <video
+                    src={getSecureVideoUrl(activeLesson.video_url)}
+                    controls
+                    className="w-full h-full"
+                  />
+                </div>
+              )}
 
             {activeLesson.lesson_type === "assignment" ? (
               <AssignmentPlayer
@@ -293,7 +314,7 @@ const CoursePlayer = () => {
                 onComplete={fetchCourseContent}
               />
             ) : (
-              <article className="prose prose-slate max-w-none mb-12 prose-headings:text-accent prose-p:text-gray-800 prose-p:leading-relaxed prose-li:text-gray-800">
+              <article className="prose prose-slate max-w-none mb-8 prose-headings:text-accent prose-p:text-gray-800 prose-p:leading-relaxed prose-li:text-gray-800">
                 {activeLesson.content ? (
                   <div
                     className="whitespace-pre-wrap text-gray-800 font-medium leading-relaxed accessibility-text"
@@ -310,36 +331,37 @@ const CoursePlayer = () => {
             )}
 
             {activeLesson.lesson_type !== "assignment" && (
-              <div className="border-t border-gray-100 pt-10 flex justify-end">
+              <div className="border-t border-gray-100 pt-6 flex justify-end">
                 {!activeLesson.completed ? (
                   <button
                     onClick={handleLessonComplete}
                     disabled={completing}
-                    className="bg-primary text-accent px-8 py-4 rounded-2xl font-bold hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center gap-2 group/btn active:scale-95 disabled:opacity-50"
+                    className="w-full sm:w-auto justify-center bg-gradient-to-r from-accent to-[#2d5462] text-white px-8 py-4 rounded-2xl font-extrabold hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 transition-all duration-300 flex items-center gap-3 group/btn disabled:opacity-50 disabled:pointer-events-none"
                   >
                     {completing ? (
                       <>
-                        <CheckCircle size={20} className="animate-spin" />
-                        Saving Progress...
+                        <CheckCircle size={20} className="animate-spin text-primary" />
+                        <span className="tracking-wide text-white">Saving Progress...</span>
                       </>
                     ) : (
                       <>
-                        Mark as Complete 
-                        <CheckCircle size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                        <span className="tracking-wide text-white">Mark as Complete</span>
+                        <CheckCircle size={20} className="group-hover/btn:scale-110 group-hover/btn:rotate-6 transition-transform duration-300 text-primary" />
                       </>
                     )}
                   </button>
                 ) : (
-                  <div className="bg-green-50 text-green-700 px-8 py-4 rounded-2xl font-bold flex items-center gap-3 border border-green-100 shadow-sm">
+                  <div className="w-full sm:w-auto justify-center bg-green-50/60 backdrop-blur-sm text-green-700 px-8 py-4 rounded-2xl font-extrabold flex items-center gap-3 border border-green-100/80 shadow-sm shadow-green-600/5">
                     <CheckCircle size={22} className="text-green-600" />
-                    Lesson Completed!
+                    <span className="tracking-wide">Lesson Completed!</span>
                   </div>
                 )}
               </div>
             )}
+            </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400 p-10 text-center">
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 p-10 text-center bg-white">
             <PlayCircle size={64} className="mb-4 opacity-10" />
             <h3 className="text-lg font-bold text-gray-300">Select a lesson to start learning</h3>
           </div>
@@ -387,7 +409,8 @@ const CoursePlayer = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </LearnerLayout>
   );
 };
 
@@ -493,7 +516,7 @@ const AssignmentPlayer = ({
     );
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+    <div className="bg-muted/50 rounded-2xl md:rounded-[2rem] border border-gray-100/60 p-4 md:p-6 mb-8">
       <div className="flex items-center gap-3 mb-2">
         <ClipboardList size={22} className="text-purple-500" />
         <h2 className="text-xl font-bold text-gray-800">{assignment.title}</h2>
@@ -509,10 +532,10 @@ const AssignmentPlayer = ({
         <div className="space-y-4">
           {result.mcq_total > 0 && (
             <div
-              className={`p-4 rounded-lg flex items-center gap-3 ${
+              className={`p-4 rounded-xl flex items-center gap-3 ${
                 result.mcq_score === result.mcq_total
-                  ? "bg-green-50 border border-green-200"
-                  : "bg-yellow-50 border border-yellow-200"
+                  ? "bg-green-50 border border-green-100 text-green-800"
+                  : "bg-yellow-50 border border-yellow-100 text-yellow-800"
               }`}
             >
               <CheckCircle
@@ -529,7 +552,7 @@ const AssignmentPlayer = ({
             </div>
           )}
           {result.has_subjective && (
-            <div className="p-4 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 text-sm">
+            <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 text-blue-800 text-sm">
               Your written answers have been submitted and are pending
               instructor review.
             </div>
@@ -538,9 +561,9 @@ const AssignmentPlayer = ({
             {result.answers.map((ans, i) => (
               <div
                 key={ans.question_id}
-                className="border border-gray-100 rounded-lg p-4"
+                className="border border-gray-100 bg-white rounded-2xl p-4 shadow-sm"
               >
-                <p className="font-medium text-gray-800 mb-2">
+                <p className="font-semibold text-gray-800 mb-2">
                   {i + 1}. {ans.question_text}
                 </p>
                 {ans.question_type === "mcq" ? (
@@ -550,12 +573,12 @@ const AssignmentPlayer = ({
                     ) : (
                       <X size={16} className="text-red-500" />
                     )}
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-gray-600 font-medium">
                       {ans.is_correct ? "Correct" : "Incorrect"}
                     </span>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-600 italic">
+                  <p className="text-sm text-gray-600 italic font-medium">
                     {ans.answer_text || "(no answer)"}
                   </p>
                 )}
@@ -563,7 +586,7 @@ const AssignmentPlayer = ({
             ))}
           </div>
           {result.status !== "approved" && result.has_subjective && (
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-gray-400 mt-2 font-medium">
               Status: {result.status.replace(/_/g, " ")}
             </p>
           )}
@@ -572,14 +595,14 @@ const AssignmentPlayer = ({
         // Show questions form
         <form onSubmit={handleSubmit} className="space-y-6">
           {(assignment.questions || []).map((q, idx) => (
-            <div key={q.id} className="border border-gray-100 rounded-lg p-4">
-              <p className="font-medium text-gray-800 mb-3">
+            <div key={q.id} className="border border-gray-100 bg-white rounded-2xl p-5 shadow-sm">
+              <p className="font-semibold text-gray-800 mb-3">
                 {idx + 1}. {q.question_text}
                 <span
-                  className={`ml-2 text-xs px-2 py-0.5 rounded ${
+                  className={`ml-2 text-xs px-2 py-0.5 rounded font-bold ${
                     q.question_type === "mcq"
-                      ? "bg-purple-100 text-purple-700"
-                      : "bg-blue-100 text-blue-700"
+                      ? "bg-purple-50 text-purple-600 border border-purple-100"
+                      : "bg-blue-50 text-blue-600 border border-blue-100"
                   }`}
                 >
                   {q.question_type === "mcq" ? "MCQ" : "Written"}
@@ -590,10 +613,10 @@ const AssignmentPlayer = ({
                   {q.options.map((opt) => (
                     <label
                       key={opt.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
+                      className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition ${
                         answers[q.id]?.selected_option_id === opt.id
-                          ? "border-primary bg-primary/5"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? "border-primary bg-primary/10 font-bold"
+                          : "border-gray-200 hover:border-gray-300 font-medium"
                       }`}
                     >
                       <input
@@ -602,7 +625,7 @@ const AssignmentPlayer = ({
                         value={opt.id}
                         checked={answers[q.id]?.selected_option_id === opt.id}
                         onChange={() => handleOptionSelect(q.id, opt.id)}
-                        className="text-primary"
+                        className="text-primary focus:ring-primary"
                       />
                       <span className="text-sm text-gray-700">
                         {opt.option_text}
@@ -615,18 +638,18 @@ const AssignmentPlayer = ({
                   placeholder="Type your answer here..."
                   value={answers[q.id]?.answer_text || ""}
                   onChange={(e) => handleTextAnswer(q.id, e.target.value)}
-                  className="w-full border border-gray-200 p-3 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-white font-medium"
                   rows={4}
                 />
               )}
             </div>
           ))}
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={submitting}
-              className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 disabled:opacity-50 flex items-center gap-2"
+              className="bg-primary text-accent px-6 py-3.5 rounded-xl font-bold hover:bg-opacity-90 disabled:opacity-50 flex items-center gap-2 hover:shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
             >
               {submitting ? "Submitting..." : "Submit Assignment"}
               <ClipboardList size={18} />

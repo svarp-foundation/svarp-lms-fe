@@ -43,7 +43,7 @@ const Wishlist = () => {
   return (
     <LearnerLayout>
       {/* Page header banner */}
-      <div className="w-full bg-accent text-white px-8 py-6">
+      <div className="w-full bg-accent text-white page-padding">
         <h1 className="text-2xl font-bold flex items-center gap-3">
           <Heart size={26} className="text-red-400 fill-red-400" />
           My Wishlist
@@ -53,7 +53,7 @@ const Wishlist = () => {
         </p>
       </div>
 
-      <div className="p-8 max-w-7xl mx-auto">
+      <div className="page-padding max-w-7xl mx-auto">
         {loading ? (
           <div className="flex justify-center p-16">
             <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -80,7 +80,7 @@ const Wishlist = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="responsive-grid">
             {courses.map((course) => (
               <div
                 key={course.id}

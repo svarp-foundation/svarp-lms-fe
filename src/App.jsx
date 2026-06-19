@@ -1,5 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Home from "./pages/Home";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/learner/Dashboard";
@@ -12,10 +11,7 @@ import Users from "./pages/admin/Users";
 import Payments from "./pages/admin/Payments";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
-import VerifyCertificate from "./pages/VerifyCertificate";
-import Navbar from "./components/Navbar";
 import { useAuth } from "./context/AuthContext";
-import CertificateSearch from "./pages/CertificateSearch";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
@@ -26,27 +22,12 @@ const PrivateRoute = ({ children, roles }) => {
 };
 
 function App() {
-  const location = useLocation();
-  // Pages that have their own full-screen layout (sidebar, etc.) don't need the global Navbar
-  const hideNavbar =
-    location.pathname === "/dashboard" ||
-    location.pathname === "/wishlist" ||
-    location.pathname === "/courses-catalog" ||
-    location.pathname.startsWith("/admin") ||
-    location.pathname.endsWith("/learn");
-
   return (
     <div className="min-h-screen bg-muted text-primary">
-      {!hideNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/verify" element={<CertificateSearch />} />
-        <Route
-          path="/verify/:certificateCode"
-          element={<VerifyCertificate />}
-        />
         <Route
           path="/dashboard"
           element={

@@ -25,7 +25,7 @@ html.lenis body {
   --color-accent: #1f3b45;
   --color-muted: #f4f7f6;
   --color-secondary: #1f3b45;
-
+ 
   /* Glassmorphism Tokens */
   --surface-glass: rgba(255, 255, 255, 0.4);
   --border-glass: rgba(255, 255, 255, 0.2);
@@ -49,7 +49,7 @@ html.lenis body {
   --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
   --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
   --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
-  --text-xl: clamp(1.2rem, 1.15rem + 0.5vw, 1.4rem);
+  --text-xl: clamp(1. 2rem, 1.15rem + 0.5vw, 1.4rem);
   --text-2xl: clamp(1.4rem, 1.35rem + 0.75vw, 1.7rem);
   --text-3xl: clamp(1.7rem, 1.65rem + 1.1vw, 2.2rem);
   --text-4xl: clamp(2.1rem, 1.9rem + 1.7vw, 2.8rem);
@@ -242,3 +242,63 @@ body {
   color: #9bcf9b !important;
   text-decoration: underline !important;
 }
+
+/* ── Container Queries for Mobile App Layout Responsiveness ── */
+.page-container-context {
+  container-type: inline-size;
+}
+
+.page-padding {
+  padding: 1.25rem !important; /* 20px on mobile */
+}
+
+.responsive-grid {
+  display: grid !important;
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  gap: 1.25rem !important;
+}
+
+@container (min-width: 540px) {
+  .page-padding {
+    padding: 2rem !important; /* 32px on tablet/desktop */
+  }
+  .responsive-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@container (min-width: 800px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@container (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Course Overview Sidebar Stack to Flex */
+.responsive-layout-flex {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+}
+
+.responsive-layout-sidebar {
+  width: 100% !important;
+}
+
+@container (min-width: 768px) {
+  .responsive-layout-flex {
+    flex-direction: row !important;
+    gap: 2rem !important;
+  }
+  .responsive-layout-sidebar {
+    width: 20rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+

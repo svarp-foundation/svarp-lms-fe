@@ -4,6 +4,7 @@ import api from "../../lib/api";
 
 import { PlayCircle, FileText, CheckCircle, Lock, Heart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import LearnerLayout from "../../components/LearnerLayout";
 
 const CourseOverview = () => {
   const { courseId } = useParams();
@@ -18,7 +19,7 @@ const CourseOverview = () => {
 
   const isMember =
     (user && user.membership) || (course && course.discounted_price === 0);
-  const showDiscount = isMember && course.is_paid;
+  const showDiscount = isMember && course?.is_paid;
 
   const handleEnrollOrGo = async () => {
     if (!user) {
@@ -122,35 +123,40 @@ const CourseOverview = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-50 items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <LearnerLayout>
+        <div className="flex h-[60vh] bg-gray-50 items-center justify-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </LearnerLayout>
     );
   }
 
   if (!course) {
     return (
-      <div className="flex min-h-screen bg-gray-50 items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800">Course not found</h2>
-          <Link to="/dashboard" className="text-primary mt-4 inline-block">
-            Back to Dashboard
-          </Link>
+      <LearnerLayout>
+        <div className="flex h-[60vh] bg-gray-50 items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-800">Course not found</h2>
+            <Link to="/dashboard" className="text-primary mt-4 inline-block">
+              Back to Dashboard
+            </Link>
+          </div>
         </div>
-      </div>
+      </LearnerLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <LearnerLayout>
+      <div className="bg-gray-50 pb-12">
       {/* Course Header */}
-      <div className="bg-accent text-white py-12 px-8">
+      <div className="bg-accent text-white page-padding">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
-          <p className="text-gray-300 text-lg mb-6 whitespace-pre-wrap">
+          <h1 className="text-2xl font-bold mb-4">{course.title}</h1>
+          <p className="text-gray-300 text-sm mb-6 whitespace-pre-wrap">
             {course.description}
           </p>
-          <div className="flex items-center gap-4 text-sm text-gray-400">
+          <div className="flex items-center gap-4 text-xs text-gray-400">
             <span>Created by {course.instructor_name || "Instructor"}</span>
             <span>•</span>
             <span>
@@ -161,20 +167,20 @@ const CourseOverview = () => {
       </div>
 
       {/* Content Area */}
-      <div className="max-w-4xl mx-auto p-8 flex flex-col md:flex-row gap-8">
+      <div className="max-w-4xl mx-auto page-padding responsive-layout-flex">
         {/* Left Column: Course Content */}
         <div className="flex-1">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">
             Course Content
           </h2>
 
           {!user ? (
-            <div className="bg-white p-8 rounded-xl border border-gray-200 text-center">
-              <Lock className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
+            <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
+              <Lock className="mx-auto h-10 w-10 text-gray-400 mb-4" />
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
                 Login to View Content
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-6 text-sm">
                 Please log in or register to preview the course modules and
                 lessons.
               </p>
@@ -238,7 +244,7 @@ const CourseOverview = () => {
         </div>
 
         {/* Right Column: Enrollment/Action Card */}
-        <div className="w-full md:w-80 flex-shrink-0">
+        <div className="responsive-layout-sidebar">
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sticky top-8">
             <div className="aspect-video bg-gray-200 rounded-lg mb-6 overflow-hidden">
               {course.thumbnail_url ? (
@@ -344,6 +350,7 @@ const CourseOverview = () => {
         </div>
       </div>
     </div>
+  </LearnerLayout>
   );
 };
 

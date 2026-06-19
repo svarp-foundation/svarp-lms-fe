@@ -31,22 +31,22 @@ const Dashboard = () => {
   return (
     <LearnerLayout>
       {/* Welcome banner */}
-      <div className="w-full bg-accent text-white px-6 py-8 md:px-12 md:py-12 relative overflow-hidden">
+      <div className="w-full bg-accent text-white page-padding relative overflow-hidden">
         {/* Background Accent */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32 blur-3xl" />
         
         <div className="relative z-10">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             Welcome back,
             {user?.full_name ? ` ${user.full_name.split(" ")[0]}` : " Learner"}!
           </h1>
-          <p className="text-gray-300 text-base mt-2 max-w-md">
+          <p className="text-gray-300 text-sm mt-2 max-w-md">
             Your progress is looking great. Ready to dive back in?
           </p>
         </div>
       </div>
 
-      <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      <div className="page-padding max-w-7xl mx-auto">
         {/* SECTION 1: In Progress */}
         <section className="mb-12">
           <h2 className="text-xl font-bold text-gray-800 mb-6">
@@ -58,7 +58,7 @@ const Dashboard = () => {
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : courses.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="responsive-grid">
               {courses.map((course) => (
                 <CourseCard key={course.id} course={course} enrolled={true} />
               ))}
@@ -80,7 +80,7 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold text-gray-800 mb-6">
             Upcoming Deadlines / Assignments
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="responsive-grid">
             {upcomingDeadlines.map((i) => (
               <div
                 key={i}
