@@ -69,9 +69,9 @@ const AdminLayout = ({ children }) => {
       <AppSidebar
         open={sidebarOpen}
         setOpen={setSidebarOpen}
-        brandIcon={<GraduationCap size={20} className="text-primary" />}
-        brandText1="SGA"
-        brandText2="ADMIN"
+        brandIcon={<img src="/company/svarp-logo.png" alt="SVARP Logo" className="h-8 w-auto object-contain" />}
+        brandText1=""
+        brandText2=""
         brandLink="/admin"
         navLinks={adminLinks}
         onLogout={handleLogout}

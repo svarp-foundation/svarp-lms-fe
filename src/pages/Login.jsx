@@ -55,7 +55,6 @@ const Login = () => {
     <div className="min-h-screen w-full bg-white md:bg-gray-50 flex flex-col md:items-center md:justify-center font-sans selection:bg-primary/20 md:p-4">
       {/* ── Responsive Auth Card ── */}
       <div className="w-full md:max-w-md bg-white md:shadow-[0_20px_50px_rgba(0,0,0,0.08)] md:border md:border-gray-100/80 relative flex flex-col flex-1 md:flex-initial md:rounded-[2rem] overflow-hidden">
-        
         {/* Background ambient light effects */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full -ml-32 -mb-32 blur-3xl pointer-events-none" />
@@ -136,7 +135,6 @@ const Login = () => {
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );

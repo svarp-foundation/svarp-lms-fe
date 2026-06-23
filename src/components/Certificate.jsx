@@ -20,7 +20,7 @@ const Certificate = ({
   profilePictureUrl = null,
 }) => {
   // Default profile image - using SVARP themed placeholder if none provided
-  const defaultProfileImg = "https://www.svarp.org/company/svarp-logo.webp";
+  const defaultProfileImg = "/company/svarp-logo.png";
   const displayImg = profilePictureUrl || defaultProfileImg;
 
   return (

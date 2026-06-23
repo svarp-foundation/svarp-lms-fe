@@ -93,7 +93,7 @@ export default function CoursePayment() {
         currency: orderData.currency,
         name: orderData.app_name || "SVARP GLOBAL ACADEMY",
         description: `Course: ${course.title}`,
-        image: "https://www.svarp.org/company/svarp-logo.webp",
+        image: window.location.origin + "/company/svarp-logo.png",
         order_id: orderData.razorpay_order_id,
         handler: async function (response) {
           try {
