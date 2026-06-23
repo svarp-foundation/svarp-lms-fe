@@ -73,13 +73,20 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
       <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed inset-y-0 left-0 z-40 justify-between p-6 shadow-sm">
         <div className="flex flex-col gap-8">
           {/* Logo Branding */}
-          <div className="flex flex-col px-2">
-            <span className="text-xl font-extrabold text-accent tracking-wider leading-none">
-              SVARP
-            </span>
-            <span className="text-[10px] font-bold text-primary tracking-[0.16em] uppercase mt-1 leading-none">
-              GLOBAL ACADEMY
-            </span>
+          <div className="flex items-center gap-3 px-2">
+            <img
+              src="/company/svarp-logo.png"
+              alt="SVARP Logo"
+              className="w-8 h-8 object-contain"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-extrabold text-accent tracking-wider leading-none">
+                SVARP
+              </span>
+              <span className="text-[9px] font-bold text-primary tracking-[0.16em] uppercase mt-1 leading-none">
+                GLOBAL ACADEMY
+              </span>
+            </div>
           </div>
 
           {/* Links */}
@@ -135,13 +142,20 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
         {/* Top bar (Mobile only) */}
         {!isPlayerPage && (
           <header className="md:hidden h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center px-6 gap-4 flex-shrink-0 z-30 sticky top-0">
-            <div className="flex-1 flex flex-col justify-center">
-              <span className="text-lg font-extrabold text-accent tracking-wider leading-none">
-                SVARP
-              </span>
-              <span className="text-[10px] font-bold text-primary tracking-[0.16em] uppercase mt-0.5 leading-none">
-                GLOBAL ACADEMY
-              </span>
+            <div className="flex-1 flex items-center gap-2">
+              <img
+                src="/company/svarp-logo.png"
+                alt="SVARP Logo"
+                className="w-7 h-7 object-contain"
+              />
+              <div className="flex flex-col">
+                <span className="text-base font-extrabold text-accent tracking-wider leading-none">
+                  SVARP
+                </span>
+                <span className="text-[9px] font-bold text-primary tracking-[0.16em] uppercase mt-0.5 leading-none">
+                  GLOBAL ACADEMY
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center">

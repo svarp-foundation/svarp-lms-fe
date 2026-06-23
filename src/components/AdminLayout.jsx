@@ -70,8 +70,8 @@ const AdminLayout = ({ children }) => {
         open={sidebarOpen}
         setOpen={setSidebarOpen}
         brandIcon={<img src="/company/svarp-logo.png" alt="SVARP Logo" className="h-8 w-auto object-contain" />}
-        brandText1=""
-        brandText2=""
+        brandText1="SVARP"
+        brandText2="Admin"
         brandLink="/admin"
         navLinks={adminLinks}
         onLogout={handleLogout}
