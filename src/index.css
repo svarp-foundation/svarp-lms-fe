@@ -283,7 +283,7 @@ body {
 /* Course Overview Sidebar Stack to Flex */
 .responsive-layout-flex {
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: column-reverse !important;
   gap: 1.5rem !important;
 }
 
