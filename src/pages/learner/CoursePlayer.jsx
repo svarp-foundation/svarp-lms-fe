@@ -269,7 +269,7 @@ const CoursePlayer = () => {
                 </button>
               </div>
             ) : (
-              courseContent.progress === 100 &&
+              (Number(courseContent.progress) >= 100 || !!courseContent.certificate_pdf_url) &&
               courseContent.require_final_assignment && (
                 <div className="mt-4">
                   <p className="text-[10px] text-blue-600 bg-blue-50 p-2 rounded-lg border border-blue-100 font-medium">
@@ -322,6 +322,64 @@ const CoursePlayer = () => {
       <div className="flex-1 bg-white overflow-y-auto w-full page-container-context">
         {activeLesson ? (
           <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-10">
+            {(Number(courseContent?.progress) >= 100 || !!courseContent?.certificate_pdf_url) && (
+              <div className="mb-8 relative overflow-hidden bg-gradient-to-br from-[#1f3b45] to-[#15803d] text-white rounded-3xl p-6 md:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/10">
+                {/* Decorative backgrounds/glows */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl -ml-20 -mb-20 pointer-events-none"></div>
+                
+                <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner flex-shrink-0">
+                    <Award className="w-10 h-10 text-green-300" />
+                  </div>
+                  
+                  <div className="flex-1 text-center md:text-left">
+                    <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
+                      Congratulations, {user?.full_name || user?.username || "Learner"}!
+                    </h2>
+                    <p className="text-white/80 text-sm md:text-base font-medium max-w-xl">
+                      You have finished all modules and requirements for <strong className="text-white font-semibold">"{courseContent.title}"</strong>. Your hard work has paid off!
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto flex-shrink-0">
+                    {courseContent.certificate_pdf_url ? (
+                      <>
+                        <button
+                          onClick={() => setShowCertificate(true)}
+                          className="bg-white text-[#1f3b45] hover:bg-green-50 px-6 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-98 flex items-center justify-center gap-2"
+                        >
+                          <Award size={18} />
+                          View Certificate
+                        </button>
+                        <a
+                          href={`${getSecureVideoUrl(courseContent.certificate_pdf_url)}&download=true`}
+                          download="Certificate.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/30 px-6 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-98 flex items-center justify-center gap-2 text-center"
+                        >
+                          <Download size={18} />
+                          Download Certificate
+                        </a>
+                      </>
+                    ) : (
+                      courseContent.require_final_assignment && (
+                        <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-4 text-center sm:text-left max-w-sm">
+                          <p className="text-xs text-green-200 font-bold">
+                            Certificate Pending
+                          </p>
+                          <p className="text-[11px] text-white/70 mt-1 leading-relaxed">
+                            Your certificate will be generated automatically once the final assignment submission is reviewed and approved.
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="w-full mb-8">
               <h1 className="text-accent text-2xl md:text-3xl font-bold mb-6 leading-tight tracking-tight">
                 {activeLesson.title}
@@ -404,10 +462,71 @@ const CoursePlayer = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400 p-10 text-center bg-white">
-            <PlayCircle size={64} className="mb-4 opacity-10" />
-            <h3 className="text-lg font-bold text-gray-300">Select a lesson to start learning</h3>
-          </div>
+          (Number(courseContent?.progress) >= 100 || !!courseContent?.certificate_pdf_url) ? (
+            <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] p-6 bg-gray-50/50">
+              <div className="max-w-2xl w-full relative overflow-hidden bg-gradient-to-br from-[#1f3b45] to-[#15803d] text-white rounded-[2rem] p-8 md:p-12 shadow-2xl border border-white/10 text-center flex flex-col items-center">
+                {/* Decorative backgrounds */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl -ml-24 -mb-24 pointer-events-none"></div>
+                
+                <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center border border-white/20 shadow-inner mb-6 animate-float">
+                  <Award className="w-12 h-12 text-green-300" />
+                </div>
+                
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-white/15 text-green-200 uppercase tracking-widest mb-4 border border-white/10">
+                  🏆 Course Accomplished!
+                </span>
+                
+                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 animate-luxury">
+                  Outstanding Work, {user?.full_name || user?.username || "Learner"}!
+                </h2>
+                
+                <p className="text-white/80 text-base md:text-lg font-medium max-w-lg mb-8 leading-relaxed">
+                  You've successfully completed <strong className="text-white">"{courseContent.title}"</strong>. You've demonstrated dedication and mastership across all modules.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                  {courseContent.certificate_pdf_url ? (
+                    <>
+                      <button
+                        onClick={() => setShowCertificate(true)}
+                        className="bg-white text-[#1f3b45] hover:bg-green-50 px-8 py-4 rounded-2xl font-extrabold shadow-xl transition-all active:scale-98 flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                      >
+                        <Award size={20} />
+                        View Certificate
+                      </button>
+                      <a
+                        href={`${getSecureVideoUrl(courseContent.certificate_pdf_url)}&download=true`}
+                        download="Certificate.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/30 px-8 py-4 rounded-2xl font-extrabold shadow-xl transition-all active:scale-98 flex items-center justify-center gap-2 hover:-translate-y-0.5 text-center"
+                      >
+                        <Download size={20} />
+                        Download Certificate
+                      </a>
+                    </>
+                  ) : (
+                    courseContent.require_final_assignment && (
+                      <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 max-w-md">
+                        <p className="text-sm text-green-200 font-bold mb-1">
+                          Certificate Processing
+                        </p>
+                        <p className="text-xs text-white/70 leading-relaxed">
+                          Your final assignment submission has been received. Your certificate will be issued automatically once the review is approved by the instructor.
+                        </p>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400 p-10 text-center bg-white">
+              <PlayCircle size={64} className="mb-4 opacity-10" />
+              <h3 className="text-lg font-bold text-gray-300">Select a lesson to start learning</h3>
+            </div>
+          )
         )}
       </div>
 

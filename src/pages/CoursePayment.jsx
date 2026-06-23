@@ -15,9 +15,6 @@ export default function CoursePayment() {
   const { state } = useLocation();
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  // Course info can come from router state (passed by CourseOverview)
-  // or we fetch it if the user navigates directly
   const [course, setCourse] = useState(state?.course || null);
   const [loading, setLoading] = useState(!state?.course);
   const [paying, setPaying] = useState(false);
