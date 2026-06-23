@@ -175,7 +175,7 @@ export default function CoursePayment() {
                 <img
                   src={course.thumbnail_url}
                   alt={course.title}
-                  className="w-20 h-20 rounded-xl object-cover flex-shrink-0"
+                  className="w-20 h-20 rounded-xl object-fill flex-shrink-0"
                 />
               ) : (
                 <div className="w-20 h-20 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">

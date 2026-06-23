@@ -14,6 +14,7 @@ const CourseOverview = () => {
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
@@ -75,7 +76,14 @@ const CourseOverview = () => {
     api
       .get(`/learner/courses`)
       .then((res) => {
-        setIsEnrolled(res.data.some((c) => c.id === course.id));
+        const enrolledCourse = res.data.find((c) => c.id === course.id);
+        if (enrolledCourse) {
+          setIsEnrolled(true);
+          setProgress(enrolledCourse.progress || 0);
+        } else {
+          setIsEnrolled(false);
+          setProgress(0);
+        }
       })
       .catch(() => {});
 
@@ -251,7 +259,7 @@ const CourseOverview = () => {
                 <img
                   src={course.thumbnail_url}
                   alt={course.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-fill"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -287,7 +295,7 @@ const CourseOverview = () => {
                   className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition shadow-lg flex items-center justify-center gap-2"
                 >
                   <CheckCircle size={20} />
-                  Continue Learning
+                  {progress === 100 ? "Completed" : "Continue Learning"}
                 </button>
               ) : (
                 <>

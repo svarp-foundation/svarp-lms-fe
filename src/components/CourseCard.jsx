@@ -1,8 +1,79 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { GraduationCap, PlayCircle, Info, CheckCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { GraduationCap, PlayCircle, Info, CheckCircle, Heart } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import api from "../lib/api";
+
+// Simple global cache to avoid N duplicate requests on page load
+let wishlistCache = null;
+let wishlistPromise = null;
 
 const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const checkWishlist = async () => {
+      if (wishlistCache !== null) {
+        setIsWishlisted(wishlistCache.includes(course.id));
+        return;
+      }
+
+      if (!wishlistPromise) {
+        wishlistPromise = api.get("/learner/wishlist")
+          .then((res) => {
+            wishlistCache = res.data.map((c) => c.id);
+            return wishlistCache;
+          })
+          .catch((err) => {
+            console.error("Error fetching wishlist", err);
+            wishlistPromise = null;
+            return [];
+          });
+      }
+
+      const ids = await wishlistPromise;
+      setIsWishlisted(ids.includes(course.id));
+    };
+
+    checkWishlist();
+  }, [user, course.id]);
+
+  const handleWishlistToggle = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    setWishlistLoading(true);
+    try {
+      if (isWishlisted) {
+        await api.delete(`/learner/wishlist/${course.id}`);
+        setIsWishlisted(false);
+        if (wishlistCache) {
+          wishlistCache = wishlistCache.filter((id) => id !== course.id);
+        }
+      } else {
+        await api.post(`/learner/wishlist/${course.id}`, {});
+        setIsWishlisted(true);
+        if (wishlistCache) {
+          wishlistCache.push(course.id);
+        }
+      }
+    } catch (err) {
+      console.error("Error toggling wishlist:", err);
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-[2rem] shadow-md overflow-hidden hover-lift transition-luxury border border-gray-100 flex flex-col h-full group">
       <div className="h-44 bg-gray-200 relative overflow-hidden">
@@ -10,7 +81,7 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
           <img
             src={course.thumbnail_url}
             alt={course.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
@@ -29,13 +100,26 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
           )}
         </span>
 
+        {/* Wishlist Button */}
+        <button
+          onClick={handleWishlistToggle}
+          disabled={wishlistLoading}
+          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white text-gray-700 rounded-full shadow-md transition-all active:scale-95 disabled:opacity-50 z-10 flex items-center justify-center"
+          title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+        >
+          <Heart
+            size={16}
+            className={isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}
+          />
+        </button>
+
         <span className="absolute bottom-4 right-4 bg-white px-3 py-1 rounded text-xs font-bold text-gray-800 shadow-sm">
           {course.status === "published" ? "Course" : "Draft"}
         </span>
 
         {/* Enrolled badge */}
         {enrolled && (
-          <span className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1 shadow">
+          <span className="absolute bottom-4 left-4 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1 shadow">
             <CheckCircle size={12} /> Enrolled
           </span>
         )}
@@ -79,7 +163,15 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
               to={`/courses/${course.id}/learn`}
               className="flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700 transition shadow-sm text-sm"
             >
-              <PlayCircle size={16} /> Continue
+              {course.progress === 100 ? (
+                <>
+                  <CheckCircle size={16} /> Completed
+                </>
+              ) : (
+                <>
+                  <PlayCircle size={16} /> Continue
+                </>
+              )}
             </Link>
           ) : !isPublic ? (
             <Link

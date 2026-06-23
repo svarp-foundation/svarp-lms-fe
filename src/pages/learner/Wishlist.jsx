@@ -95,7 +95,7 @@ const Wishlist = () => {
                     <img
                       src={course.thumbnail_url}
                       alt={course.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

@@ -6,7 +6,9 @@ import { useAuth } from "../../context/AuthContext";
 import { BookOpen, Search } from "lucide-react";
 
 const AllCourses = () => {
+  const { user } = useAuth();
   const [courses, setCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -26,12 +28,17 @@ const AllCourses = () => {
         params: { search: debouncedSearch, limit: 100 },
       });
       setCourses(res.data);
+
+      if (user) {
+        const enrollRes = await api.get(`/learner/courses`);
+        setEnrolledCourses(enrollRes.data);
+      }
     } catch (err) {
       console.error("Error fetching courses:", err);
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch]);
+  }, [debouncedSearch, user]);
 
   useEffect(() => {
     fetchCourses();
@@ -97,9 +104,21 @@ const AllCourses = () => {
           </div>
         ) : (
           <div className="responsive-grid">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} isPublic={true} />
-            ))}
+            {courses.map((course) => {
+              const enrolledCourse = enrolledCourses.find((c) => c.id === course.id);
+              const isEnrolled = !!enrolledCourse;
+              const courseData = isEnrolled
+                ? { ...course, progress: enrolledCourse.progress }
+                : course;
+              return (
+                <CourseCard
+                  key={course.id}
+                  course={courseData}
+                  isPublic={true}
+                  enrolled={isEnrolled}
+                />
+              );
+            })}
           </div>
         )}
       </div>
