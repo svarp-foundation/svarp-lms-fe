@@ -67,6 +67,65 @@ const CoursePlayer = () => {
     setMobileSidebarOpen(false); // Close on mobile after selection
   };
 
+  const handleLessonNavigation = (modules, currentLessonId) => {
+    let foundActive = false;
+    let nextLesson = null;
+
+    for (const m of modules) {
+      for (const l of m.lessons) {
+        if (foundActive && !l.locked) {
+          nextLesson = l;
+          break;
+        }
+        if (l.id === currentLessonId) {
+          foundActive = true;
+        }
+      }
+      if (nextLesson) break;
+    }
+
+    if (nextLesson) {
+      setActiveLesson(nextLesson);
+    } else {
+      // Fallback: Just sync current lesson status if no next found
+      for (const module of modules) {
+        const updated = module.lessons.find((l) => l.id === currentLessonId);
+        if (updated) {
+          setActiveLesson(updated);
+          break;
+        }
+      }
+    }
+  };
+
+  const getNextLesson = (currentLesson) => {
+    if (!currentLesson || !courseContent) return null;
+    let foundActive = false;
+    for (const m of courseContent.modules) {
+      for (const l of m.lessons) {
+        if (foundActive && !l.locked) {
+          return l;
+        }
+        if (l.id === currentLesson.id) {
+          foundActive = true;
+        }
+      }
+    }
+    return null;
+  };
+
+  const handleAssignmentComplete = async () => {
+    try {
+      const response = await api.get(`/learner/courses/${courseId}/content`);
+      setCourseContent(response.data);
+      if (activeLesson) {
+        handleLessonNavigation(response.data.modules, activeLesson.id);
+      }
+    } catch (error) {
+      console.error("Error refreshing after assignment completion:", error);
+    }
+  };
+
   const handleLessonComplete = async () => {
     if (!activeLesson || completing) return;
     setCompleting(true);
@@ -82,35 +141,7 @@ const CoursePlayer = () => {
       const response = await api.get(`/learner/courses/${courseId}/content`);
       setCourseContent(response.data);
 
-      // Find the next lesson automatically
-      let foundActive = false;
-      let nextLesson = null;
-
-      for (const m of response.data.modules) {
-        for (const l of m.lessons) {
-          if (foundActive && !l.locked) {
-            nextLesson = l;
-            break;
-          }
-          if (l.id === activeLesson.id) {
-            foundActive = true;
-          }
-        }
-        if (nextLesson) break;
-      }
-
-      if (nextLesson) {
-        setActiveLesson(nextLesson);
-      } else {
-        // Fallback: Just sync current lesson status if no next found
-        for (const module of response.data.modules) {
-          const updated = module.lessons.find((l) => l.id === activeLesson.id);
-          if (updated) {
-            setActiveLesson(updated);
-            break;
-          }
-        }
-      }
+      handleLessonNavigation(response.data.modules, activeLesson.id);
     } catch (error) {
       console.error("Error marking lesson complete:", error);
       setActiveLesson((prev) => ({ ...prev, completed: false }));
@@ -311,7 +342,9 @@ const CoursePlayer = () => {
                 lesson={activeLesson.isFinal ? null : activeLesson}
                 initialAssignment={activeLesson.isFinal ? activeLesson : null}
                 courseId={courseId}
-                onComplete={fetchCourseContent}
+                onComplete={handleAssignmentComplete}
+                nextLesson={getNextLesson(activeLesson)}
+                onNextLesson={() => handleLessonSelect(getNextLesson(activeLesson))}
               />
             ) : (
               <article className="prose prose-slate max-w-none mb-8 prose-headings:text-accent prose-p:text-gray-800 prose-p:leading-relaxed prose-li:text-gray-800">
@@ -351,9 +384,19 @@ const CoursePlayer = () => {
                     )}
                   </button>
                 ) : (
-                  <div className="w-full sm:w-auto justify-center bg-green-50/60 backdrop-blur-sm text-green-700 px-8 py-4 rounded-2xl font-extrabold flex items-center gap-3 border border-green-100/80 shadow-sm shadow-green-600/5">
-                    <CheckCircle size={22} className="text-green-600" />
-                    <span className="tracking-wide">Lesson Completed!</span>
+                  <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-end">
+                    <div className="justify-center bg-green-50/60 backdrop-blur-sm text-green-700 px-8 py-4 rounded-2xl font-extrabold flex items-center gap-3 border border-green-100/80 shadow-sm shadow-green-600/5">
+                      <CheckCircle size={22} className="text-green-600" />
+                      <span className="tracking-wide">Lesson Completed!</span>
+                    </div>
+                    {getNextLesson(activeLesson) && (
+                      <button
+                        onClick={() => handleLessonSelect(getNextLesson(activeLesson))}
+                        className="bg-accent hover:bg-opacity-90 text-white px-8 py-4 rounded-2xl font-extrabold flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 transition-all duration-300"
+                      >
+                        Next Lesson
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -423,6 +466,8 @@ const AssignmentPlayer = ({
   initialAssignment,
   courseId,
   onComplete,
+  nextLesson,
+  onNextLesson,
 }) => {
   const [assignment, setAssignment] = useState(initialAssignment);
   const [answers, setAnswers] = useState({}); // { question_id: { answer_text, selected_option_id } }
@@ -589,6 +634,17 @@ const AssignmentPlayer = ({
             <p className="text-xs text-gray-400 mt-2 font-medium">
               Status: {result.status.replace(/_/g, " ")}
             </p>
+          )}
+          {nextLesson && (
+            <div className="flex justify-end mt-6 pt-6 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={onNextLesson}
+                className="bg-accent text-white px-6 py-3.5 rounded-xl font-bold hover:bg-opacity-90 flex items-center gap-2 hover:shadow-xl hover:shadow-accent/20 transition-all active:scale-95"
+              >
+                Next Lesson
+              </button>
+            </div>
           )}
         </div>
       ) : (
