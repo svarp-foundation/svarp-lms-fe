@@ -20,6 +20,7 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
   const [metricsData, setMetricsData] = useState(null);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [showVerificationWarning, setShowVerificationWarning] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -335,14 +336,18 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-gray-50 border border-gray-200 p-5 rounded-2xl flex flex-col items-center text-center">
-                    <Award className="text-gray-400 w-10 h-10 mb-2" />
-                    <h5 className="font-extrabold text-gray-700 text-sm">Certificate Pending</h5>
-                    <p className="text-xs text-gray-500 mt-1 max-w-[85%]">
-                      {course.require_final_assignment
-                        ? "Your certificate will be generated automatically once your final assignment is reviewed and approved."
-                        : "Your certificate is being generated. Please check back in a few moments."}
+                  <div className="bg-gradient-to-r from-yellow-50 to-amber-50/50 border border-yellow-100 p-5 rounded-2xl flex flex-col items-center text-center">
+                    <Award className="text-yellow-600 w-10 h-10 mb-2" />
+                    <h5 className="font-extrabold text-amber-900 text-sm">Certificate is ready!</h5>
+                    <p className="text-xs text-amber-800/80 mt-1 max-w-[85%]">
+                      Your certificate of completion has been generated successfully.
                     </p>
+                    <button
+                      onClick={() => setShowVerificationWarning(true)}
+                      className="w-full mt-4 bg-yellow-600 hover:bg-yellow-700 text-white py-2.5 rounded-xl font-bold transition flex items-center justify-center gap-2 text-sm shadow-md shadow-yellow-600/10"
+                    >
+                      <Award size={16} /> View Certificate
+                    </button>
                   </div>
                 )}
               </div>
@@ -405,6 +410,53 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
                   </a>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Verification Warning Modal */}
+      {showVerificationWarning && createPortal(
+        <div 
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setTimeout(() => setShowVerificationWarning(false), 100);
+          }}
+        >
+          <div 
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 relative text-center border border-gray-100 animate-scale-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100 mx-auto mb-4">
+              <Award className="w-8 h-8 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-accent mb-2">
+              Profile Incomplete
+            </h3>
+            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+              please complete profile on svarp.org, by registering same email to generate certificate
+            </p>
+            <div className="flex flex-col gap-2">
+              <a
+                href="https://svarp.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-accent hover:bg-opacity-95 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-accent/10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Go to svarp.org
+              </a>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTimeout(() => setShowVerificationWarning(false), 100);
+                }}
+                className="w-full bg-gray-50 hover:bg-gray-100 text-gray-500 py-3 rounded-xl font-bold transition"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>,

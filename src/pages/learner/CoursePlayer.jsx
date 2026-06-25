@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import API_URL from "../../config";
@@ -28,6 +29,7 @@ const CoursePlayer = () => {
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [showVerificationWarning, setShowVerificationWarning] = useState(false);
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -258,10 +260,16 @@ const CoursePlayer = () => {
             <p className="text-xs text-gray-500 mt-1.5 font-medium">
               {courseContent.progress}% Course Completed
             </p>
-            {courseContent.certificate_pdf_url ? (
+            {(courseContent.certificate_pdf_url || Number(courseContent.progress) >= 100) ? (
               <div className="mt-4">
                 <button
-                  onClick={() => setShowCertificate(true)}
+                  onClick={() => {
+                    if (courseContent.certificate_pdf_url) {
+                      setShowCertificate(true);
+                    } else {
+                      setShowVerificationWarning(true);
+                    }
+                  }}
                   className="w-full bg-accent hover:bg-opacity-90 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all"
                 >
                   <Award size={16} />
@@ -363,32 +371,23 @@ const CoursePlayer = () => {
                           Download Certificate
                         </a>
                       </>
-                    ) : courseContent.verification_readiness && !courseContent.verification_readiness.ready ? (
-                      <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-4 text-left max-w-sm">
-                        <p className="text-xs text-red-200 font-bold">
-                          Profile Verification Required
-                        </p>
-                        <p className="text-[10px] text-white/90 mt-1 leading-relaxed">
-                          Please complete your profile documentation on the SVARP website to generate your certificate.
-                        </p>
-                        <button
-                          onClick={() => navigate("/dashboard")}
-                          className="w-full mt-2 bg-white text-accent py-1.5 px-3 rounded-lg text-xs font-bold hover:bg-green-50 transition"
-                        >
-                          Go to Profile Dashboard
-                        </button>
-                      </div>
                     ) : (
-                      courseContent.require_final_assignment && (
-                        <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-4 text-center sm:text-left max-w-sm">
-                          <p className="text-xs text-green-200 font-bold">
-                            Certificate Pending
-                          </p>
-                          <p className="text-[11px] text-white/70 mt-1 leading-relaxed">
-                            Your certificate will be generated automatically once the final assignment submission is reviewed and approved.
-                          </p>
-                        </div>
-                      )
+                      <>
+                        <button
+                          onClick={() => setShowVerificationWarning(true)}
+                          className="bg-white text-[#1f3b45] hover:bg-green-50 px-6 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-98 flex items-center justify-center gap-2"
+                        >
+                          <Award size={18} />
+                          View Certificate
+                        </button>
+                        <button
+                          onClick={() => setShowVerificationWarning(true)}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/30 px-6 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-98 flex items-center justify-center gap-2 text-center"
+                        >
+                          <Download size={18} />
+                          Download Certificate
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -521,51 +520,23 @@ const CoursePlayer = () => {
                         Download Certificate
                       </a>
                     </>
-                  ) : courseContent.verification_readiness && !courseContent.verification_readiness.ready ? (
-                    <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 max-w-md text-left">
-                      <p className="text-sm text-red-200 font-bold mb-1">
-                        Profile Verification Required
-                      </p>
-                      <p className="text-xs text-white/90 leading-relaxed mb-3">
-                        Please upload all required documentation on the SVARP main website to unlock your certificate:
-                      </p>
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] text-white/80 mb-4 bg-black/10 p-3 rounded-xl border border-white/5">
-                        {[
-                          { key: "has_full_name", label: "Full Name" },
-                          { key: "has_phone_number", label: "Phone Number" },
-                          { key: "has_pan_card", label: "PAN Card" },
-                          { key: "has_address", label: "Address" },
-                          { key: "has_city", label: "City" },
-                          { key: "has_state", label: "State" },
-                          { key: "has_government_id_doc", label: "Govt ID" },
-                          { key: "has_profile_picture_doc", label: "Photo" },
-                        ].map((item) => (
-                          <div key={item.key} className="flex items-center gap-1.5">
-                            <span className="font-bold">{courseContent.verification_readiness[item.key] ? "✓" : "✗"}</span>
-                            <span className={courseContent.verification_readiness[item.key] ? "line-through opacity-50" : ""}>
-                              {item.label}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                      <button
-                        onClick={() => navigate("/dashboard")}
-                        className="w-full bg-white text-accent py-2.5 rounded-xl font-extrabold hover:bg-green-50 transition"
-                      >
-                        Go to Profile Dashboard
-                      </button>
-                    </div>
                   ) : (
-                    courseContent.require_final_assignment && (
-                      <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 max-w-md">
-                        <p className="text-sm text-green-200 font-bold mb-1">
-                          Certificate Processing
-                        </p>
-                        <p className="text-xs text-white/70 leading-relaxed">
-                          Your final assignment submission has been received. Your certificate will be issued automatically once the review is approved by the instructor.
-                        </p>
-                      </div>
-                    )
+                    <>
+                      <button
+                        onClick={() => setShowVerificationWarning(true)}
+                        className="bg-white text-[#1f3b45] hover:bg-green-50 px-8 py-4 rounded-2xl font-extrabold shadow-xl transition-all active:scale-98 flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                      >
+                        <Award size={20} />
+                        View Certificate
+                      </button>
+                      <button
+                        onClick={() => setShowVerificationWarning(true)}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/30 px-8 py-4 rounded-2xl font-extrabold shadow-xl transition-all active:scale-98 flex items-center justify-center gap-2 hover:-translate-y-0.5 text-center"
+                      >
+                        <Download size={20} />
+                        Download Certificate
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
@@ -578,6 +549,53 @@ const CoursePlayer = () => {
           )
         )}
       </div>
+
+      {/* Verification Warning Modal */}
+      {showVerificationWarning && createPortal(
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setTimeout(() => setShowVerificationWarning(false), 100);
+          }}
+        >
+          <div 
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 relative text-center border border-gray-100 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100 mx-auto mb-4">
+              <Award className="w-8 h-8 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-accent mb-2">
+              Profile Incomplete
+            </h3>
+            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+              please complete profile on svarp.org, by registering same email to generate certificate
+            </p>
+            <div className="flex flex-col gap-2">
+              <a
+                href="https://svarp.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-accent hover:bg-opacity-95 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-accent/10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Go to svarp.org
+              </a>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTimeout(() => setShowVerificationWarning(false), 100);
+                }}
+                className="w-full bg-gray-50 hover:bg-gray-100 text-gray-500 py-3 rounded-xl font-bold transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Certificate Modal */}
       {showCertificate && courseContent?.certificate_pdf_url && (
