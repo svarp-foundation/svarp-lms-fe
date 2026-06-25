@@ -11,6 +11,7 @@ import Users from "./pages/admin/Users";
 import Payments from "./pages/admin/Payments";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
+import Certificates from "./pages/learner/Certificates";
 import { useAuth } from "./context/AuthContext";
 import PwaInstallBanner from "./components/PwaInstallBanner";
 
@@ -43,6 +44,14 @@ function App() {
           element={
             <PrivateRoute roles={["learner", "admin"]}>
               <Wishlist />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/certificates"
+          element={
+            <PrivateRoute roles={["learner", "admin"]}>
+              <Certificates />
             </PrivateRoute>
           }
         />

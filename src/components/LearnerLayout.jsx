@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Home, Heart, Bell, GraduationCap, LogOut } from "lucide-react";
+import { Home, Heart, Bell, GraduationCap, LogOut, Award } from "lucide-react";
 import API_URL from "../config";
 
 const learnerLinks = [
@@ -12,6 +12,7 @@ const learnerLinks = [
     icon: <GraduationCap size={18} />,
   },
   { label: "Wishlist", to: "/wishlist", icon: <Heart size={18} /> },
+  { label: "Certificates", to: "/certificates", icon: <Award size={18} /> },
 ];
 
 const LearnerLayout = ({ children, isPlayerPage = false }) => {
