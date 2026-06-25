@@ -27,6 +27,7 @@ const Dashboard = () => {
   };
 
   const upcomingDeadlines = [1, 2];
+  const inProgressCourses = courses.filter((course) => course.progress < 100);
 
   return (
     <LearnerLayout>
@@ -57,9 +58,9 @@ const Dashboard = () => {
             <div className="flex justify-center p-8">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : courses.length > 0 ? (
+          ) : inProgressCourses.length > 0 ? (
             <div className="responsive-grid">
-              {courses.map((course) => (
+              {inProgressCourses.map((course) => (
                 <CourseCard key={course.id} course={course} enrolled={true} />
               ))}
             </div>
