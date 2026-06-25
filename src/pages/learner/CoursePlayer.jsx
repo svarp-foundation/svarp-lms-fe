@@ -363,6 +363,21 @@ const CoursePlayer = () => {
                           Download Certificate
                         </a>
                       </>
+                    ) : courseContent.verification_readiness && !courseContent.verification_readiness.ready ? (
+                      <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-4 text-left max-w-sm">
+                        <p className="text-xs text-red-200 font-bold">
+                          Profile Verification Required
+                        </p>
+                        <p className="text-[10px] text-white/90 mt-1 leading-relaxed">
+                          Please complete your profile documentation on the SVARP website to generate your certificate.
+                        </p>
+                        <button
+                          onClick={() => navigate("/dashboard")}
+                          className="w-full mt-2 bg-white text-accent py-1.5 px-3 rounded-lg text-xs font-bold hover:bg-green-50 transition"
+                        >
+                          Go to Profile Dashboard
+                        </button>
+                      </div>
                     ) : (
                       courseContent.require_final_assignment && (
                         <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-4 text-center sm:text-left max-w-sm">
@@ -506,6 +521,40 @@ const CoursePlayer = () => {
                         Download Certificate
                       </a>
                     </>
+                  ) : courseContent.verification_readiness && !courseContent.verification_readiness.ready ? (
+                    <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 max-w-md text-left">
+                      <p className="text-sm text-red-200 font-bold mb-1">
+                        Profile Verification Required
+                      </p>
+                      <p className="text-xs text-white/90 leading-relaxed mb-3">
+                        Please upload all required documentation on the SVARP main website to unlock your certificate:
+                      </p>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] text-white/80 mb-4 bg-black/10 p-3 rounded-xl border border-white/5">
+                        {[
+                          { key: "has_full_name", label: "Full Name" },
+                          { key: "has_phone_number", label: "Phone Number" },
+                          { key: "has_pan_card", label: "PAN Card" },
+                          { key: "has_address", label: "Address" },
+                          { key: "has_city", label: "City" },
+                          { key: "has_state", label: "State" },
+                          { key: "has_government_id_doc", label: "Govt ID" },
+                          { key: "has_profile_picture_doc", label: "Photo" },
+                        ].map((item) => (
+                          <div key={item.key} className="flex items-center gap-1.5">
+                            <span className="font-bold">{courseContent.verification_readiness[item.key] ? "✓" : "✗"}</span>
+                            <span className={courseContent.verification_readiness[item.key] ? "line-through opacity-50" : ""}>
+                              {item.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => navigate("/dashboard")}
+                        className="w-full bg-white text-accent py-2.5 rounded-xl font-extrabold hover:bg-green-50 transition"
+                      >
+                        Go to Profile Dashboard
+                      </button>
+                    </div>
                   ) : (
                     courseContent.require_final_assignment && (
                       <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 max-w-md">
