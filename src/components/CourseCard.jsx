@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
 import API_URL from "../config";
 import Certificate from "./Certificate";
+import CertificateModalPreview from "./CertificateModalPreview";
 
 // Simple global cache to avoid N duplicate requests on page load
 let wishlistCache = null;
@@ -375,10 +376,19 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
 
       {/* Full Screen Certificate Viewer Modal */}
       {showCertificate && metricsData?.certificate_pdf_url && createPortal(
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 p-4">
-          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden relative">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-xl font-bold text-accent">Your Course Certificate</h2>
+        <div className="fixed inset-0 z-[10000] flex flex-col bg-white overflow-hidden animate-in fade-in duration-200">
+          <div className="flex justify-between items-center p-6 border-b flex-shrink-0">
+            <h2 className="text-xl font-bold text-accent">Your Course Certificate</h2>
+            <div className="flex items-center gap-4">
+              <a
+                href={`${getSecureVideoUrl(metricsData.certificate_pdf_url)}&download=true`}
+                download="Certificate.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-accent text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md hover:bg-opacity-95 transition whitespace-nowrap flex-shrink-0"
+              >
+                <Download size={14} /> Download PDF
+              </a>
               <button
                 onClick={() => setShowCertificate(false)}
                 className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
@@ -386,32 +396,18 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
                 <X size={24} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-12">
-              <div className="max-w-4xl mx-auto">
-                <Certificate
-                  learnerName={user?.full_name || user?.username || "SVARP Learner"}
-                  courseName={course.title}
-                  certificateId={metricsData.certificate_id || `SV-${course.id}-${user?.id || "PRO"}`}
-                  date={new Date(metricsData.completion_date || Date.now()).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                  isHonour={course.progress >= 75}
-                  qrImageUrl={getSecureVideoUrl(metricsData.certificate_pdf_url.replace(".pdf", ".png"))}
-                  profilePictureUrl={metricsData.profile_picture_url}
-                />
-                
-                <div className="mt-12 text-center">
-                  <a
-                    href={`${getSecureVideoUrl(metricsData.certificate_pdf_url)}&download=true`}
-                    download="Certificate.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-accent/20 hover:bg-primary hover:text-accent transition-luxury"
-                  >
-                    <Download size={20} /> Download Official PDF
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
+          <CertificateModalPreview>
+            <Certificate
+              learnerName={user?.full_name || user?.username || "SVARP Learner"}
+              courseName={course.title}
+              certificateId={metricsData.certificate_code || metricsData.certificate_id || `SV-${course.id}-${user?.id || "PRO"}`}
+              date={new Date(metricsData.completion_date || Date.now()).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+              isHonour={course.progress >= 75}
+              qrImageUrl={getSecureVideoUrl(metricsData.certificate_pdf_url.replace(".pdf", ".png"))}
+              profilePictureUrl={getSecureVideoUrl(metricsData.profile_picture_url || "/media/profile-picture")}
+            />
+          </CertificateModalPreview>
         </div>,
         document.body
       )}
