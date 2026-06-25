@@ -552,7 +552,7 @@ const CoursePlayer = () => {
                   date={new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                   isHonour={courseContent.progress >= 75}
                   qrImageUrl={getSecureVideoUrl(courseContent.certificate_pdf_url.replace(".pdf", ".png"))}
-                  profilePictureUrl={courseContent.profile_picture_url}
+                  profilePictureUrl={getSecureVideoUrl(courseContent.profile_picture_url)}
                 />
                 
                 <div className="mt-12 text-center">

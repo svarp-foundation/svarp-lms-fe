@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Home, Heart, Bell, GraduationCap, LogOut } from "lucide-react";
+import API_URL from "../config";
 
 const learnerLinks = [
   { label: "Home", to: "/dashboard", icon: <Home size={18} />, exact: true },
@@ -30,6 +31,13 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
     logout();
     navigate("/login");
   };
+
+  const [profileImgErr, setProfileImgErr] = useState(false);
+
+  const token = localStorage.getItem("token") || "";
+  const secureProfilePicUrl = user?.profile_picture_url
+    ? `${API_URL}${user.profile_picture_url}${user.profile_picture_url.includes("?") ? "&" : "?"}token=${token}`
+    : null;
 
   const initials = user?.full_name
     ? user.full_name
@@ -114,8 +122,17 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
         {/* Profile / Logout */}
         <div className="border-t border-gray-100 pt-6 flex flex-col gap-4">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
-              {initials}
+            <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden">
+              {secureProfilePicUrl && !profileImgErr ? (
+                <img
+                  src={secureProfilePicUrl}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={() => setProfileImgErr(true)}
+                />
+              ) : (
+                initials
+              )}
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-bold text-gray-900 truncate">
@@ -163,8 +180,17 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
                 onClick={() => setProfileOpen(true)}
                 className="flex items-center group"
               >
-                <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all">
-                  {initials}
+                <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all overflow-hidden">
+                  {secureProfilePicUrl && !profileImgErr ? (
+                    <img
+                      src={secureProfilePicUrl}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                      onError={() => setProfileImgErr(true)}
+                    />
+                  ) : (
+                    initials
+                  )}
                 </div>
               </button>
             </div>
@@ -226,8 +252,17 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
 
         {/* User Info */}
         <div className="flex flex-col items-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-accent text-white flex items-center justify-center font-bold text-2xl shadow-lg ring-4 ring-primary/20 mb-3">
-            {initials}
+          <div className="w-20 h-20 rounded-full bg-accent text-white flex items-center justify-center font-bold text-2xl shadow-lg ring-4 ring-primary/20 mb-3 overflow-hidden">
+            {secureProfilePicUrl && !profileImgErr ? (
+              <img
+                src={secureProfilePicUrl}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                onError={() => setProfileImgErr(true)}
+              />
+            ) : (
+              initials
+            )}
           </div>
           <h3 className="text-xl font-bold text-gray-900">
             {user?.full_name || "Learner"}

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { LogOut, Menu, X, ChevronRight } from "lucide-react";
+import API_URL from "../config";
 
 const AppSidebar = ({
   open,
@@ -15,6 +16,13 @@ const AppSidebar = ({
 }) => {
   const { user } = useAuth();
   const location = useLocation();
+
+  const [profileImgErr, setProfileImgErr] = useState(false);
+
+  const token = localStorage.getItem("token") || "";
+  const secureProfilePicUrl = user?.profile_picture_url
+    ? `${API_URL}${user.profile_picture_url}${user.profile_picture_url.includes("?") ? "&" : "?"}token=${token}`
+    : null;
 
   const initials = user?.full_name
     ? user.full_name
@@ -119,8 +127,17 @@ const AppSidebar = ({
           <div
             className={`flex items-center gap-3 transition-all duration-300 ${open ? "px-1" : "justify-center"}`}
           >
-            <div className="w-9 h-9 rounded-full bg-primary text-accent flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-inner">
-              {initials}
+            <div className="w-9 h-9 rounded-full bg-primary text-accent flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-inner overflow-hidden">
+              {secureProfilePicUrl && !profileImgErr ? (
+                <img
+                  src={secureProfilePicUrl}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={() => setProfileImgErr(true)}
+                />
+              ) : (
+                initials
+              )}
             </div>
             {open && (
               <div className="flex-1 min-w-0 transition-opacity duration-300">

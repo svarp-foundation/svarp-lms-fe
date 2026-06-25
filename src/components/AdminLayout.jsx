@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AppSidebar from "./AppSidebar";
+import API_URL from "../config";
 import {
   LayoutDashboard,
   BookOpen,
@@ -46,6 +47,13 @@ const AdminLayout = ({ children }) => {
     logout();
     navigate("/login");
   };
+
+  const [profileImgErr, setProfileImgErr] = useState(false);
+
+  const token = localStorage.getItem("token") || "";
+  const secureProfilePicUrl = user?.profile_picture_url
+    ? `${API_URL}${user.profile_picture_url}${user.profile_picture_url.includes("?") ? "&" : "?"}token=${token}`
+    : null;
 
   const initials = user?.full_name
     ? user.full_name
@@ -101,8 +109,17 @@ const AdminLayout = ({ children }) => {
             </button>
 
             <div className="flex items-center gap-2 pl-3 border-l border-gray-200 group">
-              <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all">
-                {initials}
+              <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all overflow-hidden">
+                {secureProfilePicUrl && !profileImgErr ? (
+                  <img
+                    src={secureProfilePicUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={() => setProfileImgErr(true)}
+                  />
+                ) : (
+                  initials
+                )}
               </div>
               <span className="text-sm font-bold text-gray-700 hidden lg:block">
                 {user?.full_name || "Admin"}
