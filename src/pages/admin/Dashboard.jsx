@@ -9,29 +9,15 @@ import {
   IndianRupee,
   ArrowRight,
   GraduationCap,
-  CheckCircle,
   Clock,
   Star,
 } from "lucide-react";
 
-const StatCard = ({ icon, label, value, sub, color, gradient }) => (
-  <div
-    className={`rounded-2xl p-6 text-white shadow-lg flex flex-col gap-3 ${gradient}`}
-  >
-    <div className="flex items-center justify-between">
-      <div
-        className={`w-11 h-11 rounded-xl flex items-center justify-center bg-white/20`}
-      >
-        {icon}
-      </div>
-      <span className="text-xs font-medium bg-white/15 px-2.5 py-1 rounded-full">
-        {sub}
-      </span>
-    </div>
-    <div>
-      <p className="text-3xl font-bold">{value}</p>
-      <p className="text-sm text-white/75 mt-0.5">{label}</p>
-    </div>
+const StatCard = ({ label, value, sub }) => (
+  <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{label}</p>
+    <h3 className="text-xl font-extrabold text-accent mt-1">{value}</h3>
+    <p className="text-[10px] text-slate-500 mt-0.5">{sub}</p>
   </div>
 );
 
@@ -49,177 +35,136 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="p-8 max-w-7xl mx-auto space-y-8">
-        {/* Page heading */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Overview</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Welcome back — here's what's happening on your platform today.
-          </p>
+      <div className="space-y-5 font-sans">
+        
+        {/* Simple Header */}
+        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+          <div>
+            <h1 className="text-xl font-bold text-accent">Admin Dashboard</h1>
+            <p className="text-xs text-slate-500">System overview and course management statistics</p>
+          </div>
         </div>
 
         {/* ── Stats Cards ── */}
-        {loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {loading ? (
+            [...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl h-36 bg-gray-200 animate-pulse"
+                className="bg-white p-4 h-[84px] rounded-xl border border-slate-200 shadow-sm animate-pulse"
               />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            <StatCard
-              icon={<Users size={22} />}
-              label="Total Learners"
-              value={stats?.total_users ?? 0}
-              sub="All time"
-              gradient="bg-gradient-to-br from-blue-500 to-blue-700"
-            />
-            <StatCard
-              icon={<BookOpen size={22} />}
-              label="Total Courses"
-              value={stats?.total_courses ?? 0}
-              sub={`${stats?.published_courses ?? 0} published`}
-              gradient="bg-gradient-to-br from-violet-500 to-violet-700"
-            />
-            <StatCard
-              icon={<TrendingUp size={22} />}
-              label="Enrollments"
-              value={stats?.total_enrollments ?? 0}
-              sub="All time"
-              gradient="bg-gradient-to-br from-emerald-500 to-emerald-700"
-            />
-            <StatCard
-              icon={<IndianRupee size={22} />}
-              label="Revenue"
-              value={`₹${(stats?.total_revenue ?? 0).toLocaleString("en-IN")}`}
-              sub="Completed payments"
-              gradient="bg-gradient-to-br from-amber-500 to-orange-600"
-            />
-          </div>
-        )}
+            ))
+          ) : (
+            <>
+              <StatCard
+                label="Total Learners"
+                value={stats?.total_users ?? 0}
+                sub="Registered accounts"
+              />
+              <StatCard
+                label="Total Courses"
+                value={stats?.total_courses ?? 0}
+                sub={`${stats?.published_courses ?? 0} published`}
+              />
+              <StatCard
+                label="Total Enrollments"
+                value={stats?.total_enrollments ?? 0}
+                sub="Active course subscriptions"
+              />
+              <StatCard
+                label="Total Revenue"
+                value={`₹${(stats?.total_revenue ?? 0).toLocaleString("en-IN")}`}
+                sub="Completed course sales"
+              />
+            </>
+          )}
+        </div>
 
         {/* ── Quick Actions ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
             to="/admin/courses"
-            className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary/30 transition-all flex items-center gap-4"
+            className="group bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-primary transition-all flex items-center gap-3.5"
           >
-            <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0 group-hover:bg-violet-100 transition">
-              <BookOpen size={22} />
+            <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 text-accent flex items-center justify-center flex-shrink-0 group-hover:bg-slate-100 transition">
+              <BookOpen size={16} />
             </div>
-            <div className="flex-1">
-              <p className="font-bold text-gray-800">Manage Courses</p>
-              <p className="text-sm text-gray-500">Create, edit, publish</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-accent group-hover:text-primary transition-colors">Manage Courses</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Create, edit, publish</p>
             </div>
             <ArrowRight
-              size={18}
-              className="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"
+              size={14}
+              className="text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all"
             />
           </Link>
 
           <Link
             to="/admin/users"
-            className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary/30 transition-all flex items-center gap-4"
+            className="group bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-primary transition-all flex items-center gap-3.5"
           >
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition">
-              <Users size={22} />
+            <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 text-accent flex items-center justify-center flex-shrink-0 group-hover:bg-slate-100 transition">
+              <Users size={16} />
             </div>
-            <div className="flex-1">
-              <p className="font-bold text-gray-800">Manage Users</p>
-              <p className="text-sm text-gray-500">View & bulk import</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-accent group-hover:text-primary transition-colors">Manage Users</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">View & bulk import</p>
             </div>
             <ArrowRight
-              size={18}
-              className="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"
+              size={14}
+              className="text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all"
             />
           </Link>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 opacity-50 cursor-not-allowed select-none">
-            <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center flex-shrink-0">
-              <Star size={22} />
+          <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200 flex items-center gap-3.5 select-none opacity-60">
+            <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 text-slate-400 flex items-center justify-center flex-shrink-0">
+              <Star size={16} />
             </div>
-            <div className="flex-1">
-              <p className="font-bold text-gray-600">Reports</p>
-              <p className="text-sm text-gray-400">Coming soon</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-slate-500">Reports Panel</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Coming soon</p>
             </div>
-            <Clock size={18} className="text-gray-300" />
+            <Clock size={14} className="text-slate-300" />
           </div>
         </div>
 
-        {/* ── Recent Activity ── */}
+        {/* ── Recent Activity Feed ── */}
         {!loading && stats && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Recent Courses */}
-            <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/80 overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100/80 bg-gray-50/50 backdrop-blur-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-violet-100/50 rounded-xl text-violet-600 border border-violet-100">
-                    <BookOpen size={18} className="stroke-[2.5]" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 leading-tight">
-                      Recent Courses
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-0.5 font-medium">
-                      Latest additions
-                    </p>
-                  </div>
-                </div>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+              <div className="flex justify-between items-center pb-2 mb-3 border-b border-slate-100">
+                <h3 className="text-sm font-bold text-accent">Recent Courses</h3>
                 <Link
                   to="/admin/courses"
-                  className="flex items-center gap-1 text-sm text-violet-600 font-bold hover:text-violet-700 hover:bg-violet-50 px-3 py-1.5 rounded-xl transition-all"
+                  className="text-[10px] text-primary font-bold hover:underline"
                 >
-                  View all <ArrowRight size={14} />
+                  View all
                 </Link>
               </div>
-              <div className="p-4 flex-1">
+              <div className="flex-1">
                 {stats.recent_courses.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm py-8 space-y-2">
-                    <BookOpen size={32} className="opacity-20" />
-                    <p>No courses yet</p>
-                  </div>
+                  <div className="p-4 text-center text-xs text-slate-400 italic">No courses found</div>
                 ) : (
-                  <ul className="space-y-2">
+                  <div className="space-y-2">
                     {stats.recent_courses.map((course) => (
-                      <li
+                      <div
                         key={course.id}
-                        className="group flex items-center p-3 rounded-2xl hover:bg-gray-50 border border-transparent hover:border-gray-100 cursor-pointer transition-all duration-300"
+                        className="flex items-center p-2 rounded-lg border border-slate-100 hover:bg-slate-50/50"
                       >
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-50 to-purple-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-sm border border-violet-100/50">
-                          <GraduationCap
-                            size={22}
-                            className="text-violet-600"
-                          />
+                        <div className="w-8 h-8 rounded bg-slate-50 border border-slate-100 text-accent flex items-center justify-center font-bold text-xs flex-shrink-0">
+                          <GraduationCap size={14} />
                         </div>
-                        <div className="flex-1 min-w-0 ml-4">
-                          <p className="text-sm font-bold text-gray-900 truncate group-hover:text-violet-700 transition-colors">
+                        <div className="flex-1 min-w-0 ml-3">
+                          <p className="text-xs font-bold text-accent truncate">
                             {course.title}
                           </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs font-semibold text-gray-600 flex items-center gap-1">
-                              {course.is_paid ? (
-                                <>
-                                  <IndianRupee
-                                    size={12}
-                                    className="text-gray-400"
-                                  />{" "}
-                                  {course.price}
-                                </>
-                              ) : (
-                                "Free"
-                              )}
-                            </span>
-                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                            <span className="text-xs text-gray-400 font-medium">
-                              Course
-                            </span>
-                          </div>
+                          <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">
+                            {course.is_paid ? `₹${course.price}` : "Free"}
+                          </p>
                         </div>
                         <span
-                          className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg font-bold shadow-sm border ${
+                          className={`text-[8px] uppercase tracking-wider px-1.5 py-0.5 rounded font-bold border ${
                             course.status === "published"
                               ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                               : "bg-amber-50 text-amber-600 border-amber-100"
@@ -227,44 +172,29 @@ const AdminDashboard = () => {
                         >
                           {course.status}
                         </span>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Recent Users */}
-            <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/80 overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100/80 bg-gray-50/50 backdrop-blur-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100/50 rounded-xl text-blue-600 border border-blue-100">
-                    <Users size={18} className="stroke-[2.5]" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 leading-tight">
-                      Recent Learners
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-0.5 font-medium">
-                      New signups
-                    </p>
-                  </div>
-                </div>
+            {/* Recent Learners */}
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+              <div className="flex justify-between items-center pb-2 mb-3 border-b border-slate-100">
+                <h3 className="text-sm font-bold text-accent">Recent Learners</h3>
                 <Link
                   to="/admin/users"
-                  className="flex items-center gap-1 text-sm text-blue-600 font-bold hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition-all"
+                  className="text-[10px] text-primary font-bold hover:underline"
                 >
-                  View all <ArrowRight size={14} />
+                  View all
                 </Link>
               </div>
-              <div className="p-4 flex-1">
+              <div className="flex-1">
                 {stats.recent_users.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm py-8 space-y-2">
-                    <Users size={32} className="opacity-20" />
-                    <p>No learners yet</p>
-                  </div>
+                  <div className="p-4 text-center text-xs text-slate-400 italic">No learners found</div>
                 ) : (
-                  <ul className="space-y-2">
+                  <div className="space-y-2">
                     {stats.recent_users.map((u) => {
                       const initials = u.full_name
                         ? u.full_name
@@ -275,33 +205,25 @@ const AdminDashboard = () => {
                             .toUpperCase()
                         : u.email[0].toUpperCase();
                       return (
-                        <li
+                        <div
                           key={u.id}
-                          className="group flex items-center p-3 rounded-2xl hover:bg-gray-50 border border-transparent hover:border-gray-100 cursor-pointer transition-all duration-300"
+                          className="p-2 border border-slate-100 rounded-lg flex items-center justify-between hover:bg-slate-50/50"
                         >
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-50 to-sky-50 border border-blue-100/50 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-500">
-                            {initials}
+                          <div className="flex items-center min-w-0">
+                            <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 text-accent flex items-center justify-center font-bold text-xs flex-shrink-0">
+                              {initials}
+                            </div>
+                            <div className="flex-1 min-w-0 ml-3">
+                              <h4 className="text-xs font-bold text-accent truncate">
+                                {u.full_name || "—"}
+                              </h4>
+                              <p className="text-[9px] text-slate-400 truncate">{u.email}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0 ml-4">
-                            <p className="text-sm font-bold text-gray-900 truncate group-hover:text-blue-700 transition-colors">
-                              {u.full_name || "—"}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate mt-0.5 font-medium">
-                              {u.email}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-300 border border-green-100 group-hover:border-green-500">
-                            <CheckCircle
-                              size={16}
-                              className={
-                                "bg-white rounded-full group-hover:bg-transparent"
-                              }
-                            />
-                          </div>
-                        </li>
+                        </div>
                       );
                     })}
-                  </ul>
+                  </div>
                 )}
               </div>
             </div>

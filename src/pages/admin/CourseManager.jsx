@@ -13,9 +13,7 @@ import {
   Pencil,
   BookOpen,
   LayoutGrid,
-  CheckSquare,
   GripVertical,
-  Search,
 } from "lucide-react";
 import API_URL from "../../config";
 
@@ -23,7 +21,7 @@ const CourseManager = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [activeTab, setActiveTab] = useState("info"); // info, curriculum
+  const [activeTab, setActiveTab] = useState("info");
   const [uploading, setUploading] = useState(false);
 
   // Form state for Course
@@ -107,13 +105,13 @@ const CourseManager = () => {
       if (selectedCourse && selectedCourse.id) {
         response = await api.put(
           `/admin/courses/${selectedCourse.id}`,
-          courseForm,
+          courseForm
         );
       } else {
         response = await api.post(`/admin/courses`, courseForm);
       }
       fetchCourses();
-      setSelectedCourse(response.data); // Set as selected to enable curriculum tab
+      setSelectedCourse(response.data);
       alert("Course saved successfully!");
     } catch (error) {
       console.error("Error saving course:", error);
@@ -147,37 +145,32 @@ const CourseManager = () => {
       alert(error.response?.data?.detail || "Failed to upload course file");
     } finally {
       setUploading(false);
-      e.target.value = null; // Clear input to allow re-upload of same file
+      e.target.value = null;
     }
   };
 
   return (
     <AdminLayout>
-      <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+      <div className="space-y-4 font-sans">
         {/* Page Header Banner */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 pb-2 border-b border-slate-200">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-3">
-              <span className="p-2.5 bg-violet-100 rounded-2xl text-violet-600 shadow-sm">
-                <BookOpen size={24} className="stroke-[2.5]" />
-              </span>
-              Course Management
-            </h1>
-            <p className="mt-2 text-sm text-gray-500 font-medium">
+            <h1 className="text-xl font-bold text-accent">Course Management</h1>
+            <p className="text-xs text-slate-500">
               Create, curate, and publish high-impact learning experiences.
             </p>
           </div>
 
           {!selectedCourse && (
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 onClick={() =>
                   document.getElementById("course-file-upload").click()
                 }
-                className={`px-5 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm flex items-center gap-2 ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`bg-white border border-slate-200 text-slate-700 hover:border-slate-300 font-bold px-3 py-1.5 rounded-lg transition-all text-xs flex items-center gap-1.5 shadow-xs shrink-0 ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
                 disabled={uploading}
               >
-                <Upload size={18} />
+                <Upload size={14} />
                 {uploading ? "Uploading..." : "Bulk Upload"}
               </button>
               <input
@@ -189,9 +182,9 @@ const CourseManager = () => {
               />
               <button
                 onClick={handleCreateClick}
-                className="px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-opacity-90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2"
+                className="bg-primary hover:bg-slate-900 text-white font-bold px-3 py-1.5 rounded-lg transition-all text-xs flex items-center gap-1.5 shadow-xs shrink-0"
               >
-                <Plus size={18} /> New Course
+                <Plus size={14} /> New Course
               </button>
             </div>
           )}
@@ -199,40 +192,40 @@ const CourseManager = () => {
 
         {selectedCourse ? (
           /* ── Course Editor Interface ── */
-          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/80 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="border-b border-gray-100 bg-gray-50/30 p-2">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div className="border-b border-slate-100 bg-slate-50/50 p-1.5">
               <div className="flex flex-wrap items-center gap-1">
                 <button
                   onClick={() => setActiveTab("info")}
-                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === "info" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "info" ? "bg-white text-accent border border-slate-200 shadow-xs" : "text-slate-500 hover:text-slate-700 hover:bg-slate-100/50"}`}
                 >
-                  <FileText size={16} /> Basic Info
+                  <FileText size={14} /> Basic Info
                 </button>
                 <button
                   onClick={() => setActiveTab("curriculum")}
                   disabled={!selectedCourse.id}
-                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === "curriculum" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"} ${!selectedCourse.id ? "opacity-40 cursor-not-allowed" : ""}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "curriculum" ? "bg-white text-accent border border-slate-200 shadow-xs" : "text-slate-500 hover:text-slate-700 hover:bg-slate-100/50"} ${!selectedCourse.id ? "opacity-40 cursor-not-allowed" : ""}`}
                 >
-                  <LayoutGrid size={16} /> Curriculum
+                  <LayoutGrid size={14} /> Curriculum
                 </button>
                 <button
                   onClick={() => setSelectedCourse(null)}
-                  className="ml-auto px-6 py-3 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors"
+                  className="ml-auto px-4 py-1.5 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors"
                 >
                   Back to List
                 </button>
               </div>
             </div>
 
-            <div className="p-4 md:p-10">
+            <div className="p-4 md:p-6">
               {activeTab === "info" ? (
                 <form
                   onSubmit={handleCourseSubmit}
-                  className="max-w-3xl mx-auto space-y-8"
+                  className="max-w-3xl mx-auto space-y-4"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 ml-0.5">
                         Course Title
                       </label>
                       <input
@@ -244,14 +237,14 @@ const CourseManager = () => {
                             title: e.target.value,
                           })
                         }
-                        placeholder="e.g. Mastering Advanced React Patterns"
-                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-medium placeholder:text-gray-300 focus:ring-2 focus:ring-primary transition-all shadow-inner"
+                        placeholder="e.g. Mastering SVARP Instrumentation"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-semibold"
                         required
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 ml-0.5">
                         Course Description
                       </label>
                       <textarea
@@ -262,15 +255,15 @@ const CourseManager = () => {
                             description: e.target.value,
                           })
                         }
-                        placeholder="Provide a compelling overview of what students will learn..."
-                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-medium placeholder:text-gray-300 focus:ring-2 focus:ring-primary transition-all shadow-inner"
-                        rows={5}
+                        placeholder="Provide an overview of the course content..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-semibold"
+                        rows={4}
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 ml-0.5">
                         Thumbnail URL
                       </label>
                       <input
@@ -282,12 +275,12 @@ const CourseManager = () => {
                             thumbnail_url: e.target.value,
                           })
                         }
-                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-primary transition-all shadow-inner"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-semibold"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 ml-0.5">
                         Publication Status
                       </label>
                       <select
@@ -298,7 +291,7 @@ const CourseManager = () => {
                             status: e.target.value,
                           })
                         }
-                        className="w-full bg-gray-50 border-none px-5 py-4 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-primary transition-all shadow-inner cursor-pointer"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-bold cursor-pointer"
                       >
                         <option value="draft">Draft (Private)</option>
                         <option value="published">Published (Public)</option>
@@ -307,7 +300,7 @@ const CourseManager = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 ml-0.5">
                         Passing Score (%)
                       </label>
                       <div className="relative">
@@ -319,22 +312,22 @@ const CourseManager = () => {
                           onChange={(e) =>
                             setCourseForm({
                               ...courseForm,
-                              passing_score: parseInt(e.target.value),
+                              passing_score: parseInt(e.target.value) || 70,
                             })
                           }
-                          className="w-full bg-gray-50 border-none pl-5 pr-12 py-4 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-primary transition-all shadow-inner"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-8 py-1.5 outline-none focus:border-accent text-xs font-bold"
                           required
                         />
-                        <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold">
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">
                           %
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer border border-transparent hover:border-primary/10 group">
-                      <div className="relative w-6 h-6 flex-shrink-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <label className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-200 transition-colors cursor-pointer group">
+                      <div className="relative w-5 h-5 flex-shrink-0">
                         <input
                           type="checkbox"
                           checked={courseForm.require_all_lessons_completed}
@@ -346,22 +339,22 @@ const CourseManager = () => {
                           }
                           className="peer absolute inset-0 opacity-0 cursor-pointer z-10"
                         />
-                        <div className="w-6 h-6 rounded-lg bg-white border-2 border-gray-200 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center text-white">
-                          <Plus size={14} className="stroke-[4]" />
+                        <div className="w-5 h-5 rounded bg-white border-2 border-slate-200 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center text-white">
+                          <Plus size={12} className="stroke-[4]" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-700">
+                        <p className="text-xs font-bold text-accent">
                           Linear Learning
                         </p>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
                           Require all lessons
                         </p>
                       </div>
                     </label>
 
-                    <label className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer border border-transparent hover:border-primary/10 group">
-                      <div className="relative w-6 h-6 flex-shrink-0">
+                    <label className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-200 transition-colors cursor-pointer group">
+                      <div className="relative w-5 h-5 flex-shrink-0">
                         <input
                           type="checkbox"
                           checked={courseForm.require_assignment_approval}
@@ -373,15 +366,15 @@ const CourseManager = () => {
                           }
                           className="peer absolute inset-0 opacity-0 cursor-pointer z-10"
                         />
-                        <div className="w-6 h-6 rounded-lg bg-white border-2 border-gray-200 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center text-white">
-                          <Plus size={14} className="stroke-[4]" />
+                        <div className="w-5 h-5 rounded bg-white border-2 border-slate-200 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center text-white">
+                          <Plus size={12} className="stroke-[4]" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-700">
+                        <p className="text-xs font-bold text-accent">
                           Strict Assessment
                         </p>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
                           Require manual approval
                         </p>
                       </div>
@@ -389,9 +382,9 @@ const CourseManager = () => {
                   </div>
 
                   {/* Pricing Section */}
-                  <div className="p-6 rounded-3xl bg-violet-50/50 border border-violet-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-12 h-6 flex-shrink-0">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-10 h-5 flex-shrink-0">
                         <input
                           type="checkbox"
                           checked={courseForm.is_paid}
@@ -406,23 +399,23 @@ const CourseManager = () => {
                           }
                           className="peer absolute inset-0 opacity-0 cursor-pointer z-10"
                         />
-                        <div className="w-12 h-6 rounded-full bg-gray-200 peer-checked:bg-violet-500 transition-all relative">
-                          <div className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-all peer-checked:translate-x-6" />
+                        <div className="w-10 h-5 rounded-full bg-slate-200 peer-checked:bg-primary transition-all relative">
+                          <div className="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-all peer-checked:translate-x-5" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-violet-900">
+                        <p className="text-xs font-bold text-accent">
                           Premium Access
                         </p>
-                        <p className="text-xs text-violet-600 font-medium">
+                        <p className="text-[10px] text-slate-500 font-medium">
                           Set a price for this course
                         </p>
                       </div>
                     </div>
 
                     {courseForm.is_paid && (
-                      <div className="relative w-full md:w-48">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-400 font-bold">
+                      <div className="relative w-full sm:w-40">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">
                           ₹
                         </span>
                         <input
@@ -434,7 +427,7 @@ const CourseManager = () => {
                               price: parseFloat(e.target.value) || 0,
                             })
                           }
-                          className="w-full bg-white border-none pl-10 pr-5 py-3 rounded-xl text-gray-900 font-bold focus:ring-2 focus:ring-violet-400 transition-all shadow-sm"
+                          className="w-full bg-white border border-slate-200 rounded-lg pl-6 pr-3 py-1.5 outline-none focus:border-accent text-xs font-bold"
                           placeholder="Price"
                           required
                         />
@@ -442,10 +435,10 @@ const CourseManager = () => {
                     )}
                   </div>
 
-                  <div className="flex justify-end pt-4 border-t border-gray-100">
+                  <div className="flex justify-end pt-4 border-t border-slate-100">
                     <button
                       type="submit"
-                      className="px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary/20 transition-all"
+                      className="bg-primary hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-lg transition-all text-xs"
                     >
                       {selectedCourse.id ? "Update Course" : "Create Course"}
                     </button>
@@ -458,70 +451,68 @@ const CourseManager = () => {
           </div>
         ) : (
           /* ── Course Grid ── */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {courses.length === 0 && !loading && (
-              <div className="col-span-full py-20 text-center text-gray-400">
-                <div className="flex flex-col items-center justify-center gap-4">
-                  <div className="w-20 h-20 rounded-3xl bg-gray-50 flex items-center justify-center text-gray-200">
-                    <BookOpen size={48} />
-                  </div>
-                  <p className="font-bold text-gray-500">
-                    No courses yet. Click "New Course" to get started.
-                  </p>
-                </div>
+              <div className="col-span-full py-12 text-center border border-slate-200 rounded-lg bg-white">
+                <BookOpen size={32} className="mx-auto text-slate-200 mb-2" />
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                  No courses yet. Click "New Course" to get started.
+                </p>
               </div>
             )}
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="bg-white rounded-3xl p-6 border border-gray-100/80 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all group"
+                className="bg-white rounded-md border border-slate-200 p-4 flex flex-col justify-between space-y-3 hover:border-slate-300 transition-colors shadow-xs animate-fadeIn"
               >
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex gap-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex gap-1.5">
                     <span
-                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+                      className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border ${
                         course.status === "published"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                          : "bg-amber-50 text-amber-700 border-amber-100"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : "bg-amber-50 text-amber-600 border-amber-100"
                       }`}
                     >
                       {course.status}
                     </span>
                     {course.is_paid ? (
-                      <span className="px-3 py-1 rounded-lg text-xs bg-violet-50 text-violet-700 border border-violet-100 font-bold">
+                      <span className="px-1.5 py-0.5 rounded text-[8px] bg-violet-50 text-violet-600 border border-violet-100 font-bold">
                         ₹{course.price}
                       </span>
                     ) : (
-                      <span className="px-3 py-1 rounded-lg text-xs bg-blue-50 text-blue-700 border border-blue-100 font-bold">
+                      <span className="px-1.5 py-0.5 rounded text-[8px] bg-blue-50 text-blue-600 border border-blue-100 font-bold">
                         Free
                       </span>
                     )}
                   </div>
                   <button
                     onClick={() => handleDeleteCourse(course.id)}
-                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    className="p-1 rounded bg-slate-50 border border-slate-200 text-slate-500 hover:border-red-500 hover:text-red-500 transition-all"
                     title="Delete Course"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
 
-                <h3 className="font-bold text-xl text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-gray-400 line-clamp-2 mb-8 font-medium">
-                  {course.description}
-                </p>
+                <div>
+                  <h3 className="font-bold text-sm text-accent leading-snug mb-1">
+                    {course.title}
+                  </h3>
+                  <p className="text-[10px] text-slate-400 line-clamp-2">
+                    {course.description}
+                  </p>
+                </div>
 
-                <div className="flex items-center justify-between border-t border-gray-50 pt-5">
-                  <div className="flex items-center text-xs text-gray-400 font-bold uppercase tracking-wider">
-                    Course ID: {course.id}
+                <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+                  <div className="text-[8px] text-slate-400 font-mono">
+                    ID: {course.id}
                   </div>
                   <button
                     onClick={() => handleEditClick(course)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-50 text-accent text-sm font-bold hover:bg-primary hover:text-white transition-all shadow-sm"
+                    className="px-2.5 py-1 rounded bg-slate-50 border border-slate-200 text-slate-700 hover:border-accent hover:text-accent font-bold transition-all text-[10px] flex items-center gap-1"
                   >
-                    Manage <Pencil size={14} />
+                    Manage <Pencil size={11} />
                   </button>
                 </div>
               </div>
@@ -561,7 +552,7 @@ const CurriculumEditor = ({ courseId }) => {
         title: newModuleTitle,
         description: newModuleDescription,
         order: modules.length + 1,
-        lessons: [], // Currently backend might not need this if schema is clean
+        lessons: [],
       });
       setNewModuleTitle("");
       setNewModuleDescription("");
@@ -572,42 +563,42 @@ const CurriculumEditor = ({ courseId }) => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="space-y-4 max-w-4xl mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Curriculum</h2>
-          <p className="text-sm text-gray-400 font-medium font-sans">
+          <h2 className="text-base font-bold text-accent">Curriculum</h2>
+          <p className="text-xs text-slate-400">
             Organize modules and lessons to build the learning path.
           </p>
         </div>
       </div>
 
-      <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100 shadow-inner group">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 ml-1">
+      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner">
+        <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 ml-0.5">
           Quick Add Module
         </h3>
         <form
           onSubmit={handleAddModule}
-          className="flex flex-col sm:flex-row gap-4"
+          className="flex flex-col sm:flex-row gap-2"
         >
           <input
             type="text"
             placeholder="e.g. Introduction to SVARP"
             value={newModuleTitle}
             onChange={(e) => setNewModuleTitle(e.target.value)}
-            className="flex-1 bg-white border-none px-5 py-3 rounded-2xl text-gray-900 font-medium placeholder:text-gray-300 focus:ring-2 focus:ring-primary transition-all shadow-sm"
+            className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-semibold"
             required
           />
           <button
             type="submit"
-            className="px-6 py-3 bg-primary text-white rounded-2xl font-bold hover:bg-opacity-90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+            className="bg-primary hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-lg transition-all text-xs flex items-center justify-center gap-1.5"
           >
-            <Plus size={18} /> Add Section
+            <Plus size={14} /> Add Section
           </button>
         </form>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {modules.map((module, index) => (
           <ModuleItem
             key={module.id}
@@ -617,9 +608,9 @@ const CurriculumEditor = ({ courseId }) => {
           />
         ))}
         {modules.length === 0 && !loading && (
-          <div className="py-12 text-center border-2 border-dashed border-gray-100 rounded-3xl">
-            <LayoutGrid size={40} className="mx-auto text-gray-200 mb-3" />
-            <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">
+          <div className="py-8 text-center border border-dashed border-slate-200 rounded-lg bg-white">
+            <LayoutGrid size={32} className="mx-auto text-slate-200 mb-2" />
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
               No modules created yet
             </p>
           </div>
@@ -645,13 +636,11 @@ const ModuleItem = ({ module, onUpdate, index }) => {
     setEditingLessonId(lesson.id);
     setLessonForm({
       title: lesson.title,
-      type: lesson.lesson_type, // Assuming lesson_type in DB, mapping back to type
+      type: lesson.lesson_type,
       content: lesson.content || "",
       file: null,
     });
     setShowAddLesson(true);
-    // If assignment, we might need questions, but for now focus on basic content
-    // as the user specifically asked for text content editing.
   };
 
   const handleDeleteLesson = async (e, lessonId) => {
@@ -670,7 +659,7 @@ const ModuleItem = ({ module, onUpdate, index }) => {
     e.stopPropagation();
     if (
       !window.confirm(
-        "Are you sure you want to delete this section and all its lessons?",
+        "Are you sure you want to delete this section and all its lessons?"
       )
     )
       return;
@@ -693,18 +682,18 @@ const ModuleItem = ({ module, onUpdate, index }) => {
     ]);
   };
 
-  const updateQuestion = (idx, field, value) => {
+  const updateQuestion = (qIdx, field, value) => {
     const updated = [...questions];
-    updated[idx] = { ...updated[idx], [field]: value };
+    updated[qIdx] = { ...updated[qIdx], [field]: value };
     if (field === "question_type" && value === "subjective") {
-      updated[idx].options = [];
+      updated[qIdx].options = [];
     }
     if (
       field === "question_type" &&
       value === "mcq" &&
-      updated[idx].options.length === 0
+      updated[qIdx].options.length === 0
     ) {
-      updated[idx].options = [{ option_text: "", is_correct: false }];
+      updated[qIdx].options = [{ option_text: "", is_correct: false }];
     }
     setQuestions(updated);
   };
@@ -726,7 +715,6 @@ const ModuleItem = ({ module, onUpdate, index }) => {
     const updated = [...questions];
     const opts = [...updated[qIdx].options];
     if (field === "is_correct") {
-      // Only one correct answer allowed
       opts.forEach((o, i) => {
         opts[i] = { ...o, is_correct: false };
       });
@@ -754,7 +742,7 @@ const ModuleItem = ({ module, onUpdate, index }) => {
       if (
         lessonForm.type === "video" &&
         lessonForm.file &&
-        !editingLessonId // Only upload new file if not editing, or if new file provided
+        !editingLessonId
       ) {
         const formData = new FormData();
         formData.append("file", lessonForm.file);
@@ -765,7 +753,6 @@ const ModuleItem = ({ module, onUpdate, index }) => {
       }
 
       if (editingLessonId) {
-        // Update existing lesson
         const updateData = {
           title: lessonForm.title,
           content: lessonForm.content,
@@ -774,8 +761,6 @@ const ModuleItem = ({ module, onUpdate, index }) => {
 
         await api.put(`/admin/lessons/${editingLessonId}`, updateData);
       } else {
-        // Create new lesson
-        // Create the lesson
         const lessonRes = await api.post(
           `${API_URL}/admin/modules/${module.id}/lessons`,
           {
@@ -784,10 +769,9 @@ const ModuleItem = ({ module, onUpdate, index }) => {
             video_url: videoUrl,
             lesson_type: lessonForm.type,
             order: module.lessons ? module.lessons.length + 1 : 1,
-          },
+          }
         );
 
-        // If assignment, also create the assignment with questions
         if (lessonForm.type === "assignment") {
           await api.post(`/admin/assignments`, {
             title: lessonForm.title,
@@ -817,30 +801,30 @@ const ModuleItem = ({ module, onUpdate, index }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden group/module animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden group/module animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div
-        className="p-5 bg-gray-50/50 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+        className="p-3 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-4">
-          <div className="p-2 text-gray-300 group-hover/module:text-gray-400 transition-colors">
-            <GripVertical size={20} />
+        <div className="flex items-center gap-2">
+          <div className="p-1 text-slate-300 group-hover/module:text-slate-400 transition-colors">
+            <GripVertical size={16} />
           </div>
-          <h4 className="font-bold text-gray-900 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[10px] font-mono text-gray-400 group-hover/module:border-primary/20 group-hover/module:text-primary transition-all">
+          <h4 className="font-bold text-accent text-xs flex items-center gap-2">
+            <span className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center text-[9px] font-mono text-slate-400 group-hover/module:border-primary/20 group-hover/module:text-primary transition-all">
               {String(index + 1).padStart(2, "0")}
             </span>
             {module.title}
           </h4>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white rounded-lg border border-gray-100 text-[10px] font-bold uppercase tracking-wider text-gray-400">
-            <LayoutGrid size={12} />
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-1 px-2 py-0.5 bg-white rounded border border-slate-200 text-[8px] font-bold uppercase tracking-wider text-slate-400">
+            <LayoutGrid size={10} />
             {module.lessons ? module.lessons.length : 0} Lessons
           </div>
 
-          <div className="flex items-center gap-1 opacity-40 group-hover/module:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1 opacity-60 group-hover/module:opacity-100 transition-opacity">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -854,39 +838,39 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                 });
                 setIsExpanded(true);
               }}
-              className="p-2.5 bg-white border border-gray-100 text-primary rounded-xl hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm"
+              className="p-1 bg-white border border-slate-200 text-primary rounded hover:bg-primary hover:text-white hover:border-primary transition-all shadow-xs"
               title="Add Lesson"
             >
-              <Plus size={18} />
+              <Plus size={14} />
             </button>
             <button
               onClick={handleDeleteModule}
-              className="p-2.5 bg-white border border-gray-100 text-gray-400 rounded-xl hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm"
+              className="p-1 bg-white border border-slate-200 text-slate-400 rounded hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-xs"
               title="Delete Section"
             >
-              <Trash2 size={18} />
+              <Trash2 size={14} />
             </button>
-            <div className="ml-2 p-1 text-gray-400">
-              {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            <div className="ml-1 p-0.5 text-slate-400">
+              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </div>
           </div>
         </div>
       </div>
 
       {isExpanded && (
-        <div className="p-4 border-t border-gray-200 bg-white">
+        <div className="p-3 bg-white">
           {module.description && (
-            <p className="text-gray-600 text-sm mb-4 italic px-2">
+            <p className="text-slate-500 text-xs mb-3 italic px-1">
               {module.description}
             </p>
           )}
 
           {showAddLesson && (
-            <div className="mb-6 p-4 border border-blue-100 bg-blue-50 rounded-lg">
-              <h5 className="font-bold text-sm mb-3 text-blue-800">
+            <div className="mb-4 p-3 border border-slate-200 bg-slate-50 rounded-lg">
+              <h5 className="font-bold text-xs mb-2 text-accent">
                 {editingLessonId ? "Edit Lesson" : "New Lesson"}
               </h5>
-              <form onSubmit={handleAddLesson} className="space-y-3">
+              <form onSubmit={handleAddLesson} className="space-y-2.5">
                 <div>
                   <input
                     type="text"
@@ -895,12 +879,12 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                     onChange={(e) =>
                       setLessonForm({ ...lessonForm, title: e.target.value })
                     }
-                    className="w-full border p-2 rounded text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:border-accent text-xs font-semibold"
                     required
                   />
                 </div>
-                <div className="flex gap-4 flex-wrap">
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <div className="flex gap-4 flex-wrap text-xs font-medium text-slate-600">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
                     <input
                       type="radio"
                       name="type"
@@ -909,9 +893,9 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                         setLessonForm({ ...lessonForm, type: "video" })
                       }
                     />
-                    <VideoIcon size={16} /> Video
+                    <VideoIcon size={14} /> Video
                   </label>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
                     <input
                       type="radio"
                       name="type"
@@ -920,9 +904,9 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                         setLessonForm({ ...lessonForm, type: "text" })
                       }
                     />
-                    <FileText size={16} /> Text / Article
+                    <FileText size={14} /> Text / Article
                   </label>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
                     <input
                       type="radio"
                       name="type"
@@ -932,18 +916,18 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                         if (questions.length === 0) addQuestion();
                       }}
                     />
-                    <ClipboardList size={16} /> Assignment
+                    <ClipboardList size={14} /> Assignment
                   </label>
                 </div>
 
                 {editingLessonId && (
-                  <p className="text-xs text-blue-600 italic">
+                  <p className="text-[9px] text-slate-500 italic">
                     Note: Changing lesson type is not supported in edit mode.
                   </p>
                 )}
 
                 {lessonForm.type === "video" ? (
-                  <div className="border-2 border-dashed border-gray-300 rounded p-4 text-center bg-white cursor-pointer hover:bg-gray-50">
+                  <div className="border-2 border-dashed border-slate-200 rounded p-3 text-center bg-white cursor-pointer hover:bg-slate-50">
                     <input
                       type="file"
                       accept="video/*"
@@ -953,10 +937,10 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                     />
                     <label
                       htmlFor={`file-${module.id}`}
-                      className="cursor-pointer flex flex-col items-center"
+                      className="cursor-pointer flex flex-col items-center justify-center min-h-[60px]"
                     >
-                      <Upload size={24} className="text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600">
+                      <Upload size={18} className="text-slate-400 mb-1" />
+                      <span className="text-[10px] text-slate-600 font-medium">
                         {lessonForm.file
                           ? lessonForm.file.name
                           : "Upload Video File"}
@@ -970,12 +954,12 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                     onChange={(e) =>
                       setLessonForm({ ...lessonForm, content: e.target.value })
                     }
-                    className="w-full border p-2 rounded text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:border-accent text-xs font-semibold"
                     rows={4}
                   />
                 ) : (
-                  // Assignment question builder
-                  <div className="space-y-4">
+                  /* Assignment Question Builder */
+                  <div className="space-y-3">
                     <textarea
                       placeholder="Assignment description / instructions..."
                       value={lessonForm.content}
@@ -985,14 +969,14 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                           content: e.target.value,
                         })
                       }
-                      className="w-full border p-2 rounded text-sm"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:border-accent text-xs font-semibold"
                       rows={2}
                     />
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {questions.map((q, qIdx) => (
                         <div
                           key={qIdx}
-                          className="border border-gray-200 rounded-lg p-3 bg-white"
+                          className="border border-slate-200 rounded-lg p-2.5 bg-white"
                         >
                           <div className="flex gap-2 mb-2">
                             <input
@@ -1006,7 +990,7 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                                   e.target.value,
                                 )
                               }
-                              className="flex-1 border p-1.5 rounded text-sm"
+                              className="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none focus:border-accent text-xs font-semibold"
                               required
                             />
                             <select
@@ -1018,7 +1002,7 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                                   e.target.value,
                                 )
                               }
-                              className="border p-1.5 rounded text-sm"
+                              className="bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none focus:border-accent text-xs font-bold"
                             >
                               <option value="subjective">Subjective</option>
                               <option value="mcq">MCQ</option>
@@ -1028,7 +1012,7 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                               onClick={() => removeQuestion(qIdx)}
                               className="text-red-400 hover:text-red-600"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={14} />
                             </button>
                           </div>
                           {q.question_type === "mcq" && (
@@ -1050,10 +1034,10 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                                         e.target.value,
                                       )
                                     }
-                                    className="flex-1 border p-1.5 rounded text-xs"
+                                    className="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none focus:border-accent text-[10px] font-semibold"
                                     required
                                   />
-                                  <label className="flex items-center gap-1 text-xs text-green-700 cursor-pointer">
+                                  <label className="flex items-center gap-1 text-[10px] text-green-700 cursor-pointer font-bold">
                                     <input
                                       type="radio"
                                       name={`correct-${qIdx}`}
@@ -1074,14 +1058,14 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                                     onClick={() => removeOption(qIdx, oIdx)}
                                     className="text-red-400 hover:text-red-600"
                                   >
-                                    <Trash2 size={14} />
+                                    <Trash2 size={12} />
                                   </button>
                                 </div>
                               ))}
                               <button
                                 type="button"
                                 onClick={() => addOption(qIdx)}
-                                className="text-xs text-primary hover:underline mt-1"
+                                className="text-[10px] text-primary hover:underline font-bold mt-0.5"
                               >
                                 + Add Option
                               </button>
@@ -1093,14 +1077,14 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                     <button
                       type="button"
                       onClick={addQuestion}
-                      className="text-sm text-primary border border-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition"
+                      className="text-xs text-primary border border-slate-200 bg-white hover:bg-slate-50 px-2.5 py-1 rounded font-bold"
                     >
                       + Add Question
                     </button>
                   </div>
                 )}
 
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-1.5 pt-1.5 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => {
@@ -1113,14 +1097,14 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                         file: null,
                       });
                     }}
-                    className="px-3 py-1 text-sm bg-white border rounded"
+                    className="px-3 py-1 text-xs bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded font-bold"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={uploading}
-                    className="px-3 py-1 text-sm bg-primary text-white rounded"
+                    className="px-3 py-1 text-xs bg-primary hover:bg-slate-900 text-white rounded font-bold disabled:bg-slate-200"
                   >
                     {uploading
                       ? "Saving..."
@@ -1133,28 +1117,28 @@ const ModuleItem = ({ module, onUpdate, index }) => {
             </div>
           )}
 
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {module.lessons &&
               module.lessons.map((lesson, idx) => (
                 <div
                   key={lesson.id}
-                  className="flex items-center justify-between p-3.5 bg-white border border-gray-100 rounded-2xl hover:border-primary/20 hover:shadow-sm transition-all group/lesson"
+                  className="flex items-center justify-between p-2 bg-white border border-slate-100 rounded-lg hover:bg-slate-50/50 group/lesson"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover/lesson:bg-primary/5 group-hover/lesson:text-primary transition-colors">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0 font-bold">
                       {lesson.lesson_type === "video" ? (
-                        <VideoIcon size={16} />
+                        <VideoIcon size={12} />
                       ) : lesson.lesson_type === "assignment" ? (
-                        <ClipboardList size={16} />
+                        <ClipboardList size={12} />
                       ) : (
-                        <FileText size={16} />
+                        <FileText size={12} />
                       )}
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-700">
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-accent truncate">
                         {lesson.title}
                       </p>
-                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                      <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
                         {lesson.lesson_type}{" "}
                         {lesson.lesson_type === "assignment"
                           ? "• Manual Review"
@@ -1162,30 +1146,30 @@ const ModuleItem = ({ module, onUpdate, index }) => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover/lesson:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 opacity-0 group-hover/lesson:opacity-100 transition-opacity flex-shrink-0">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditLesson(lesson);
                       }}
-                      className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                      className="p-1 rounded bg-slate-50 border border-slate-200 text-slate-500 hover:border-accent hover:text-accent transition-all"
                       title="Edit Lesson"
                     >
-                      <Pencil size={14} />
+                      <Pencil size={12} />
                     </button>
                     <button
                       onClick={(e) => handleDeleteLesson(e, lesson.id)}
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                      className="p-1 rounded bg-slate-50 border border-slate-200 text-slate-500 hover:border-red-500 hover:text-red-500 transition-all"
                       title="Delete Lesson"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
               ))}
             {(!module.lessons || module.lessons.length === 0) && (
-              <div className="py-8 text-center border-2 border-dashed border-gray-50/50 rounded-2xl">
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+              <div className="py-6 text-center border border-dashed border-slate-100 rounded-lg">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                   No content in this section
                 </p>
               </div>

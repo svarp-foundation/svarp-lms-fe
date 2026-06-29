@@ -1,138 +1,160 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import AppSidebar from "./AppSidebar";
-import API_URL from "../config";
-import {
-  LayoutDashboard,
-  BookOpen,
-  Users,
-  Bell,
-  IndianRupee,
-  Menu,
-  GraduationCap,
-} from "lucide-react";
-
-const adminLinks = [
-  {
-    label: "Overview",
-    to: "/admin",
-    icon: <LayoutDashboard size={18} />,
-    exact: true,
-  },
-  {
-    label: "Courses",
-    to: "/admin/courses",
-    icon: <BookOpen size={18} />,
-  },
-  {
-    label: "Users",
-    to: "/admin/users",
-    icon: <Users size={18} />,
-  },
-  {
-    label: "Payments",
-    to: "/admin/payments",
-    icon: <IndianRupee size={18} />,
-  },
-];
 
 const AdminLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  if (loading || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-dvh bg-muted text-primary text-xs">
+        Loading Admin...
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  const [profileImgErr, setProfileImgErr] = useState(false);
-
-  const token = localStorage.getItem("token") || "";
-  const secureProfilePicUrl = user?.profile_picture_url
-    ? `${API_URL}${user.profile_picture_url}${user.profile_picture_url.includes("?") ? "&" : "?"}token=${token}`
-    : null;
-
-  const initials = user?.full_name
-    ? user.full_name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase()
-    : user?.email?.[0]?.toUpperCase() ?? "A";
-
-  const isActive = (link) =>
-    link.exact
-      ? location.pathname === link.to
-      : location.pathname.startsWith(link.to);
-
-  const currentLabel = adminLinks.find((l) => isActive(l))?.label ?? "Admin";
+  const navItems = [
+    {
+      name: "Overview",
+      path: "/admin",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
+      end: true,
+    },
+    {
+      name: "Courses",
+      path: "/admin/courses",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      ),
+    },
+    {
+      name: "Users",
+      path: "/admin/users",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+    },
+    {
+      name: "Payments",
+      path: "/admin/payments",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 font-sans selection:bg-primary/20">
-      {/* ── Sidebar (Drawer on mobile) ── */}
-      <AppSidebar
-        open={sidebarOpen}
-        setOpen={setSidebarOpen}
-        brandIcon={<img src="/company/svarp-logo.png" alt="SVARP Logo" className="h-8 w-auto object-contain" />}
-        brandText1="SVARP"
-        brandText2="Admin"
-        brandLink="/admin"
-        navLinks={adminLinks}
-        onLogout={handleLogout}
-      />
-
-      {/* ── Main area ── */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0 relative">
-        {/* Top bar */}
-        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center px-4 md:px-8 gap-4 flex-shrink-0 z-30 sticky top-0">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="md:hidden p-2 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
-          >
-            <Menu size={20} />
-          </button>
-
-          <div className="flex-1">
-            <h2 className="text-base font-bold text-accent md:text-sm md:font-medium md:text-gray-500">
-              {currentLabel}
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 transition text-gray-500">
-              <Bell size={18} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
-            </button>
-
-            <div className="flex items-center gap-2 pl-3 border-l border-gray-200 group">
-              <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all overflow-hidden">
-                {secureProfilePicUrl && !profileImgErr ? (
-                  <img
-                    src={secureProfilePicUrl}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                    onError={() => setProfileImgErr(true)}
-                  />
-                ) : (
-                  initials
-                )}
-              </div>
-              <span className="text-sm font-bold text-gray-700 hidden lg:block">
-                {user?.full_name || "Admin"}
-              </span>
-            </div>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50/50">
-          {children}
-        </main>
+    <div className="flex flex-col md:flex-row min-h-dvh bg-muted font-sans text-accent overflow-x-hidden w-full relative">
+      {/* Mobile Top Bar */}
+      <div className="md:hidden w-full bg-[#1f3b45] text-white p-2.5 flex justify-between items-center fixed top-0 left-0 z-50 border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <img
+            src="/company/svarp-logo.webp"
+            alt="SVARP Global"
+            className="h-8 w-auto object-contain"
+          />
+          <span className="text-xs font-bold tracking-wider text-white">
+            SVARP GLOBAL
+          </span>
+        </div>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-1 bg-white/10 hover:bg-white/20 rounded transition-all"
+        >
+          {isSidebarOpen ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
+
+      {/* Sidebar Mobile Backdrop */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`w-52 bg-[#1f3b45] text-white fixed h-dvh border-r border-white/5 flex flex-col z-50 transition-all duration-300
+          max-md:top-0 max-md:left-0 max-md:shadow-2xl
+          ${isSidebarOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full md:translate-x-0"}`}
+      >
+        <div className="p-3.5 flex items-center justify-between gap-2 border-b border-white/5">
+          <div className="flex items-center gap-2">
+            <img
+              src="/company/svarp-logo.webp"
+              alt="SVARP Global"
+              className="h-7 w-auto object-contain"
+            />
+            <span className="text-[10px] font-bold tracking-wider text-white">
+              SVARP GLOBAL
+            </span>
+          </div>
+        </div>
+
+        <nav className="flex-1 px-2 py-3">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.end}
+              onClick={() => setIsSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold mb-0.5 transition-all ${
+                  isActive
+                    ? "bg-white/10 text-primary border-l-2 border-primary"
+                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                }`
+              }
+            >
+              <span>{item.icon}</span>
+              {item.name}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t border-white/5">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition-all group"
+          >
+            <svg className="w-4 h-4 text-red-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 min-w-0 ml-52 p-6 max-w-7xl max-md:ml-0 max-md:p-4 max-md:pt-20 w-full">
+        {children}
+      </main>
     </div>
   );
 };
