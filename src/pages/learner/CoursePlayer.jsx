@@ -19,6 +19,8 @@ import {
   ArrowLeft,
   Award,
   Menu,
+  MessageSquare,
+  Trash2,
 } from "lucide-react";
 
 const CoursePlayer = () => {
@@ -33,6 +35,57 @@ const CoursePlayer = () => {
   const [showVerificationWarning, setShowVerificationWarning] = useState(false);
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentsError, setCommentsError] = useState("");
+
+  useEffect(() => {
+    if (activeLesson) {
+      fetchComments();
+    }
+  }, [activeLesson?.id]);
+
+  const fetchComments = async () => {
+    setCommentsLoading(true);
+    setCommentsError("");
+    try {
+      const res = await api.get(`/learner/lessons/${activeLesson.id}/comments`);
+      setComments(res.data);
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+      setCommentsError("Could not load comments.");
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const handlePostComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    try {
+      const res = await api.post(`/learner/lessons/${activeLesson.id}/comments`, {
+        content: newComment,
+      });
+      setComments((prev) => [...prev, res.data]);
+      setNewComment("");
+    } catch (err) {
+      console.error("Error posting comment:", err);
+      alert("Failed to post comment.");
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    try {
+      await api.delete(`/learner/lessons/comments/${commentId}`);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+      alert("Failed to delete comment.");
+    }
+  };
 
   useEffect(() => {
     fetchCourseContent();
@@ -475,7 +528,102 @@ const CoursePlayer = () => {
               </div>
             )}
             </div>
-          </div>
+
+            {/* ── Lesson Discussion Forum ── */}
+            <div className="mt-12 pt-8 border-t border-gray-150">
+              <div className="flex items-center gap-3 mb-6">
+                <MessageSquare size={22} className="text-accent" />
+                <h3 className="text-xl font-extrabold text-accent">Discussion Forum</h3>
+                <span className="text-xs bg-gray-100 text-gray-500 font-bold px-2.5 py-1 rounded-full">
+                  {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+                </span>
+              </div>
+
+              {/* Comment Post Form */}
+              <form onSubmit={handlePostComment} className="mb-8">
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Ask a question or share your thoughts about this lesson..."
+                  className="w-full border border-gray-200 p-4 rounded-2xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-white font-medium shadow-sm transition-all"
+                  rows={3}
+                />
+                <div className="flex justify-end mt-2">
+                  <button
+                    type="submit"
+                    disabled={!newComment.trim()}
+                    className="bg-accent hover:bg-opacity-90 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Post Comment
+                  </button>
+                </div>
+              </form>
+
+              {/* Comments List */}
+              {commentsLoading ? (
+                <div className="py-4 text-center text-sm text-gray-400">Loading comments...</div>
+              ) : commentsError ? (
+                <div className="py-4 text-center text-sm text-red-500">{commentsError}</div>
+              ) : comments.length === 0 ? (
+                <div className="py-8 text-center text-sm text-gray-450 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 font-medium">
+                  No comments yet. Start the conversation!
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {comments.map((c) => {
+                    const initials = c.user.full_name
+                      ? c.user.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+                      : c.user.email.slice(0, 2).toUpperCase();
+                    
+                    const isAuthorOrAdmin = c.user_id === user?.id || user?.role === "admin";
+                    const isInstructor = c.user.role === "admin";
+
+                    return (
+                      <div key={c.id} className="flex gap-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
+                          isInstructor ? "bg-accent" : "bg-primary text-accent"
+                        }`}>
+                          {initials}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-accent">
+                                {c.user.full_name || c.user.email}
+                              </span>
+                              {isInstructor && (
+                                <span className="text-[10px] bg-accent/10 text-accent font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                  Instructor
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-[11px] text-gray-400 font-medium">
+                              {new Date(c.created_at).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700 font-medium whitespace-pre-wrap leading-relaxed">
+                            {c.content}
+                          </p>
+                          {isAuthorOrAdmin && (
+                            <div className="flex justify-end mt-2">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteComment(c.id)}
+                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                title="Delete comment"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            </div>
         ) : (
           (Number(courseContent?.progress) >= 100 || !!courseContent?.certificate_pdf_url) ? (
             <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] p-6 bg-gray-50/50">
@@ -657,6 +805,7 @@ const AssignmentPlayer = ({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [attempts, setAttempts] = useState([]);
 
   useEffect(() => {
     fetchAssignment();
@@ -666,17 +815,20 @@ const AssignmentPlayer = ({
     setLoading(true);
     setResult(null);
     setAnswers({});
+    setAttempts([]);
     try {
+      let currentAsgn = initialAssignment;
       if (lesson) {
         // Find assignment linked to this lesson
         const res = await api.get(
           `/learner/assignments/by-lesson/${lesson.id}`,
         );
+        currentAsgn = res.data;
         setAssignment(res.data);
       } else if (initialAssignment) {
         setAssignment(initialAssignment);
       }
-      const currentAsgn = initialAssignment || assignment;
+      
       if (!currentAsgn) return;
 
       // Check for prior submission
@@ -687,6 +839,16 @@ const AssignmentPlayer = ({
         setResult(priorRes.data);
       } catch (_) {
         /* No prior submission */
+      }
+
+      // Fetch all attempts history
+      try {
+        const attemptsRes = await api.get(
+          `/learner/assignments/${currentAsgn.id}/attempts`,
+        );
+        setAttempts(attemptsRes.data);
+      } catch (_) {
+        /* Could not load attempts */
       }
     } catch (e) {
       setError("Could not load assignment.");
@@ -724,6 +886,14 @@ const AssignmentPlayer = ({
       );
       setResult(res.data);
       onComplete(); // Refresh course sidebar
+
+      // Reload attempts history
+      try {
+        const attemptsRes = await api.get(
+          `/learner/assignments/${assignment.id}/attempts`,
+        );
+        setAttempts(attemptsRes.data);
+      } catch (_) {}
     } catch (e) {
       setError(e.response?.data?.detail || "Submission failed.");
     } finally {
@@ -812,10 +982,32 @@ const AssignmentPlayer = ({
               </div>
             ))}
           </div>
-          {result.status !== "approved" && result.has_subjective && (
+          {result.status !== "approved" && (
             <p className="text-xs text-gray-400 mt-2 font-medium">
               Status: {result.status.replace(/_/g, " ")}
             </p>
+          )}
+          {result.status === "rejected" && (
+            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-800 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+              <div className="flex items-center gap-3">
+                <X size={20} className="text-red-650" />
+                <div className="text-left">
+                  <p className="font-bold text-sm">Attempt Failed</p>
+                  <p className="text-xs text-red-600 font-medium">You did not meet the passing score requirement for this lesson.</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setResult(null);
+                  setAnswers({});
+                  setError("");
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition"
+              >
+                Try Again
+              </button>
+            </div>
           )}
           {nextLesson && (
             <div className="flex justify-end mt-6 pt-6 border-t border-gray-100">
@@ -894,6 +1086,61 @@ const AssignmentPlayer = ({
             </button>
           </div>
         </form>
+      )}
+
+      {/* Attempts History */}
+      {attempts.length > 0 && (
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <h3 className="text-sm font-extrabold text-gray-400 uppercase tracking-wider mb-4 text-left">
+            Attempt History
+          </h3>
+          <div className="space-y-3">
+            {attempts.map((attempt, index) => {
+              const attemptNumber = attempts.length - index;
+              const isPassed = attempt.status === "approved";
+              const isFailed = attempt.status === "rejected";
+              
+              return (
+                <div
+                  key={attempt.submission_id}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-white border border-gray-100 shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-full bg-gray-50 border border-gray-150 flex items-center justify-center text-xs font-bold text-gray-500">
+                      #{attemptNumber}
+                    </span>
+                    <div className="text-left">
+                      <p className="text-sm font-bold text-accent">
+                        Submitted: {new Date(attempt.submitted_at).toLocaleString()}
+                      </p>
+                      {attempt.feedback && (
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          Feedback: <span className="italic font-medium">{attempt.feedback}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {attempt.mcq_total > 0 && (
+                      <span className="text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-lg">
+                        Score: {attempt.mcq_score} / {attempt.mcq_total}
+                      </span>
+                    )}
+                    <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg uppercase tracking-wider ${
+                      isPassed
+                        ? "bg-green-50 text-green-700 border border-green-150"
+                        : isFailed
+                        ? "bg-red-50 text-red-700 border border-red-150"
+                        : "bg-yellow-50 text-yellow-750 border border-yellow-150"
+                    }`}>
+                      {attempt.status.replace(/_/g, " ")}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );
