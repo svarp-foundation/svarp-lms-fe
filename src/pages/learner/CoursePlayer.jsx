@@ -21,6 +21,7 @@ import {
   Menu,
   MessageSquare,
   Trash2,
+  AlertTriangle,
 } from "lucide-react";
 
 const CoursePlayer = () => {
@@ -548,7 +549,15 @@ const CoursePlayer = () => {
                   className="w-full border border-gray-200 p-4 rounded-2xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-white font-medium shadow-sm transition-all"
                   rows={3}
                 />
-                <div className="flex justify-end mt-2">
+                {newComment.trim() && (
+                  <div className="flex items-start gap-2.5 text-xs text-red-700 bg-red-50 border border-red-100 p-3.5 rounded-xl mt-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <AlertTriangle size={16} className="mt-0.5 flex-shrink-0 text-red-500" />
+                    <span className="leading-relaxed">
+                      Please comment under community guidelines. If found faulty then your account can be terminated.
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-end mt-3">
                   <button
                     type="submit"
                     disabled={!newComment.trim()}
@@ -580,11 +589,12 @@ const CoursePlayer = () => {
 
                     return (
                       <div key={c.id} className="flex gap-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm transition-all hover:shadow-md">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
-                          isInstructor ? "bg-accent" : "bg-primary text-accent"
-                        }`}>
-                          {initials}
-                        </div>
+                        <CommentAvatar
+                          src={c.user.profile_picture_url ? getSecureVideoUrl(c.user.profile_picture_url) : null}
+                          alt={c.user.full_name || "Profile"}
+                          initials={initials}
+                          isInstructor={isInstructor}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <div className="flex items-center gap-2">
@@ -784,6 +794,30 @@ const CoursePlayer = () => {
       )}
       </div>
     </LearnerLayout>
+  );
+};
+
+// ─── Comment Avatar Component ────────────────────────────────────────────────
+const CommentAvatar = ({ src, alt, initials, isInstructor }) => {
+  const [imgError, setImgError] = useState(false);
+
+  if (src && !imgError) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="w-10 h-10 rounded-full object-cover flex-shrink-0 border border-gray-100 shadow-sm"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+
+  return (
+    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
+      isInstructor ? "bg-accent" : "bg-primary text-accent"
+    }`}>
+      {initials}
+    </div>
   );
 };
 
