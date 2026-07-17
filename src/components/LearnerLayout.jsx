@@ -310,3 +310,4 @@ const LearnerLayout = ({ children, isPlayerPage = false }) => {
 };
 
 export default LearnerLayout;
+// Trigger HMR rebuild
