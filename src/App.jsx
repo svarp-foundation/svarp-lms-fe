@@ -17,9 +17,11 @@ import PwaInstallBanner from "./components/PwaInstallBanner";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
-  if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
+  if (loading) return <div className="p-4 text-center">Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  
+  const effectiveRole = user.role || (user.roles?.includes("admin") ? "admin" : "learner");
+  if (roles && !roles.includes(effectiveRole)) return <Navigate to="/login" replace />;
   return children;
 };
 
@@ -28,7 +30,7 @@ function App() {
     <div className="min-h-screen bg-muted text-primary">
       <PwaInstallBanner />
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route

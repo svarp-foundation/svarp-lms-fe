@@ -30,7 +30,8 @@ export const AuthProvider = ({ children }) => {
         if (decoded.exp * 1000 < Date.now()) {
           if (!refresh) logout();
         } else {
-          setUser(decoded);
+          const userRole = decoded.role || (decoded.roles?.includes("admin") ? "admin" : "learner");
+          setUser({ ...decoded, role: userRole });
           api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
           fetchProfile(); // Get full profile with membership
         }
@@ -70,7 +71,8 @@ export const AuthProvider = ({ children }) => {
 
             api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
             const decoded = jwtDecode(newToken);
-            setUser(decoded);
+            const userRole = decoded.role || (decoded.roles?.includes("admin") ? "admin" : "learner");
+            setUser({ ...decoded, role: userRole });
             fetchProfile(); // Refresh profile after token refresh
 
             originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
@@ -94,7 +96,8 @@ export const AuthProvider = ({ children }) => {
     if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
 
     const decoded = jwtDecode(token);
-    setUser(decoded);
+    const userRole = decoded.role || (decoded.roles?.includes("admin") ? "admin" : "learner");
+    setUser({ ...decoded, role: userRole });
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     fetchProfile(); // Fetch profile on login
   };
