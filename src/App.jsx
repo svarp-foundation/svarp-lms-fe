@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/learner/Dashboard";
 import CoursePlayer from "./pages/learner/CoursePlayer";
 import CourseOverview from "./pages/learner/CourseOverview";
@@ -17,11 +18,14 @@ import PwaInstallBanner from "./components/PwaInstallBanner";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
+  const isAdminOnly = roles && roles.length === 1 && roles[0] === "admin";
+  const redirectTarget = isAdminOnly ? "/admin/login" : "/login";
+
   if (loading) return <div className="p-4 text-center">Loading...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to={redirectTarget} replace />;
   
   const effectiveRole = user.role || (user.roles?.includes("admin") ? "admin" : "learner");
-  if (roles && !roles.includes(effectiveRole)) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(effectiveRole)) return <Navigate to={redirectTarget} replace />;
   return children;
 };
 
@@ -33,6 +37,7 @@ function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/dashboard"
           element={
