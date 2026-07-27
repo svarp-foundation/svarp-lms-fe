@@ -10,8 +10,8 @@ echo "Pulling latest changes from origin dev..."
 git pull origin dev
 
 # 2. Install dependencies (in case package.json changed)
-# echo "Installing dependencies..."
-# npm install
+echo "Installing dependencies..."
+npm install
 
 # 3. Build the production application
 echo "Building the application..."
