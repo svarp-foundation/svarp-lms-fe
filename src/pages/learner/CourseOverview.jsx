@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
+import API_URL, { getMediaUrl } from "../../config";
 
 import { PlayCircle, FileText, CheckCircle, Lock, Heart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -257,7 +258,7 @@ const CourseOverview = () => {
             <div className="aspect-video bg-gray-200 rounded-lg mb-6 overflow-hidden">
               {course.thumbnail_url ? (
                 <img
-                  src={course.thumbnail_url}
+                  src={getMediaUrl(course.thumbnail_url)}
                   alt={course.title}
                   className="w-full h-full object-fill"
                 />
