@@ -202,6 +202,18 @@ const Users = () => {
     }
   };
 
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to permanently delete this user from LMS? All course progress, enrollments, and certificates will be removed.")) return;
+    try {
+      await api.delete(`/admin/users/${userId}`);
+      fetchUsers();
+    } catch (error) {
+      console.error("Error deleting user from LMS:", error);
+      alert(error.response?.data?.detail || "Failed to delete user from LMS");
+    }
+  };
+
+
   return (
     <AdminLayout>
       <div className="space-y-4 font-sans">
@@ -499,21 +511,32 @@ const Users = () => {
                             </button>
                           </>
                         ) : (
-                          <button
-                            onClick={() => setConfirmingId(user.id)}
-                            className={`p-1 rounded bg-slate-50 border border-slate-200 text-slate-500 hover:border-accent hover:text-accent transition-all`}
-                            title={user.is_suspended ? "Unsuspend" : "Suspend"}
-                          >
-                            {user.is_suspended ? (
-                              <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            ) : (
+                          <>
+                            <button
+                              onClick={() => setConfirmingId(user.id)}
+                              className={`p-1 rounded bg-slate-50 border border-slate-200 text-slate-500 hover:border-accent hover:text-accent transition-all`}
+                              title={user.is_suspended ? "Unsuspend" : "Suspend"}
+                            >
+                              {user.is_suspended ? (
+                                <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              ) : (
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                </svg>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="p-1 rounded bg-slate-50 border border-slate-200 text-red-500 hover:border-red-400 hover:bg-red-50 transition-all"
+                              title="Delete User from LMS"
+                            >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
-                            )}
-                          </button>
+                            </button>
+                          </>
                         )}
                       </div>
                     )}
