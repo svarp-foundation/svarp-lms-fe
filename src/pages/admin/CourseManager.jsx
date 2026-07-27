@@ -15,7 +15,7 @@ import {
   LayoutGrid,
   GripVertical,
 } from "lucide-react";
-import API_URL from "../../config";
+import API_URL, { getMediaUrl } from "../../config";
 
 const CourseManager = () => {
   const [courses, setCourses] = useState([]);
@@ -23,6 +23,7 @@ const CourseManager = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [activeTab, setActiveTab] = useState("info");
   const [uploading, setUploading] = useState(false);
+  const [thumbnailUploading, setThumbnailUploading] = useState(false);
 
   // Form state for Course
   const [courseForm, setCourseForm] = useState({
@@ -36,6 +37,30 @@ const CourseManager = () => {
     is_paid: false,
     price: 0,
   });
+
+  const handleThumbnailUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setThumbnailUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadRes = await api.post(`/admin/upload`, formData);
+
+      const url = uploadRes.data.url;
+      setCourseForm((prev) => ({
+        ...prev,
+        thumbnail_url: url,
+      }));
+    } catch (error) {
+      console.error("Error uploading thumbnail:", error);
+      alert(error.response?.data?.detail || "Failed to upload thumbnail image.");
+    } finally {
+      setThumbnailUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchCourses();
@@ -317,19 +342,53 @@ const CourseManager = () => {
 
                     <div>
                       <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 ml-0.5">
-                        Thumbnail URL
+                        Course Thumbnail
                       </label>
-                      <input
-                        type="text"
-                        value={courseForm.thumbnail_url}
-                        onChange={(e) =>
-                          setCourseForm({
-                            ...courseForm,
-                            thumbnail_url: e.target.value,
-                          })
-                        }
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-semibold"
-                      />
+                      <div className="space-y-2">
+                        <div className="flex gap-2 items-center">
+                          <input
+                            type="text"
+                            value={courseForm.thumbnail_url}
+                            onChange={(e) =>
+                              setCourseForm({
+                                ...courseForm,
+                                thumbnail_url: e.target.value,
+                              })
+                            }
+                            placeholder="Paste image URL or upload file below..."
+                            className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-accent text-xs font-semibold"
+                          />
+                          <label className="px-3 py-1.5 bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs cursor-pointer transition-all flex items-center gap-1.5 shrink-0">
+                            <Upload size={12} />
+                            <span>{thumbnailUploading ? "Uploading..." : "Upload File"}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              disabled={thumbnailUploading}
+                              onChange={handleThumbnailUpload}
+                            />
+                          </label>
+                        </div>
+
+                        {courseForm.thumbnail_url && (
+                          <div className="relative w-40 h-24 rounded-lg overflow-hidden border border-slate-200 group bg-slate-100">
+                            <img
+                              src={getMediaUrl(courseForm.thumbnail_url)}
+                              alt="Thumbnail Preview"
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setCourseForm({ ...courseForm, thumbnail_url: "" })}
+                              className="absolute top-1 right-1 p-1 bg-black/60 text-white rounded-full hover:bg-red-600 transition-colors"
+                              title="Remove Thumbnail"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div>

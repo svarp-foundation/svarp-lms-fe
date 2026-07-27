@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GraduationCap, PlayCircle, Info, CheckCircle, Heart, Award, Download, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
-import API_URL from "../config";
+import API_URL, { getMediaUrl } from "../config";
 import Certificate from "./Certificate";
 import CertificateModalPreview from "./CertificateModalPreview";
 
@@ -117,7 +117,7 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
       <div className="h-44 bg-gray-200 relative overflow-hidden">
         {course.thumbnail_url ? (
           <img
-            src={course.thumbnail_url}
+            src={getMediaUrl(course.thumbnail_url)}
             alt={course.title}
             className="w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
           />
