@@ -149,6 +149,38 @@ const CourseManager = () => {
     }
   };
 
+  const handleInjectFileForCourse = async (courseId, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".txt")) {
+      alert("Please upload a .txt course file");
+      return;
+    }
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await api.post(`/admin/courses/${courseId}/update-from-file`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert(response.data.message || "Course details and curriculum updated successfully!");
+      fetchCourses();
+      if (selectedCourse?.id === courseId) {
+        const detailRes = await api.get(`/admin/courses/${courseId}`);
+        setSelectedCourse(detailRes.data);
+      }
+    } catch (error) {
+      console.error("Error injecting course file:", error);
+      alert(error.response?.data?.detail || "Failed to update course from file");
+    } finally {
+      setUploading(false);
+      e.target.value = null;
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-4 font-sans">
@@ -208,6 +240,27 @@ const CourseManager = () => {
                 >
                   <LayoutGrid size={14} /> Curriculum
                 </button>
+                {selectedCourse.id && (
+                  <>
+                    <button
+                      onClick={() =>
+                        document.getElementById(`inject-file-editor-${selectedCourse.id}`).click()
+                      }
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-all flex items-center gap-1.5 shadow-xs"
+                      title="Inject new .txt file to update course details and curriculum"
+                      disabled={uploading}
+                    >
+                      <Upload size={13} /> {uploading ? "Injecting..." : "Inject File to Update"}
+                    </button>
+                    <input
+                      type="file"
+                      id={`inject-file-editor-${selectedCourse.id}`}
+                      className="hidden"
+                      accept=".txt"
+                      onChange={(e) => handleInjectFileForCourse(selectedCourse.id, e)}
+                    />
+                  </>
+                )}
                 <button
                   onClick={() => setSelectedCourse(null)}
                   className="ml-auto px-4 py-1.5 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors"
@@ -508,12 +561,31 @@ const CourseManager = () => {
                   <div className="text-[8px] text-slate-400 font-mono">
                     ID: {course.id}
                   </div>
-                  <button
-                    onClick={() => handleEditClick(course)}
-                    className="px-2.5 py-1 rounded bg-slate-50 border border-slate-200 text-slate-700 hover:border-accent hover:text-accent font-bold transition-all text-[10px] flex items-center gap-1"
-                  >
-                    Manage <Pencil size={11} />
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() =>
+                        document.getElementById(`inject-file-card-${course.id}`).click()
+                      }
+                      className="px-2 py-1 rounded bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 font-bold transition-all text-[10px] flex items-center gap-1"
+                      title="Inject new .txt file to update details & curriculum"
+                      disabled={uploading}
+                    >
+                      Inject File <Upload size={10} />
+                    </button>
+                    <input
+                      type="file"
+                      id={`inject-file-card-${course.id}`}
+                      className="hidden"
+                      accept=".txt"
+                      onChange={(e) => handleInjectFileForCourse(course.id, e)}
+                    />
+                    <button
+                      onClick={() => handleEditClick(course)}
+                      className="px-2.5 py-1 rounded bg-slate-50 border border-slate-200 text-slate-700 hover:border-accent hover:text-accent font-bold transition-all text-[10px] flex items-center gap-1"
+                    >
+                      Manage <Pencil size={11} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
