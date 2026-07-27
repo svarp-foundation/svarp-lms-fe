@@ -3,9 +3,10 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import API_URL, { getMediaUrl } from "../../config";
 
-import { PlayCircle, FileText, CheckCircle, Lock, Heart } from "lucide-react";
+import { PlayCircle, FileText, CheckCircle, Lock, Heart, Share2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import LearnerLayout from "../../components/LearnerLayout";
+import ShareModal from "../../components/ShareModal";
 
 const CourseOverview = () => {
   const { courseId } = useParams();
@@ -18,6 +19,7 @@ const CourseOverview = () => {
   const [progress, setProgress] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const isMember =
     (user && user.membership) || (course && course.discounted_price === 0);
@@ -340,6 +342,15 @@ const CourseOverview = () => {
                       : "Add to Wishlist"}
                 </button>
               )}
+
+              {/* Share Course Button */}
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="w-full py-2.5 rounded-lg font-medium border border-gray-200 text-gray-700 bg-gray-50 hover:bg-gray-100 hover:border-gray-300 transition flex items-center justify-center gap-2 text-sm"
+              >
+                <Share2 size={16} className="text-gray-600" />
+                <span>Share Course</span>
+              </button>
               <div className="text-sm text-gray-600 space-y-2 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2">
                   <CheckCircle size={16} className="text-green-500" />
@@ -359,6 +370,12 @@ const CourseOverview = () => {
         </div>
       </div>
     </div>
+    <ShareModal
+      isOpen={showShareModal}
+      onClose={() => setShowShareModal(false)}
+      courseTitle={course.title}
+      courseUrl={window.location.href}
+    />
   </LearnerLayout>
   );
 };

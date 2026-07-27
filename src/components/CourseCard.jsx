@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
-import { GraduationCap, PlayCircle, Info, CheckCircle, Heart, Award, Download, X } from "lucide-react";
+import { GraduationCap, PlayCircle, Info, CheckCircle, Heart, Award, Download, X, Share2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
 import API_URL, { getMediaUrl } from "../config";
 import Certificate from "./Certificate";
 import CertificateModalPreview from "./CertificateModalPreview";
+import ShareModal from "./ShareModal";
 
 // Simple global cache to avoid N duplicate requests on page load
 let wishlistCache = null;
@@ -22,6 +23,7 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
   const [showVerificationWarning, setShowVerificationWarning] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -137,6 +139,19 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
             "Free"
           )}
         </span>
+
+        {/* Share Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowShareModal(true);
+          }}
+          className="absolute top-3 right-12 p-2 bg-white/90 hover:bg-white text-gray-700 rounded-full shadow-md transition-all active:scale-95 z-10 flex items-center justify-center"
+          title="Share Course"
+        >
+          <Share2 size={16} className="text-gray-600" />
+        </button>
 
         {/* Wishlist Button */}
         <button
@@ -458,6 +473,14 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
         </div>,
         document.body
       )}
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        courseTitle={course.title}
+        courseUrl={`${window.location.origin}/courses/${course.id}`}
+      />
     </div>
   );
 };
