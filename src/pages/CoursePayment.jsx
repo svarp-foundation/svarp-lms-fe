@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
+import API_URL, { getMediaUrl } from "../config";
 import {
   ShieldCheck,
   BookOpen,
@@ -170,7 +171,7 @@ export default function CoursePayment() {
             <div className="flex items-start gap-4">
               {course.thumbnail_url ? (
                 <img
-                  src={course.thumbnail_url}
+                  src={getMediaUrl(course.thumbnail_url)}
                   alt={course.title}
                   className="w-20 h-20 rounded-xl object-fill flex-shrink-0"
                 />

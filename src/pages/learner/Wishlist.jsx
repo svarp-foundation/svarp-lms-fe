@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
+import API_URL, { getMediaUrl } from "../../config";
 import LearnerLayout from "../../components/LearnerLayout";
 import { useAuth } from "../../context/AuthContext";
 import { Heart, BookOpen, Trash2, PlayCircle } from "lucide-react";
@@ -93,7 +94,7 @@ const Wishlist = () => {
                 >
                   {course.thumbnail_url ? (
                     <img
-                      src={course.thumbnail_url}
+                      src={getMediaUrl(course.thumbnail_url)}
                       alt={course.title}
                       className="w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
                     />
