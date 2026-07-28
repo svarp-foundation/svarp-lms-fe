@@ -10,6 +10,7 @@ import CourseManager from "./pages/admin/CourseManager";
 import CoursePayment from "./pages/CoursePayment";
 import Users from "./pages/admin/Users";
 import Payments from "./pages/admin/Payments";
+import Submissions from "./pages/admin/Submissions";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
 import Certificates from "./pages/learner/Certificates";
@@ -108,6 +109,14 @@ function App() {
           element={
             <PrivateRoute roles={["admin"]}>
               <Users />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/submissions"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <Submissions />
             </PrivateRoute>
           }
         />
