@@ -7,6 +7,7 @@ import { PlayCircle, FileText, CheckCircle, Lock, Heart, Share2 } from "lucide-r
 import { useAuth } from "../../context/AuthContext";
 import LearnerLayout from "../../components/LearnerLayout";
 import ShareModal from "../../components/ShareModal";
+import { CourseOverviewSkeleton } from "../../components/Skeletons";
 
 const CourseOverview = () => {
   const { courseId } = useParams();
@@ -135,9 +136,7 @@ const CourseOverview = () => {
   if (loading) {
     return (
       <LearnerLayout>
-        <div className="flex h-[60vh] bg-gray-50 items-center justify-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <CourseOverviewSkeleton />
       </LearnerLayout>
     );
   }

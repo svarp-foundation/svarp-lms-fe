@@ -10,6 +10,7 @@ import {
   Download,
   Shield,
 } from "lucide-react";
+import { TableSkeleton } from "../../components/Skeletons";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -434,9 +435,7 @@ const Users = () => {
 
         {/* User Card Grid */}
         {loading ? (
-          <div className="text-center text-xs text-slate-400 italic py-8 bg-white border border-slate-200 rounded-lg shadow-xs">
-            Finding members...
-          </div>
+          <TableSkeleton rows={6} />
         ) : filteredUsers.length === 0 ? (
           <div className="text-center text-xs text-slate-400 italic py-8 bg-white border border-slate-200 rounded-lg shadow-xs">
             No members found

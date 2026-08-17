@@ -4,6 +4,7 @@ import api from "../../lib/api";
 import API_URL, { getMediaUrl } from "../../config";
 import LearnerLayout from "../../components/LearnerLayout";
 import { useAuth } from "../../context/AuthContext";
+import { CourseGridSkeleton } from "../../components/Skeletons";
 import { Heart, BookOpen, Trash2, PlayCircle } from "lucide-react";
 
 const Wishlist = () => {
@@ -56,9 +57,7 @@ const Wishlist = () => {
 
       <div className="page-padding max-w-7xl mx-auto">
         {loading ? (
-          <div className="flex justify-center p-16">
-            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
+          <CourseGridSkeleton count={3} />
         ) : courses.length === 0 ? (
           /* Empty state */
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 flex flex-col items-center text-center">

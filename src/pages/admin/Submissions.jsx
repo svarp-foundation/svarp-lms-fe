@@ -16,6 +16,7 @@ import {
   User,
   Calendar,
 } from "lucide-react";
+import { TableSkeleton } from "../../components/Skeletons";
 
 const Submissions = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -205,9 +206,7 @@ const Submissions = () => {
 
         {/* Content Section */}
         {loading ? (
-          <div className="text-center text-xs text-slate-400 italic py-12 bg-white border border-slate-200 rounded-xl shadow-xs">
-            Processing submissions...
-          </div>
+          <TableSkeleton rows={4} />
         ) : Object.keys(groupedData).length === 0 ? (
           <div className="text-center text-xs text-slate-400 italic py-12 bg-white border border-slate-200 rounded-xl shadow-xs space-y-2">
             <FileText className="mx-auto text-slate-300" size={36} />

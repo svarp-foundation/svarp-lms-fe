@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../lib/api";
 import LearnerLayout from "../../components/LearnerLayout";
 import CourseCard from "../../components/CourseCard";
+import { CourseGridSkeleton } from "../../components/Skeletons";
 import { useAuth } from "../../context/AuthContext";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -217,9 +218,7 @@ const Dashboard = () => {
             </h2>
 
             {loading ? (
-              <div className="flex justify-center p-8">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              </div>
+              <CourseGridSkeleton count={3} />
             ) : inProgressCourses.length > 0 ? (
               <div className="responsive-grid">
                 {inProgressCourses.map((course) => (
@@ -266,9 +265,7 @@ const Dashboard = () => {
           </div>
 
           {loadingRecommended ? (
-            <div className="flex justify-center p-8">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
+            <CourseGridSkeleton count={3} />
           ) : recommendedCourses.length > 0 ? (
             <div
               ref={carouselRef}

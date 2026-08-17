@@ -129,7 +129,12 @@ const AdminDashboard = () => {
         </div>
 
         {/* ── Recent Activity Feed ── */}
-        {!loading && stats && (
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 animate-pulse">
+            <div className="bg-white p-4 h-64 rounded-xl border border-slate-200 shadow-sm" />
+            <div className="bg-white p-4 h-64 rounded-xl border border-slate-200 shadow-sm" />
+          </div>
+        ) : stats && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Recent Courses */}
             <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">

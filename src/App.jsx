@@ -22,7 +22,16 @@ const PrivateRoute = ({ children, roles }) => {
   const isAdminOnly = roles && roles.length === 1 && roles[0] === "admin";
   const redirectTarget = isAdminOnly ? "/admin/login" : "/login";
 
-  if (loading) return <div className="p-4 text-center">Loading...</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen bg-muted flex items-center justify-center p-6">
+        <div className="w-full max-w-md bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-4 animate-pulse">
+          <div className="h-8 bg-gray-200 rounded-xl w-3/4 mx-auto" />
+          <div className="h-4 bg-gray-100 rounded-lg w-1/2 mx-auto" />
+          <div className="h-12 bg-gray-200 rounded-2xl w-full pt-4" />
+        </div>
+      </div>
+    );
   if (!user) return <Navigate to={redirectTarget} replace />;
   
   const effectiveRole = user.role || (user.roles?.includes("admin") ? "admin" : "learner");

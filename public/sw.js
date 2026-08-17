@@ -38,12 +38,23 @@ self.addEventListener("activate", (event) => {
 
 // Fetch Event
 self.addEventListener("fetch", (event) => {
-  // Skip caching non-GET requests or API requests or hot-reloading socket connections (like dev server)
+  const url = new URL(event.request.url);
+
+  // 1. Skip cross-origin requests (e.g. backend services running on different ports or domains)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // 2. Skip non-GET requests, socket connections, chrome extensions, and API endpoints
   if (
     event.request.method !== "GET" || 
-    event.request.url.includes("/api/") ||
-    event.request.url.includes("/ws") ||
-    event.request.url.includes("chrome-extension")
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/learner/") ||
+    url.pathname.startsWith("/admin/") ||
+    url.pathname.startsWith("/course-payments/") ||
+    url.pathname.startsWith("/public/") ||
+    url.pathname.includes("/ws") ||
+    url.protocol.startsWith("chrome-extension")
   ) {
     return;
   }
@@ -81,11 +92,20 @@ self.addEventListener("fetch", (event) => {
 
           return networkResponse;
         })
-        .catch(() => {
+        .catch(async () => {
           // If offline and requesting document, return the main index.html (SPA routing)
           if (event.request.headers.get("accept")?.includes("text/html")) {
-            return caches.match("/index.html");
+            const indexResponse = await caches.match("/index.html");
+            if (indexResponse) {
+              return indexResponse;
+            }
           }
+          // MUST return a valid Response object (never undefined)
+          return new Response("Service Unavailable", {
+            status: 503,
+            statusText: "Service Unavailable",
+            headers: { "Content-Type": "text/plain" }
+          });
         });
     })
   );

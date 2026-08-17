@@ -3,6 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
 import API_URL, { getMediaUrl } from "../config";
+import LearnerLayout from "../components/LearnerLayout";
 import {
   ShieldCheck,
   BookOpen,
@@ -21,6 +22,47 @@ export default function CoursePayment() {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState("");
   const [verificationData, setVerificationData] = useState(null);
+
+  // Coupon promo code states
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [couponSuccess, setCouponSuccess] = useState("");
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setApplyingCoupon(true);
+    setCouponError("");
+    setCouponSuccess("");
+    try {
+      const res = await api.post("/course-payments/validate-coupon", {
+        code: couponCode,
+        course_id: parseInt(courseId),
+      });
+      if (res.data.valid) {
+        setAppliedCoupon({
+          id: res.data.coupon_id,
+          code: couponCode.toUpperCase(),
+          discount_amount: res.data.discount_amount,
+        });
+        setCouponSuccess(`Coupon '${couponCode.toUpperCase()}' applied successfully!`);
+      } else {
+        setCouponError(res.data.message || "Invalid coupon code");
+      }
+    } catch (err) {
+      setCouponError(err.response?.data?.detail || "Failed to validate coupon");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponSuccess("");
+    setCouponError("");
+  };
 
   useEffect(() => {
     if (!state?.course) {
@@ -81,6 +123,7 @@ export default function CoursePayment() {
         course_id: parseInt(courseId),
         amount: course.price,
         currency: "INR",
+        coupon_code: appliedCoupon?.code || null,
       });
       const orderData = orderRes.data;
 
@@ -150,24 +193,57 @@ export default function CoursePayment() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500 animate-pulse">Loading course details...</p>
-      </div>
+      <LearnerLayout>
+        <div className="w-full bg-accent text-white page-padding relative overflow-hidden">
+          <div className="max-w-7xl mx-auto flex flex-col gap-1">
+            <div className="h-8 bg-white/20 rounded-xl w-64 animate-pulse" />
+            <div className="h-4 bg-white/10 rounded-md w-96 animate-pulse mt-1" />
+          </div>
+        </div>
+        <div className="page-padding max-w-7xl mx-auto py-8">
+          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 animate-pulse">
+            <div className="bg-white rounded-3xl p-8 shadow-sm space-y-6 border border-gray-100">
+              <div className="flex gap-4">
+                <div className="w-20 h-20 bg-gray-200 rounded-xl flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-6 bg-gray-200 rounded-lg w-3/4" />
+                  <div className="h-4 bg-gray-100 rounded-md w-full" />
+                </div>
+              </div>
+              <div className="h-12 bg-gray-200 rounded-xl w-full" />
+            </div>
+            <div className="bg-white rounded-3xl p-8 shadow-sm space-y-4 border border-gray-100">
+              <div className="h-6 bg-gray-200 rounded w-1/2" />
+              <div className="h-10 bg-gray-100 rounded-xl w-full" />
+              <div className="h-12 bg-primary/30 rounded-xl w-full" />
+            </div>
+          </div>
+        </div>
+      </LearnerLayout>
     );
   }
 
   if (!course) return null;
 
   return (
-    <div className="min-h-screen bg-muted py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-primary mb-8 text-center">
-          Complete Your Enrollment
-        </h1>
+    <LearnerLayout>
+      {/* Page Header Banner */}
+      <div className="w-full bg-accent text-white page-padding relative overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col gap-1">
+          <h1 className="text-2xl font-bold flex items-center gap-3">
+            <ShieldCheck size={26} className="text-primary" />
+            Complete Your Enrollment
+          </h1>
+          <p className="text-gray-300 text-sm max-w-lg">
+            Secure checkout for lifetime access to course materials and certificates.
+          </p>
+        </div>
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+      <div className="page-padding max-w-7xl mx-auto py-8">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
           {/* Left: Course Info + Payment Action */}
-          <div className="bg-white rounded-3xl p-8 shadow-lg space-y-6">
+          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-start gap-4">
               {course.thumbnail_url ? (
                 <img
@@ -265,28 +341,10 @@ export default function CoursePayment() {
                 </button>
               </div>
             )}
-
-            <button
-              onClick={
-                course.discounted_price === 0
-                  ? handleFreeEnrollment
-                  : handlePayment
-              }
-              disabled={paying || !isReadyForPayment}
-              className="w-full bg-primary text-white py-3 rounded-full font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg hover:shadow-xl active:scale-[0.98]"
-            >
-              {paying
-                ? "Processing..."
-                : isReadyForPayment
-                  ? course.discounted_price === 0
-                    ? "Enroll for Free"
-                    : `Pay ₹${(course.price * 1.18).toFixed(2)}`
-                  : "Complete Profile to Pay"}
-            </button>
           </div>
 
           {/* Right: Order Summary */}
-          <div className="bg-white rounded-3xl p-8 shadow-lg h-fit">
+          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 h-fit space-y-6">
             <h2 className="text-2xl font-semibold text-primary mb-6">
               Order Summary
             </h2>
@@ -303,6 +361,12 @@ export default function CoursePayment() {
                   ₹{course.price.toFixed(2)}
                 </span>
               </div>
+              {appliedCoupon && (
+                <div className="flex justify-between border-b pb-4 text-green-600 font-medium">
+                  <span>Promo Discount ({appliedCoupon.code})</span>
+                  <span>-₹{appliedCoupon.discount_amount.toFixed(2)}</span>
+                </div>
+              )}
               {course.discounted_price === 0 && (
                 <div className="flex justify-between border-b pb-4 text-green-600 font-medium">
                   <span>Member Discount</span>
@@ -315,19 +379,75 @@ export default function CoursePayment() {
                   ₹
                   {course.discounted_price === 0
                     ? "0.00"
-                    : (course.price * 0.18).toFixed(2)}
+                    : (Math.max(0, course.price - (appliedCoupon?.discount_amount || 0)) * 0.18).toFixed(2)}
                 </span>
               </div>
+              
+              {/* Promo Code Input Box */}
+              {course.discounted_price !== 0 && (
+                <div className="border-b pb-4 flex flex-col gap-2 pt-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Promo Code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      disabled={!!appliedCoupon}
+                      className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary uppercase flex-1"
+                    />
+                    {appliedCoupon ? (
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleApplyCoupon}
+                        disabled={applyingCoupon || !couponCode.trim()}
+                        className="bg-primary hover:opacity-90 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        {applyingCoupon ? "..." : "Apply"}
+                      </button>
+                    )}
+                  </div>
+                  {couponError && <p className="text-[10px] text-red-500 font-bold">{couponError}</p>}
+                  {couponSuccess && <p className="text-[10px] text-green-600 font-bold">{couponSuccess}</p>}
+                </div>
+              )}
+
               <div className="flex justify-between pt-2 text-lg font-bold text-gray-900">
                 <span>Total</span>
                 <span>
                   ₹
                   {course.discounted_price === 0
                     ? "0.00"
-                    : (course.price * 1.18).toFixed(2)}
+                    : (Math.max(0, course.price - (appliedCoupon?.discount_amount || 0)) * 1.18).toFixed(2)}
                 </span>
               </div>
             </div>
+
+            {/* Payment Action Button moved after details */}
+            <button
+              onClick={
+                course.discounted_price === 0
+                  ? handleFreeEnrollment
+                  : handlePayment
+              }
+              disabled={paying || !isReadyForPayment}
+              className="w-full bg-primary text-white py-3.5 rounded-2xl font-extrabold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-lg hover:shadow-xl active:scale-[0.98] cursor-pointer"
+            >
+              {paying
+                ? "Processing..."
+                : isReadyForPayment
+                  ? course.discounted_price === 0
+                    ? "Enroll for Free"
+                    : `Pay ₹${(Math.max(0, course.price - (appliedCoupon?.discount_amount || 0)) * 1.18).toFixed(2)}`
+                  : "Complete Profile to Pay"}
+            </button>
 
             <div className="mt-8 bg-green-50 p-4 rounded-xl text-xs text-green-800 flex items-start gap-2">
               <ShieldCheck size={18} className="flex-shrink-0 mt-0.5" />
@@ -348,6 +468,6 @@ export default function CoursePayment() {
           </div>
         </div>
       </div>
-    </div>
+    </LearnerLayout>
   );
 }

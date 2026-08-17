@@ -15,6 +15,7 @@ import {
   LayoutGrid,
   GripVertical,
 } from "lucide-react";
+import { CourseGridSkeleton } from "../../components/Skeletons";
 import API_URL, { getMediaUrl } from "../../config";
 
 const CourseManager = () => {
@@ -561,6 +562,8 @@ const CourseManager = () => {
               )}
             </div>
           </div>
+        ) : loading ? (
+          <CourseGridSkeleton count={6} />
         ) : (
           /* ── Course Grid ── */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">

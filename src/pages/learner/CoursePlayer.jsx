@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import Certificate from "../../components/Certificate";
 import CertificateModalPreview from "../../components/CertificateModalPreview";
 import LearnerLayout from "../../components/LearnerLayout";
+import { CoursePlayerSkeleton } from "../../components/Skeletons";
 import {
   CheckCircle,
   Lock,
@@ -224,9 +225,7 @@ const CoursePlayer = () => {
   if (loading)
     return (
       <LearnerLayout isPlayerPage={true}>
-        <div className="flex h-[calc(100vh-4rem)] md:h-screen bg-white items-center justify-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <CoursePlayerSkeleton />
       </LearnerLayout>
     );
 

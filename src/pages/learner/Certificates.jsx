@@ -5,6 +5,7 @@ import api from "../../lib/api";
 import LearnerLayout from "../../components/LearnerLayout";
 import { useAuth } from "../../context/AuthContext";
 import { Award, Download, Eye, X, GraduationCap } from "lucide-react";
+import { CertificatesSkeleton } from "../../components/Skeletons";
 import Certificate from "../../components/Certificate";
 import CertificateModalPreview from "../../components/CertificateModalPreview";
 import API_URL from "../../config";
@@ -73,9 +74,7 @@ const Certificates = () => {
 
       <div className="page-padding max-w-7xl mx-auto">
         {loading ? (
-          <div className="flex justify-center p-16">
-            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
+          <CertificatesSkeleton />
         ) : certificates.length === 0 ? (
           /* Empty state */
           <div className="bg-white rounded-[2rem] shadow-md border border-gray-100 p-16 flex flex-col items-center text-center">

@@ -8,6 +8,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
+import { TableSkeleton } from "../../components/Skeletons";
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -89,9 +90,7 @@ const Payments = () => {
 
         {/* Content */}
         {loading ? (
-          <div className="text-center text-xs text-slate-400 italic py-8 bg-white border border-slate-200 rounded-lg shadow-xs">
-            Processing records...
-          </div>
+          <TableSkeleton rows={6} />
         ) : filteredPayments.length === 0 ? (
           <div className="text-center text-xs text-slate-400 italic py-8 bg-white border border-slate-200 rounded-lg shadow-xs">
             No transactions found
