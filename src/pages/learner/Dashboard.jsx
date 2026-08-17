@@ -15,7 +15,7 @@ const BannerCarousel = ({ courses }) => {
     if (courses.length <= 1) return;
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % courses.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [courses]);
 
@@ -34,15 +34,15 @@ const BannerCarousel = ({ courses }) => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden min-h-[220px] bg-gradient-to-br from-[#1f3b45] to-[#111827] border-b border-white/5 shadow-md">
+    <div className="relative w-full overflow-hidden bg-gradient-to-r from-[#172e38] via-[#1f3b45] to-[#0f172a] border-b border-white/10 shadow-lg">
       {/* Slider Wrapper */}
-      <div className="relative w-full min-h-[220px]">
+      <div className="relative w-full min-h-[240px] md:min-h-[260px]">
         {courses.map((course, idx) => {
           const isActive = idx === activeIndex;
           return (
             <div
               key={course.id}
-              className={`w-full min-h-[220px] transition-all duration-500 ease-out absolute inset-0 ${
+              className={`w-full transition-all duration-700 ease-in-out absolute inset-0 ${
                 isActive
                   ? "opacity-100 translate-x-0 pointer-events-auto z-10"
                   : idx < activeIndex
@@ -50,28 +50,41 @@ const BannerCarousel = ({ courses }) => {
                   : "opacity-0 translate-x-full pointer-events-none z-0"
               }`}
             >
-              <div className="relative w-full h-full page-padding py-8 flex flex-col justify-center min-h-[220px] max-w-7xl mx-auto">
-                {/* Background Decorative Elements */}
-                <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl -ml-20 -mb-20 pointer-events-none" />
+              <div className="relative w-full h-full page-padding py-6 md:py-8 flex flex-col justify-center max-w-7xl mx-auto">
+                {/* Background Ambient Glow Effects */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/15 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+                <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="w-full pr-24 text-left relative z-20">
-                  <h3 className="text-lg md:text-xl font-extrabold text-white mb-1.5 leading-tight tracking-tight line-clamp-1">
-                    {course.title}
-                  </h3>
-                  <p className="text-gray-300 text-xs md:text-sm font-medium mb-4 line-clamp-2 leading-relaxed">
-                    {course.description}
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <Link
-                      to={`/courses/${course.id}`}
-                      className="bg-primary hover:bg-opacity-90 text-black font-extrabold px-5 py-2.5 rounded-xl text-xs md:text-sm transition-all hover:shadow-lg hover:shadow-primary/20 active:scale-98"
-                    >
-                      Enroll Now
-                    </Link>
-                    <span className="text-xs md:text-sm font-bold text-gray-250">
-                      {course.is_paid ? `₹${course.price}` : "Free"}
-                    </span>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-20 pr-12 md:pr-28">
+                  {/* Left Column: Text & CTA */}
+                  <div className="flex-1 min-w-0 space-y-3">
+
+                    {/* Course Title */}
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-snug tracking-tight line-clamp-2 drop-shadow-sm">
+                      {course.title}
+                    </h3>
+
+                    {/* Course Description */}
+                    <p className="text-gray-300 text-xs md:text-sm font-medium line-clamp-2 max-w-2xl leading-relaxed">
+                      {course.description}
+                    </p>
+
+                    {/* Action Bar: Button + Price Pill */}
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                      <Link
+                        to={`/courses/${course.id}`}
+                        className="inline-flex items-center gap-2 bg-primary hover:bg-emerald-300 text-slate-950 font-black px-6 py-2.5 rounded-xl text-xs md:text-sm transition-all shadow-md shadow-primary/20 hover:shadow-primary/30 active:scale-95"
+                      >
+                        Enroll Now
+                      </Link>
+                      
+                      <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 backdrop-blur-md px-3.5 py-2 rounded-xl text-xs md:text-sm font-extrabold text-white">
+                        <span className="text-gray-400 text-xs font-semibold">Price:</span>
+                        <span className="text-primary font-black">
+                          {course.is_paid ? `₹${course.price}` : "Free"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -80,19 +93,20 @@ const BannerCarousel = ({ courses }) => {
         })}
       </div>
 
-      {/* Top-Right Navigation Arrows */}
+      {/* Top-Right Navigation Controls */}
       {courses.length > 1 && (
-        <div className="absolute top-4 right-4 md:right-8 z-30 flex gap-1.5">
+        <div className="absolute top-4 right-4 md:right-8 z-30 flex items-center gap-2">
           <button
             onClick={prevSlide}
-            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-md transition-all active:scale-95"
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 backdrop-blur-md transition-all active:scale-90 shadow-sm"
             aria-label="Previous Slide"
           >
             <ChevronLeft size={16} />
           </button>
           <button
             onClick={nextSlide}
-            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-md transition-all active:scale-95"
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 backdrop-blur-md transition-all active:scale-90 shadow-sm"
+            aria-label="Next Slide"
           >
             <ChevronRight size={16} />
           </button>
@@ -101,13 +115,15 @@ const BannerCarousel = ({ courses }) => {
 
       {/* Slide Indicators */}
       {courses.length > 1 && (
-        <div className="absolute bottom-4 right-6 md:right-12 z-30 flex gap-1.5">
+        <div className="absolute bottom-4 right-6 md:right-12 z-30 flex items-center gap-1.5">
           {courses.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setActiveIndex(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === activeIndex ? "w-5 bg-primary" : "w-1.5 bg-white/40 hover:bg-white/60"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                idx === activeIndex
+                  ? "w-6 bg-primary shadow-sm shadow-primary/50"
+                  : "w-2 bg-white/30 hover:bg-white/60"
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
