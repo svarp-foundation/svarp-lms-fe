@@ -22,8 +22,14 @@ const CourseOverview = () => {
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  const isMember =
-    (user && user.membership) || (course && course.discounted_price === 0);
+  const isMember = (() => {
+    if (course && course.discounted_price === 0) return true;
+    if (!user || !user.membership) return false;
+    const m = user.membership;
+    if (!m.is_active) return false;
+    if (m.end_date && new Date(m.end_date) < new Date()) return false;
+    return true;
+  })();
   const showDiscount = isMember && course?.is_paid;
 
   const handleEnrollOrGo = async () => {
