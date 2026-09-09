@@ -161,23 +161,27 @@ const Dashboard = () => {
     setLoading(true);
     setLoadingRecommended(true);
     try {
-      // 1. Fetch enrolled courses
-      const enrolledRes = await api.get(`/learner/courses`);
-      setEnrolledCourses(enrolledRes.data);
+      // Fetch enrolled courses and public courses in parallel
+      const [enrolledRes, publicRes] = await Promise.all([
+        api.get(`/learner/courses`),
+        api.get(`/public/courses`, { params: { limit: 100 } }),
+      ]);
+
+      const enrolledData = enrolledRes.data || [];
+      const publicData = publicRes.data || [];
+
+      setEnrolledCourses(enrolledData);
       setLoading(false);
 
-      // 2. Fetch public courses
-      const publicRes = await api.get(`/public/courses`, { params: { limit: 100 } });
-      
-      // 3. Filter out already enrolled courses for recommendations
-      const enrolledIds = enrolledRes.data.map(c => c.id);
-      const recommended = publicRes.data.filter(c => !enrolledIds.includes(c.id));
+      // Filter out already enrolled courses for recommendations
+      const enrolledIds = enrolledData.map((c) => c.id);
+      const recommended = publicData.filter((c) => !enrolledIds.includes(c.id));
       setRecommendedCourses(recommended.slice(0, 3));
 
-      // 4. Get top 3 newly launched courses (sorted by id descending) that are not enrolled
-      const sortedNew = [...publicRes.data]
+      // Get top 3 newly launched courses (sorted by id descending) that are not enrolled
+      const sortedNew = [...publicData]
         .sort((a, b) => b.id - a.id)
-        .filter(c => !enrolledIds.includes(c.id));
+        .filter((c) => !enrolledIds.includes(c.id));
       setNewLaunchedCourses(sortedNew.slice(0, 3));
     } catch (error) {
       console.error("Error fetching dashboard data:", error);

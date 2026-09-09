@@ -76,17 +76,22 @@ const CourseOverview = () => {
   };
 
   useEffect(() => {
-    fetchCourseDetails();
-  }, [courseId]);
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        const coursePromise = api.get(`/public/courses/${courseId}`);
+        const enrollPromise = user ? api.get(`/learner/courses`) : Promise.resolve({ data: [] });
+        const wishlistPromise = user ? api.get(`/learner/wishlist`) : Promise.resolve({ data: [] });
 
-  // Check enrollment whenever course or user changes
-  useEffect(() => {
-    if (!user || !course) return;
+        const [courseRes, enrollRes, wishlistRes] = await Promise.all([
+          coursePromise,
+          enrollPromise,
+          wishlistPromise,
+        ]);
 
-    api
-      .get(`/learner/courses`)
-      .then((res) => {
-        const enrolledCourse = res.data.find((c) => c.id === course.id);
+        setCourse(courseRes.data);
+
+        const enrolledCourse = (enrollRes.data || []).find((c) => c.id === Number(courseId));
         if (enrolledCourse) {
           setIsEnrolled(true);
           setProgress(enrolledCourse.progress || 0);
@@ -94,17 +99,17 @@ const CourseOverview = () => {
           setIsEnrolled(false);
           setProgress(0);
         }
-      })
-      .catch(() => {});
 
-    // Also check wishlist status
-    api
-      .get(`/learner/wishlist`)
-      .then((res) => {
-        setIsWishlisted(res.data.some((c) => c.id === course.id));
-      })
-      .catch(() => {});
-  }, [user, course]);
+        setIsWishlisted((wishlistRes.data || []).some((c) => c.id === Number(courseId)));
+      } catch (error) {
+        console.error("Error loading course overview data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [courseId, user]);
 
   const handleWishlistToggle = async () => {
     if (!user) {
@@ -125,17 +130,6 @@ const CourseOverview = () => {
       console.error("Wishlist toggle error:", err);
     } finally {
       setWishlistLoading(false);
-    }
-  };
-
-  const fetchCourseDetails = async () => {
-    try {
-      const response = await api.get(`/public/courses/${courseId}`);
-      setCourse(response.data);
-    } catch (error) {
-      console.error("Error fetching course details:", error);
-    } finally {
-      setLoading(false);
     }
   };
 

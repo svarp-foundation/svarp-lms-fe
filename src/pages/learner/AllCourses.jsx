@@ -25,14 +25,15 @@ const AllCourses = () => {
   const fetchCourses = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/public/courses`, {
+      const publicPromise = api.get(`/public/courses`, {
         params: { search: debouncedSearch, limit: 100 },
       });
-      setCourses(res.data);
+      const enrollPromise = user ? api.get(`/learner/courses`) : Promise.resolve({ data: [] });
 
+      const [res, enrollRes] = await Promise.all([publicPromise, enrollPromise]);
+      setCourses(res.data || []);
       if (user) {
-        const enrollRes = await api.get(`/learner/courses`);
-        setEnrolledCourses(enrollRes.data);
+        setEnrolledCourses(enrollRes.data || []);
       }
     } catch (err) {
       console.error("Error fetching courses:", err);
