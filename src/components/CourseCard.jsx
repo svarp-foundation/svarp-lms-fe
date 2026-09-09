@@ -115,24 +115,24 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] shadow-md overflow-hidden hover-lift transition-luxury border border-gray-100 flex flex-col h-full group">
-      <div className="h-44 bg-gray-200 relative overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md overflow-hidden transition-all duration-200 border border-slate-200/80 hover:border-emerald-300/80 flex flex-col h-full group">
+      <div className="aspect-[16/10] bg-slate-100 relative overflow-hidden flex-shrink-0">
         {course.thumbnail_url ? (
           <img
             src={getMediaUrl(course.thumbnail_url)}
             alt={course.title}
-            className="w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-            <GraduationCap size={48} />
+          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+            <GraduationCap size={40} />
           </div>
         )}
 
         {/* Price / Free badge */}
-        <span className="absolute top-3 left-3 px-2 py-1 rounded text-xs font-bold shadow-sm bg-white text-gray-800">
+        <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm bg-white/95 backdrop-blur-sm text-slate-800 border border-slate-100">
           {course.discounted_price === 0 ? (
-            <span className="text-primary">₹0 (Member)</span>
+            <span className="text-emerald-700">₹0 (Member)</span>
           ) : course.is_paid ? (
             `₹${course.price}`
           ) : (
@@ -140,74 +140,75 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
           )}
         </span>
 
-        {/* Share Button */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowShareModal(true);
-          }}
-          className="absolute top-3 right-12 p-2 bg-white/90 hover:bg-white text-gray-700 rounded-full shadow-md transition-all active:scale-95 z-10 flex items-center justify-center"
-          title="Share Course"
-        >
-          <Share2 size={16} className="text-gray-600" />
-        </button>
+        {/* Action icons */}
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
+          {/* Share Button */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowShareModal(true);
+            }}
+            className="p-1.5 bg-white/90 hover:bg-white text-slate-600 rounded-lg shadow-sm transition-all active:scale-95 border border-slate-100/80"
+            title="Share Course"
+          >
+            <Share2 size={14} />
+          </button>
 
-        {/* Wishlist Button */}
-        <button
-          onClick={handleWishlistToggle}
-          disabled={wishlistLoading}
-          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white text-gray-700 rounded-full shadow-md transition-all active:scale-95 disabled:opacity-50 z-10 flex items-center justify-center"
-          title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-        >
-          <Heart
-            size={16}
-            className={isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}
-          />
-        </button>
-
-        <span className="absolute bottom-4 right-4 bg-white px-3 py-1 rounded text-xs font-bold text-gray-800 shadow-sm">
-          {course.status === "published" ? "Course" : "Draft"}
-        </span>
+          {/* Wishlist Button */}
+          <button
+            onClick={handleWishlistToggle}
+            disabled={wishlistLoading}
+            className="p-1.5 bg-white/90 hover:bg-white text-slate-600 rounded-lg shadow-sm transition-all active:scale-95 disabled:opacity-50 border border-slate-100/80"
+            title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+          >
+            <Heart
+              size={14}
+              className={isWishlisted ? "fill-red-500 text-red-500" : "text-slate-600"}
+            />
+          </button>
+        </div>
 
         {/* Enrolled badge */}
         {enrolled && (
-          <span className="absolute bottom-4 left-4 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1 shadow">
-            <CheckCircle size={12} /> Enrolled
+          <span className="absolute bottom-2.5 left-2.5 bg-emerald-600 text-white px-2 py-0.5 rounded-md text-[11px] font-bold flex items-center gap-1 shadow-sm">
+            <CheckCircle size={11} /> Enrolled
           </span>
         )}
       </div>
 
-      <div className="p-5 flex flex-col flex-grow">
-        <h3 className="font-bold text-lg text-gray-900 mb-1 leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+      <div className="p-4 flex flex-col flex-grow">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1">
+          SVARP Academy
+        </span>
+        <h3 className="font-bold text-sm sm:text-base text-slate-900 mb-1 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
           {course.title}
         </h3>
-        <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-3 font-semibold">SVARP GLOBAL ACADEMY</p>
-        <p className="text-sm text-gray-600 line-clamp-3 mb-6 flex-grow leading-relaxed">
+        <p className="text-xs text-slate-500 line-clamp-2 mb-4 flex-grow leading-relaxed">
           {course.description}
         </p>
 
         {enrolled && course.progress !== undefined && (
-          <div className="mb-4">
-            <div className="flex justify-between text-xs text-gray-500 mb-1 font-medium">
-              <span>Course Progress</span>
-              <span>{course.progress}%</span>
+          <div className="mb-3.5 pt-2 border-t border-slate-100">
+            <div className="flex justify-between text-[11px] text-slate-500 mb-1 font-semibold">
+              <span>Progress</span>
+              <span className="text-slate-700 font-bold">{course.progress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-green-500 transition-all duration-500"
+                className="h-full bg-emerald-500 transition-all duration-500 rounded-full"
                 style={{ width: `${course.progress}%` }}
               />
             </div>
           </div>
         )}
 
-        <div className="mt-auto grid grid-cols-2 gap-3">
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-2 border-t border-slate-100/80">
           <Link
             to={`/courses/${course.id}`}
-            className="flex items-center justify-center gap-2 bg-gray-100 text-gray-700 py-2 rounded-lg font-bold hover:bg-gray-200 transition text-sm"
+            className="flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 px-2 rounded-xl font-semibold transition text-xs"
           >
-            <Info size={16} /> Overview
+            <Info size={14} /> Overview
           </Link>
 
           {/* Enrolled users get Continue/Completed button */}
@@ -215,29 +216,29 @@ const CourseCard = ({ course, isPublic = false, enrolled = false }) => {
             course.progress === 100 ? (
               <button
                 onClick={handleCompletedClick}
-                className="flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700 transition shadow-sm text-sm"
+                className="flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-2 rounded-xl font-semibold transition text-xs shadow-sm"
               >
-                <CheckCircle size={16} /> Completed
+                <CheckCircle size={14} /> Completed
               </button>
             ) : (
               <Link
                 to={`/courses/${course.id}/learn`}
-                className="flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700 transition shadow-sm text-sm"
+                className="flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-2 rounded-xl font-semibold transition text-xs shadow-sm"
               >
-                <PlayCircle size={16} /> Continue
+                <PlayCircle size={14} /> Continue
               </Link>
             )
           ) : !isPublic ? (
             <Link
               to={`/courses/${course.id}/learn`}
-              className="flex items-center justify-center gap-2 bg-primary text-white py-2 rounded-lg font-bold hover:bg-opacity-90 transition shadow-sm text-sm"
+              className="flex items-center justify-center gap-1.5 bg-accent hover:bg-slate-800 text-white py-2 px-2 rounded-xl font-semibold transition text-xs shadow-sm"
             >
-              <PlayCircle size={16} /> Resume
+              <PlayCircle size={14} /> Resume
             </Link>
           ) : (
             <Link
               to={`/courses/${course.id}`}
-              className="flex items-center justify-center gap-2 bg-primary text-white py-2 rounded-lg font-bold hover:bg-opacity-90 transition shadow-sm text-sm"
+              className="flex items-center justify-center gap-1.5 bg-accent hover:bg-slate-800 text-white py-2 px-2 rounded-xl font-semibold transition text-xs shadow-sm"
             >
               {course.discounted_price === 0
                 ? "Enroll Free"
