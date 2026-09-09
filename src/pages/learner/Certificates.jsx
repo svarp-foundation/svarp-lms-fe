@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import api from "../../lib/api";
 import LearnerLayout from "../../components/LearnerLayout";
 import { useAuth } from "../../context/AuthContext";
-import { Award, Download, Eye, X, GraduationCap, Sparkles } from "lucide-react";
+import { Award, Download, Eye, X, GraduationCap } from "lucide-react";
 import { CertificatesSkeleton } from "../../components/Skeletons";
 import Certificate from "../../components/Certificate";
 import CertificateModalPreview from "../../components/CertificateModalPreview";
@@ -63,12 +63,7 @@ const Certificates = () => {
 
         <div className="page-padding py-8 md:py-10 max-w-7xl mx-auto relative z-10">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-400/20 text-amber-300 text-[11px] font-bold uppercase tracking-wider border border-amber-400/30 mb-3">
-              <Sparkles size={12} />
-              Credentials & Diplomas
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-              <Award size={28} className="text-amber-400 flex-shrink-0" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               My Certificates
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">

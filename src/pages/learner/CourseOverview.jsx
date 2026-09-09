@@ -208,17 +208,6 @@ const CourseOverview = () => {
               <ArrowLeft size={14} /> Back to Courses
             </Link>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-md bg-emerald-400/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider border border-emerald-400/30">
-                Verified Certification
-              </span>
-              {isMember && (
-                <span className="px-2.5 py-0.5 rounded-md bg-white/15 text-white text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm">
-                  Free with Membership
-                </span>
-              )}
-            </div>
-
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight">
               {course.title}
             </h1>

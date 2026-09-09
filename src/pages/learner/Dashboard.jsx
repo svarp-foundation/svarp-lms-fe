@@ -57,10 +57,6 @@ const BannerCarousel = ({ courses }) => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-20 pr-12 md:pr-24">
                   {/* Left Column: Text & CTA */}
                   <div className="flex-1 min-w-0 space-y-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-400/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider border border-emerald-400/30">
-                      Featured Course
-                    </span>
-
                     {/* Course Title */}
                     <h3 className="text-lg sm:text-xl md:text-2xl font-black text-white leading-tight tracking-tight line-clamp-2 drop-shadow-sm">
                       {course.title}

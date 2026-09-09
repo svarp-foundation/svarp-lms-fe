@@ -143,8 +143,7 @@ const Submissions = () => {
         {/* Admin Standard Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-200">
           <div>
-            <h1 className="text-xl font-bold text-accent flex items-center gap-2">
-              <Award className="text-accent" size={22} />
+            <h1 className="text-xl font-bold text-accent">
               Submissions & Course Reviews
             </h1>
             <p className="text-xs text-slate-500">

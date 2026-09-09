@@ -4,7 +4,7 @@ import LearnerLayout from "../../components/LearnerLayout";
 import CourseCard from "../../components/CourseCard";
 import { CourseGridSkeleton } from "../../components/Skeletons";
 import { useAuth } from "../../context/AuthContext";
-import { BookOpen, Search, X, Sparkles } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 const AllCourses = () => {
   const { user } = useAuth();
@@ -56,12 +56,7 @@ const AllCourses = () => {
         <div className="page-padding py-8 md:py-10 max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-400/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider border border-emerald-400/30 mb-3">
-                <Sparkles size={12} />
-                Course Catalog
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-                <BookOpen size={28} className="text-primary flex-shrink-0" />
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 Explore Courses
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">

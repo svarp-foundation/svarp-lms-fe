@@ -230,8 +230,7 @@ export default function CoursePayment() {
       {/* Page Header Banner */}
       <div className="w-full bg-accent text-white page-padding relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col gap-1">
-          <h1 className="text-2xl font-bold flex items-center gap-3">
-            <ShieldCheck size={26} className="text-primary" />
+          <h1 className="text-2xl font-bold">
             Complete Your Enrollment
           </h1>
           <p className="text-gray-300 text-sm max-w-lg">

@@ -5,7 +5,7 @@ import { getMediaUrl } from "../../config";
 import LearnerLayout from "../../components/LearnerLayout";
 import { useAuth } from "../../context/AuthContext";
 import { CourseGridSkeleton } from "../../components/Skeletons";
-import { Heart, BookOpen, Trash2, PlayCircle, Sparkles } from "lucide-react";
+import { Heart, BookOpen, Trash2, PlayCircle } from "lucide-react";
 
 const Wishlist = () => {
   const { user } = useAuth();
@@ -51,12 +51,7 @@ const Wishlist = () => {
 
         <div className="page-padding py-8 md:py-10 max-w-7xl mx-auto relative z-10">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-red-400/20 text-red-300 text-[11px] font-bold uppercase tracking-wider border border-red-400/30 mb-3">
-              <Sparkles size={12} />
-              Saved For Later
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-              <Heart size={28} className="text-red-400 fill-red-400 flex-shrink-0" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               My Wishlist
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
