@@ -7,3 +7,5 @@ export { LessonModal } from "./LessonModal";
 export { QuizEditor } from "./QuizEditor";
 export { AssignmentEditor } from "./AssignmentEditor";
 export { CourseTextImporterModal } from "./CourseTextImporterModal";
+export { CourseTextImporterModal as CourseFileImporterModal } from "./CourseTextImporterModal";
+export { CourseDeleteModal } from "./CourseDeleteModal";

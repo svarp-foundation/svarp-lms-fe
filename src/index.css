@@ -249,18 +249,18 @@ body {
 }
 
 .page-padding {
-  padding: 1.25rem; /* 20px on mobile */
+  padding: 0.875rem; /* 14px on mobile */
 }
 
 @media (min-width: 640px) {
   .page-padding {
-    padding: 1.75rem 2rem; /* 28px/32px on tablet */
+    padding: 1.5rem; /* 24px on tablet */
   }
 }
 
 @media (min-width: 1024px) {
   .page-padding {
-    padding: 2rem 2.5rem; /* 32px/40px on desktop */
+    padding: 2rem; /* 32px on desktop */
   }
 }
 

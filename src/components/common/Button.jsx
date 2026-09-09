@@ -36,7 +36,7 @@ export const Button = ({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer ${
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap flex-shrink-0 transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer ${
         VARIANTS[variant] || VARIANTS.primary
       } ${SIZES[size] || SIZES.sm} ${className}`}
       {...props}

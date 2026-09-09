@@ -27,47 +27,88 @@ const CoursePlayer = () => {
   const [submittingAssignment, setSubmittingAssignment] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const mainContentRef = React.useRef(null);
 
-  const fetchCourseContent = React.useCallback(async () => {
-    setLoading(true);
+  const fetchCourseContent = React.useCallback(async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
     try {
       const res = await api.get(`/learner/courses/${courseId}/content`);
       setCourseContent(res.data);
 
-      // Extract completed lesson ids from response if available
-      const completed = res.data.completed_lessons || res.data.progress?.completed_lessons || [];
+      // Extract all completed lesson ids from modules
+      const completed = [];
+      const allLessonsList = [];
+      (res.data.modules || []).forEach((mod) => {
+        (mod.lessons || []).forEach((les) => {
+          allLessonsList.push(les);
+          if (les.completed) {
+            completed.push(les.id);
+          }
+        });
+      });
       setCompletedLessonIds(completed);
 
-      // Pick first lesson if none active
+      // Pick active lesson: preserve existing or choose first uncompleted / first lesson
       setActiveLesson((current) => {
-        if (current) return current;
-        for (const mod of res.data.modules || []) {
-          if (mod.lessons && mod.lessons.length > 0) {
-            return mod.lessons[0];
-          }
+        if (current) {
+          const matched = allLessonsList.find((l) => l.id === current.id);
+          return matched || current;
         }
-        return null;
+        const firstUncompleted = allLessonsList.find((l) => !l.completed);
+        return firstUncompleted || allLessonsList[0] || null;
       });
     } catch (err) {
       console.error("Error fetching course content:", err);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   }, [courseId]);
 
   useEffect(() => {
-    fetchCourseContent();
+    fetchCourseContent(false);
   }, [fetchCourseContent]);
+
+  // Smooth scroll to top when changing lessons
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeLesson?.id]);
 
   const handleMarkComplete = async () => {
     if (!activeLesson || completing) return;
     setCompleting(true);
+
+    // Find next lesson from full lesson sequence
+    const allLessonsList = [];
+    (courseContent?.modules || []).forEach((m) => {
+      (m.lessons || []).forEach((l) => allLessonsList.push(l));
+    });
+
+    const currentIndex = allLessonsList.findIndex((l) => l.id === activeLesson.id);
+    const nextLesson =
+      currentIndex !== -1 && currentIndex + 1 < allLessonsList.length
+        ? allLessonsList[currentIndex + 1]
+        : null;
+
     try {
       await api.post(`/learner/courses/${courseId}/lessons/${activeLesson.id}/complete`, {});
-      if (!completedLessonIds.includes(activeLesson.id)) {
-        setCompletedLessonIds((prev) => [...prev, activeLesson.id]);
+      
+      // Update local completed state immediately for snappy UI
+      setCompletedLessonIds((prev) => {
+        if (!prev.includes(activeLesson.id)) {
+          return [...prev, activeLesson.id];
+        }
+        return prev;
+      });
+
+      // Automatically advance to the next lesson if available
+      if (nextLesson) {
+        setActiveLesson(nextLesson);
       }
-      fetchCourseContent();
+
+      // Silently refresh server content & progress without flashing skeleton
+      await fetchCourseContent(true);
     } catch (err) {
       console.error("Error completing lesson:", err);
     } finally {
@@ -88,7 +129,7 @@ const CoursePlayer = () => {
         formData
       );
       alert("Assignment submitted successfully for instructor evaluation.");
-      fetchCourseContent();
+      await fetchCourseContent(true);
     } catch (err) {
       console.error("Error submitting assignment:", err);
       alert(err.response?.data?.detail || "Failed to submit assignment.");
@@ -136,16 +177,16 @@ const CoursePlayer = () => {
         {/* Player Workspace: Left Content + Right Sidebar */}
         <div className="flex-1 flex overflow-hidden">
           {/* Main Content Area */}
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6">
+          <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6">
             {activeLesson ? (
               <>
                 {/* Lesson Header Title */}
                 <div className="flex items-center justify-between gap-3">
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Current Lesson
                     </span>
-                    <h1 className="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">
+                    <h1 className="text-lg sm:text-xl font-bold text-slate-900 mt-0.5 break-words">
                       {activeLesson.title}
                     </h1>
                   </div>
@@ -158,6 +199,7 @@ const CoursePlayer = () => {
                       onClick={handleMarkComplete}
                       loading={completing}
                       icon={CheckCircle2}
+                      className="whitespace-nowrap flex-shrink-0"
                     >
                       Mark as Completed
                     </Button>

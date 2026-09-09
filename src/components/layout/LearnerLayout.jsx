@@ -41,6 +41,7 @@ export const LearnerLayout = ({
   children,
   isPlayerPage = false,
   headerActions,
+  noPadding = false,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
@@ -77,9 +78,13 @@ export const LearnerLayout = ({
           actions={headerActions}
         />
 
-        <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 md:p-8">
-          {children}
-        </main>
+        {noPadding ? (
+          <main className="flex-1 w-full">{children}</main>
+        ) : (
+          <main className="flex-1 max-w-7xl w-full mx-auto p-3.5 sm:p-5 md:p-6 lg:p-8">
+            {children}
+          </main>
+        )}
       </div>
 
       {/* Mobile Bottom Navigation Bar */}

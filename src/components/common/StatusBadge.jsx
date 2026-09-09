@@ -37,9 +37,16 @@ export const StatusBadge = ({ status, customLabel, showDot = true, className = "
     case "failed":
     case "inactive":
     case "cancelled":
+    case "deleted":
       colorClasses = "text-rose-700 bg-rose-50/80 border-rose-200/60";
       dotColor = "bg-rose-500";
-      defaultLabel = normalized === "rejected" ? "Rejected" : normalized === "suspended" ? "Suspended" : "Inactive";
+      defaultLabel = normalized === "rejected" ? "Rejected" : normalized === "suspended" ? "Suspended" : normalized === "deleted" ? "Deleted" : "Inactive";
+      break;
+
+    case "archived":
+      colorClasses = "text-slate-700 bg-slate-100/90 border-slate-300";
+      dotColor = "bg-slate-400";
+      defaultLabel = "Archived";
       break;
 
     case "admin":

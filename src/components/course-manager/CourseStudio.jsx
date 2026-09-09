@@ -7,6 +7,7 @@ import CurriculumEditor from "./CurriculumEditor";
 import ModuleModal from "./ModuleModal";
 import LessonModal from "./LessonModal";
 import CourseTextImporterModal from "./CourseTextImporterModal";
+import CourseDeleteModal from "./CourseDeleteModal";
 import { CourseGridSkeleton } from "../Skeletons";
 
 export const CourseStudio = ({
@@ -44,9 +45,16 @@ export const CourseStudio = ({
   const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const [showImporterModal, setShowImporterModal] = useState(false);
-  const [importingText, setImportingText] = useState(false);
+  const [importingFile, setImportingFile] = useState(false);
 
-  // Delete Confirm Modal State
+  // Course Delete Modal State (Safe Conditional Hard Delete & Admin Force Purge)
+  const [deleteModalState, setDeleteModalState] = useState({
+    isOpen: false,
+    course: null,
+    loading: false,
+  });
+
+  // Simple Confirmation Modal State (Modules, Lessons, etc.)
   const [confirmModalState, setConfirmModalState] = useState({
     isOpen: false,
     title: "",
@@ -203,30 +211,50 @@ export const CourseStudio = ({
     }
   };
 
-  // Delete Course
-  const handleDeleteCourse = (courseId) => {
-    setConfirmModalState({
+  // Open Course Delete Modal
+  const handleDeleteCourse = (courseOrId) => {
+    const courseToDelete =
+      typeof courseOrId === "object" && courseOrId !== null
+        ? courseOrId
+        : courses.find((c) => c.id === courseOrId) || { id: courseOrId, title: "Course" };
+
+    setDeleteModalState({
       isOpen: true,
-      title: "Delete Course",
-      message:
-        "Are you sure you want to delete this course? All associated modules, lessons, and assignments will be permanently removed.",
+      course: courseToDelete,
       loading: false,
-      onConfirm: async () => {
-        setConfirmModalState((prev) => ({ ...prev, loading: true }));
-        try {
-          await api.delete(`${apiPrefix}/courses/${courseId}`);
-          setConfirmModalState({ isOpen: false, onConfirm: null, loading: false });
-          if (selectedCourse?.id === courseId) {
-            setSelectedCourse(null);
-          }
-          fetchCourses();
-        } catch (err) {
-          console.error("Error deleting course:", err);
-          alert(err.response?.data?.detail || "Failed to delete course.");
-          setConfirmModalState((prev) => ({ ...prev, loading: false }));
-        }
-      },
     });
+  };
+
+  // Confirm Course Delete Execution
+  const handleConfirmDeleteCourse = async ({ force = false }) => {
+    if (!deleteModalState.course) return;
+    const targetCourse = deleteModalState.course;
+    setDeleteModalState((prev) => ({ ...prev, loading: true }));
+    try {
+      const url = `${apiPrefix}/courses/${targetCourse.id}${force ? "?force=true" : ""}`;
+      const res = await api.delete(url);
+
+      setDeleteModalState({ isOpen: false, course: null, loading: false });
+      if (selectedCourse?.id === targetCourse.id) {
+        setSelectedCourse(null);
+      }
+      fetchCourses();
+    } catch (err) {
+      console.error("Error deleting course:", err);
+      alert(err.response?.data?.detail || "Failed to delete course.");
+      setDeleteModalState((prev) => ({ ...prev, loading: false }));
+    }
+  };
+
+  // Restore Soft-Deleted Course (Admin only)
+  const handleRestoreCourse = async (course) => {
+    try {
+      await api.post(`${apiPrefix}/courses/${course.id}/restore`);
+      fetchCourses();
+    } catch (err) {
+      console.error("Error restoring course:", err);
+      alert(err.response?.data?.detail || "Failed to restore course.");
+    }
   };
 
   // Module actions
@@ -372,22 +400,35 @@ export const CourseStudio = ({
     });
   };
 
-  // Bulk Text Importer
-  const handleBulkImport = async (text) => {
-    setImportingText(true);
+  // Bulk File Importer
+  const handleBulkImport = async (file) => {
+    setImportingFile(true);
     try {
-      const res = await api.post(`${apiPrefix}/courses/import-bundle`, {
-        bundle_text: text,
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await api.post(`${apiPrefix}/courses/bulk-create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      alert(`Course "${res.data.title}" successfully created from bundle.`);
+
+      const newCourseId = res.data.course_id || res.data.id;
+      const courseTitle = res.data.title || "Course";
+
+      alert(`Course "${courseTitle}" successfully parsed and created from file.`);
       setShowImporterModal(false);
-      fetchCourses();
-      fetchCourseDetail(res.data.id);
+      await fetchCourses();
+
+      if (newCourseId) {
+        await fetchCourseDetail(newCourseId);
+        setActiveTab("curriculum");
+      }
     } catch (err) {
-      console.error("Error importing course bundle:", err);
-      alert(err.response?.data?.detail || "Failed to parse course text bundle.");
+      console.error("Error importing course file:", err);
+      alert(err.response?.data?.detail || "Failed to parse and create course from file.");
     } finally {
-      setImportingText(false);
+      setImportingFile(false);
     }
   };
 
@@ -410,7 +451,9 @@ export const CourseStudio = ({
               onCreateCourse={handleCreateCourseClick}
               onEditCourse={handleEditCourseClick}
               onDeleteCourse={handleDeleteCourse}
+              onRestoreCourse={apiPrefix === "/admin" ? handleRestoreCourse : undefined}
               onOpenImporter={() => setShowImporterModal(true)}
+              isAdmin={apiPrefix === "/admin"}
             />
           )}
         </>
@@ -502,12 +545,24 @@ export const CourseStudio = ({
         saving={savingLesson}
       />
 
-      {/* Bulk Course Text Importer Modal */}
+      {/* Course File (.txt) Importer Modal */}
       <CourseTextImporterModal
         isOpen={showImporterModal}
         onClose={() => setShowImporterModal(false)}
         onImport={handleBulkImport}
-        importing={importingText}
+        importing={importingFile}
+      />
+
+      {/* Course Delete Modal (Safe Delete & Admin Force Purge) */}
+      <CourseDeleteModal
+        isOpen={deleteModalState.isOpen}
+        course={deleteModalState.course}
+        isAdmin={apiPrefix === "/admin"}
+        loading={deleteModalState.loading}
+        onClose={() =>
+          setDeleteModalState({ isOpen: false, course: null, loading: false })
+        }
+        onConfirm={handleConfirmDeleteCourse}
       />
 
       {/* Confirmation Modal */}

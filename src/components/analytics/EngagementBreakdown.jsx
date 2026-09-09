@@ -243,7 +243,7 @@ export const EngagementBreakdown = ({
                         {c.title}
                       </p>
                       <p className="text-[10px] text-slate-400 truncate">
-                        {c.instructor_name}
+                        {c.instructor_name ? `By ${c.instructor_name}` : "By SVARP GLOBAL ACADEMY"}
                       </p>
                     </div>
                   </div>

@@ -200,7 +200,13 @@ const AdminDashboard = () => {
                         <p className="text-xs font-bold text-slate-900 truncate">
                           {course.title}
                         </p>
-                        <p className="text-[11px] text-slate-500 truncate">
+                        <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5 truncate">
+                          <span className="text-slate-400">By</span>
+                          <span className="text-slate-700 font-semibold truncate">
+                            {course.instructor_name || "SVARP GLOBAL ACADEMY"}
+                          </span>
+                        </p>
+                        <p className="text-[11px] text-slate-400 truncate">
                           {course.enrolled_count ?? 0} learners enrolled
                         </p>
                       </div>

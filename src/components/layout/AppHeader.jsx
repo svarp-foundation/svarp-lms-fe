@@ -40,7 +40,7 @@ export const AppHeader = ({
               {brandTitle}
             </span>
             {brandSubtitle && (
-              <span className="text-[11px] font-bold text-emerald-700 uppercase">
+              <span className="text-sm font-bold text-emerald-700 uppercase">
                 {brandSubtitle}
               </span>
             )}

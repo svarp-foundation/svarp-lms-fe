@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Info, Heart, Share2 } from "lucide-react";
+import { Heart, Share2 } from "lucide-react";
 import { useWishlist } from "../../hooks/useWishlist";
-import CourseMetricsModal from "./CourseMetricsModal";
 import ShareModal from "../ShareModal";
 import { CourseThumbnail } from "../common";
 
 export const CourseCard = ({ course, enrolled = false }) => {
   const navigate = useNavigate();
   const { isWishlisted, loading: wishlistLoading, toggleWishlist } = useWishlist(course.id);
-  const [showMetricsModal, setShowMetricsModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const handleWishlistClick = async (e) => {
@@ -77,6 +75,14 @@ export const CourseCard = ({ course, enrolled = false }) => {
               </h3>
             </Link>
 
+            {/* Instructor Name */}
+            <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5 truncate">
+              <span className="text-slate-400">By</span>
+              <span className="text-slate-700 font-semibold truncate">
+                {course.instructor_name || "SVARP GLOBAL ACADEMY"}
+              </span>
+            </p>
+
             <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
               {course.description || "Master these industry-relevant skills with structured curricula."}
             </p>
@@ -121,15 +127,6 @@ export const CourseCard = ({ course, enrolled = false }) => {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setShowMetricsModal(true)}
-              className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
-              title="View Syllabus Overview"
-            >
-              <Info size={16} />
-            </button>
-
             <Link
               to={enrolled ? `/courses/${course.id}/learn` : `/courses/${course.id}`}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1f3b45] hover:bg-[#152930] text-white text-xs font-semibold shadow-xs transition-colors"
@@ -139,13 +136,6 @@ export const CourseCard = ({ course, enrolled = false }) => {
           </div>
         </div>
       </div>
-
-      {/* Metrics Modal */}
-      <CourseMetricsModal
-        isOpen={showMetricsModal}
-        onClose={() => setShowMetricsModal(false)}
-        course={course}
-      />
 
       {/* Share Modal */}
       {showShareModal && (

@@ -55,7 +55,7 @@ const PrivateRoute = ({ children, roles }) => {
 
 function App() {
   return (
-    <div className="min-h-screen bg-muted text-primary">
+    <div className="min-h-screen bg-muted text-slate-900">
       <PwaInstallBanner />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

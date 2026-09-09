@@ -122,7 +122,7 @@ export const CoursePerformanceTable = ({ courses = [], loading = false }) => {
       render: (c) => (
         <div>
           <span className="text-xs font-medium text-slate-900 block truncate max-w-[140px]">
-            {c.instructor_name || "Platform Admin"}
+            {c.instructor_name || "SVARP GLOBAL ACADEMY"}
           </span>
           <span className="text-[10px] text-slate-400 block truncate max-w-[140px]">
             {c.instructor_email || "-"}

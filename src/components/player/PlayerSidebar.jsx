@@ -37,6 +37,18 @@ export const PlayerSidebar = ({
 }) => {
   const [expandedModules, setExpandedModules] = useState({});
 
+  // Auto-expand the module containing the active lesson
+  React.useEffect(() => {
+    if (activeLessonId && modules.length > 0) {
+      modules.forEach((mod) => {
+        const hasActive = (mod.lessons || []).some((l) => l.id === activeLessonId);
+        if (hasActive) {
+          setExpandedModules((prev) => ({ ...prev, [mod.id]: true }));
+        }
+      });
+    }
+  }, [activeLessonId, modules]);
+
   const toggleModule = (modId) => {
     setExpandedModules((prev) => ({
       ...prev,
@@ -99,7 +111,7 @@ export const PlayerSidebar = ({
                 <div className="py-1">
                   {lessons.map((lesson) => {
                     const isActive = activeLessonId === lesson.id;
-                    const isCompleted = completedLessonIds.includes(lesson.id);
+                    const isCompleted = completedLessonIds.includes(lesson.id) || !!lesson.completed;
 
                     return (
                       <button
@@ -125,6 +137,8 @@ export const PlayerSidebar = ({
                         <div className="flex-shrink-0">
                           {isCompleted ? (
                             <CheckCircle size={15} className="text-emerald-600" />
+                          ) : lesson.locked ? (
+                            <Lock size={14} className="text-slate-300" />
                           ) : (
                             <Circle size={14} className="text-slate-300" />
                           )}

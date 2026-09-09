@@ -11,7 +11,7 @@ import {
   HelpCircle,
   ClipboardList,
   Layers,
-  Sparkles,
+  Upload,
 } from "lucide-react";
 
 const getLessonIcon = (type) => {
@@ -83,9 +83,9 @@ export const CurriculumEditor = ({
               variant="outline"
               size="xs"
               onClick={onOpenImporter}
-              icon={Sparkles}
+              icon={Upload}
             >
-              Text Importer
+              Upload Course (.txt)
             </Button>
           )}
           <Button
