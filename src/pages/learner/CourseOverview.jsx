@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
-import { getMediaUrl } from "../../config";
 import {
   PlayCircle,
   FileText,
@@ -21,6 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import LearnerLayout from "../../components/LearnerLayout";
 import ShareModal from "../../components/ShareModal";
 import { CourseOverviewSkeleton } from "../../components/Skeletons";
+import { CourseThumbnail } from "../../components/common";
 
 const CourseOverview = () => {
   const { courseId } = useParams();
@@ -388,17 +388,10 @@ const CourseOverview = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 sticky top-20 sm:top-24 space-y-5">
               {/* Thumbnail */}
               <div className="aspect-video bg-slate-900 rounded-xl overflow-hidden relative shadow-inner">
-                {course.thumbnail_url ? (
-                  <img
-                    src={getMediaUrl(course.thumbnail_url)}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-400">
-                    <PlayCircle size={48} />
-                  </div>
-                )}
+                <CourseThumbnail
+                  thumbnailUrl={course.thumbnail_url}
+                  title={course.title}
+                />
               </div>
 
               {/* Price Display */}

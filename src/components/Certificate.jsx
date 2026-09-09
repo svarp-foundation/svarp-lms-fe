@@ -15,7 +15,6 @@ const Certificate = ({
     day: "numeric",
   }),
   isHonour = false,
-  qrValue = "https://svarp.com/verify",
   qrImageUrl = null,
   profilePictureUrl = null,
 }) => {

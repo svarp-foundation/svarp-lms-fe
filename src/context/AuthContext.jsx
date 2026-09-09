@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
               console.warn("Could not sync live profile on init:", e);
             }
           }
-        } catch (error) {
+        } catch {
           logout();
         }
       }

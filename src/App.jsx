@@ -6,6 +6,7 @@ import Dashboard from "./pages/learner/Dashboard";
 import CoursePlayer from "./pages/learner/CoursePlayer";
 import CourseOverview from "./pages/learner/CourseOverview";
 import AdminDashboard from "./pages/admin/Dashboard";
+import Analytics from "./pages/admin/Analytics";
 import CourseManager from "./pages/admin/CourseManager";
 import CoursePayment from "./pages/CoursePayment";
 import Users from "./pages/admin/Users";
@@ -146,6 +147,14 @@ function App() {
           element={
             <PrivateRoute roles={["admin"]}>
               <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <Analytics />
             </PrivateRoute>
           }
         />

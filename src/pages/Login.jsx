@@ -56,7 +56,7 @@ const Login = () => {
         navigate("/dashboard", { replace: true });
       }
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.response?.data?.detail || "Invalid email or password");
     }
   };
 
