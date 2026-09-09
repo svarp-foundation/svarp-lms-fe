@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../lib/api";
 import LearnerLayout from "../../components/LearnerLayout";
-import CertificateModalPreview from "../../components/CertificateModalPreview";
+import { downloadCertificatePdf } from "../../utils/certificate";
 import { CoursePlayerSkeleton } from "../../components/Skeletons";
 import {
   PlayerHeader,
@@ -14,7 +14,7 @@ import {
   LessonComments,
 } from "../../components/player";
 import { Button } from "../../components/common";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
 
 const CoursePlayer = () => {
   const { courseId } = useParams();
@@ -25,8 +25,7 @@ const CoursePlayer = () => {
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [submittingAssignment, setSubmittingAssignment] = useState(false);
-  const [showCertificateModal, setShowCertificateModal] = useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [downloadingCert, setDownloadingCert] = useState(false);
   const mainContentRef = React.useRef(null);
 
   const fetchCourseContent = React.useCallback(async (isSilent = false) => {
@@ -138,7 +137,27 @@ const CoursePlayer = () => {
     }
   };
 
-  // Calculate total lessons and progress
+  const handleDownloadCertificate = async () => {
+    if (downloadingCert) return;
+    setDownloadingCert(true);
+    try {
+      // Claim/ensure certificate record exists
+      const res = await api.post(`/learner/courses/${courseId}/claim-certificate`);
+      const certData = res.data;
+      const pdfUrl = certData.pdf_url || `/media/${certData.certificate_code}.pdf`;
+      await downloadCertificatePdf(pdfUrl, certData.certificate_code);
+    } catch (err) {
+      console.error("Error claiming or downloading certificate:", err);
+      alert(
+        err.response?.data?.detail ||
+          "Unable to download certificate. Please make sure all course requirements are completed."
+      );
+    } finally {
+      setDownloadingCert(false);
+    }
+  };
+
+  // Calculate total lessons, progress, and previous/next navigation
   const allLessons = [];
   (courseContent?.modules || []).forEach((m) => {
     (m.lessons || []).forEach((l) => allLessons.push(l));
@@ -151,6 +170,13 @@ const CoursePlayer = () => {
       : 0;
 
   const isCurrentCompleted = activeLesson && completedLessonIds.includes(activeLesson.id);
+
+  const currentLessonIndex = allLessons.findIndex((l) => l.id === activeLesson?.id);
+  const prevLesson = currentLessonIndex > 0 ? allLessons[currentLessonIndex - 1] : null;
+  const nextLesson =
+    currentLessonIndex !== -1 && currentLessonIndex + 1 < allLessons.length
+      ? allLessons[currentLessonIndex + 1]
+      : null;
 
   if (loading) {
     return (
@@ -169,9 +195,8 @@ const CoursePlayer = () => {
           progressPercentage={progressPct}
           courseId={courseId}
           isCertified={courseContent?.certificate_issued}
-          onClaimCertificate={() => setShowCertificateModal(true)}
-          sidebarOpen={mobileSidebarOpen}
-          onToggleSidebar={() => setMobileSidebarOpen((prev) => !prev)}
+          onDownloadCertificate={handleDownloadCertificate}
+          downloadingCertificate={downloadingCert}
         />
 
         {/* Player Workspace: Left Content + Right Sidebar */}
@@ -246,40 +271,56 @@ const CoursePlayer = () => {
                   />
                 )}
 
+                {/* Previous / Next Lesson Navigation Footer */}
+                <div className="flex items-center justify-between gap-3 pt-4 border-t border-slate-200">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    disabled={!prevLesson}
+                    onClick={() => prevLesson && setActiveLesson(prevLesson)}
+                    icon={ArrowLeft}
+                  >
+                    Previous
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant={nextLesson ? "primary" : "outline"}
+                    size="xs"
+                    disabled={!nextLesson}
+                    onClick={() => nextLesson && setActiveLesson(nextLesson)}
+                    icon={ArrowRight}
+                  >
+                    Next Lesson
+                  </Button>
+                </div>
+
                 {/* Lesson Discussion Comments */}
-                <div className="pt-4">
+                <div className="pt-2">
                   <LessonComments lessonId={activeLesson.id} />
                 </div>
               </>
             ) : (
               <div className="text-center py-16 text-slate-400 text-xs">
-                Select a lesson from the curriculum sidebar to begin learning.
+                Select a lesson to begin learning.
               </div>
             )}
           </main>
 
-          {/* Curriculum Navigation Sidebar */}
+          {/* Desktop-Only Curriculum Navigation Sidebar */}
           <PlayerSidebar
             modules={courseContent?.modules || []}
             activeLessonId={activeLesson?.id}
             completedLessonIds={completedLessonIds}
             onSelectLesson={(lesson) => setActiveLesson(lesson)}
-            open={mobileSidebarOpen}
-            setOpen={setMobileSidebarOpen}
           />
         </div>
       </div>
-
-      {/* Certificate Modal Preview */}
-      {showCertificateModal && (
-        <CertificateModalPreview
-          courseId={courseId}
-          courseTitle={courseContent?.title}
-          onClose={() => setShowCertificateModal(false)}
-        />
-      )}
     </LearnerLayout>
   );
 };
 
 export default CoursePlayer;
+
+

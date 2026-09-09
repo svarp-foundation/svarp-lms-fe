@@ -1,14 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 import UserMenu from "./UserMenu";
 
 export const AppHeader = ({
   brandTitle = "SVARP",
   brandSubtitle = "GLOBAL",
   brandLink = "/",
-  isSidebarOpen,
-  onToggleSidebar,
   actions,
   className = "",
 }) => {
@@ -16,19 +13,8 @@ export const AppHeader = ({
     <header
       className={`h-14 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 flex-shrink-0 ${className}`}
     >
-      {/* Left: Mobile hamburger + Brand */}
+      {/* Left: Brand */}
       <div className="flex items-center gap-3">
-        {onToggleSidebar && (
-          <button
-            type="button"
-            onClick={onToggleSidebar}
-            className="md:hidden p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-            aria-label="Toggle navigation menu"
-          >
-            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        )}
-
         <Link to={brandLink} className="flex items-center gap-2">
           <img
             src="/company/svarp-logo.webp"
@@ -58,3 +44,4 @@ export const AppHeader = ({
 };
 
 export default AppHeader;
+

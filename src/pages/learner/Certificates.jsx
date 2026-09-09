@@ -2,16 +2,16 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import LearnerLayout from "../../components/LearnerLayout";
-import CertificateModalPreview from "../../components/CertificateModalPreview";
+import { downloadCertificatePdf } from "../../utils/certificate";
 import { CertificatesSkeleton } from "../../components/Skeletons";
 import { PageHeader, EmptyState, Button } from "../../components/common";
-import { Award, Eye, GraduationCap } from "lucide-react";
+import { Award, Download, GraduationCap } from "lucide-react";
 
 const Certificates = () => {
   const navigate = useNavigate();
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCert, setSelectedCert] = useState(null);
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const fetchCertificates = useCallback(async () => {
     setLoading(true);
@@ -29,12 +29,24 @@ const Certificates = () => {
     fetchCertificates();
   }, [fetchCertificates]);
 
+  const handleDownloadCertificate = async (cert) => {
+    setDownloadingId(cert.id);
+    try {
+      const pdfUrl = cert.pdf_url || `/media/${cert.certificate_code}.pdf`;
+      await downloadCertificatePdf(pdfUrl, cert.certificate_code);
+    } catch (err) {
+      console.error("Error downloading certificate:", err);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   return (
     <LearnerLayout>
       <div className="space-y-6">
         <PageHeader
           title="Earned Certificates & Honors"
-          subtitle="View and download verified graduation credentials for your completed programs"
+          subtitle="Download verified graduation credentials for your completed programs"
         />
 
         {loading ? (
@@ -86,24 +98,16 @@ const Certificates = () => {
                     type="button"
                     variant="primary"
                     size="xs"
-                    onClick={() => setSelectedCert(cert)}
-                    icon={Eye}
+                    onClick={() => handleDownloadCertificate(cert)}
+                    loading={downloadingId === cert.id}
+                    icon={Download}
                   >
-                    View & Download
+                    Download Certificate
                   </Button>
                 </div>
               </div>
             ))}
           </div>
-        )}
-
-        {/* Certificate Modal Preview */}
-        {selectedCert && (
-          <CertificateModalPreview
-            courseId={selectedCert.course_id || selectedCert.course?.id}
-            courseTitle={selectedCert.course_title || selectedCert.course?.title}
-            onClose={() => setSelectedCert(null)}
-          />
         )}
       </div>
     </LearnerLayout>
@@ -111,3 +115,4 @@ const Certificates = () => {
 };
 
 export default Certificates;
+

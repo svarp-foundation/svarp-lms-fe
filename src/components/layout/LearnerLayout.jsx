@@ -43,7 +43,6 @@ export const LearnerLayout = ({
   headerActions,
   noPadding = false,
 }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
   if (isPlayerPage) {
@@ -56,10 +55,8 @@ export const LearnerLayout = ({
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row font-sans selection:bg-emerald-500/20 text-slate-900 pb-16 md:pb-0">
-      {/* Desktop & Mobile Left Sidebar Navigation */}
+      {/* Desktop-Only Left Sidebar Navigation */}
       <AppSidebar
-        open={isSidebarOpen}
-        setOpen={setIsSidebarOpen}
         brandTitle="SVARP"
         brandSubtitle="LEARNING"
         brandLink="/dashboard"
@@ -73,8 +70,6 @@ export const LearnerLayout = ({
           brandTitle="SVARP"
           brandSubtitle="LEARNING"
           brandLink="/dashboard"
-          isSidebarOpen={isSidebarOpen}
-          onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
           actions={headerActions}
         />
 

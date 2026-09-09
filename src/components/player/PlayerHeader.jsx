@@ -1,18 +1,18 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Award, Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "../common";
 
 export const PlayerHeader = ({
   courseTitle = "Course",
   progressPercentage = 0,
   courseId,
-  isCertified = false,
+  onDownloadCertificate,
   onClaimCertificate,
-  onToggleSidebar,
-  sidebarOpen,
+  downloadingCertificate = false,
 }) => {
   const navigate = useNavigate();
+  const handleCertClick = onDownloadCertificate || onClaimCertificate;
 
   return (
     <header className="h-14 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 flex-shrink-0">
@@ -45,29 +45,19 @@ export const PlayerHeader = ({
         </div>
       </div>
 
-      {/* Right: Certificate & Sidebar Toggle */}
+      {/* Right: Certificate */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        {progressPercentage >= 100 && onClaimCertificate && (
+        {progressPercentage >= 100 && handleCertClick && (
           <Button
             type="button"
             variant="emerald"
             size="xs"
-            onClick={onClaimCertificate}
-            icon={Award}
+            onClick={handleCertClick}
+            loading={downloadingCertificate}
+            icon={Download}
           >
-            {isCertified ? "View Certificate" : "Get Certificate"}
+            Download Certificate
           </Button>
-        )}
-
-        {onToggleSidebar && (
-          <button
-            type="button"
-            onClick={onToggleSidebar}
-            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors md:hidden"
-            aria-label="Toggle curriculum navigation"
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
         )}
       </div>
     </header>
@@ -75,3 +65,5 @@ export const PlayerHeader = ({
 };
 
 export default PlayerHeader;
+
+

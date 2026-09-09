@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import AppHeader from "./AppHeader";
 import { useAuth } from "../../context/AuthContext";
@@ -32,7 +33,7 @@ const INSTRUCTOR_NAV_LINKS = [
 
 export const InstructorLayout = ({ children, headerActions }) => {
   const { user, loading } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
 
   if (loading || !user) {
     return (
@@ -43,11 +44,9 @@ export const InstructorLayout = ({ children, headerActions }) => {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafc] font-sans antialiased text-slate-900">
-      {/* Sidebar */}
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#f8fafc] font-sans antialiased text-slate-900 pb-16 md:pb-0">
+      {/* Desktop-Only Left Sidebar */}
       <AppSidebar
-        open={isSidebarOpen}
-        setOpen={setIsSidebarOpen}
         brandTitle="SVARP"
         brandSubtitle="STUDIO"
         brandLink="/instructor/dashboard"
@@ -61,8 +60,6 @@ export const InstructorLayout = ({ children, headerActions }) => {
           brandTitle="SVARP"
           brandSubtitle="STUDIO"
           brandLink="/instructor/dashboard"
-          isSidebarOpen={isSidebarOpen}
-          onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
           actions={headerActions}
         />
 
@@ -70,8 +67,32 @@ export const InstructorLayout = ({ children, headerActions }) => {
           {children}
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-white border-t border-slate-200 z-40 flex items-center justify-around px-2 shadow-lg">
+        {INSTRUCTOR_NAV_LINKS.map((link) => {
+          const isActive = link.end
+            ? location.pathname === link.to
+            : location.pathname.startsWith(link.to);
+          const Icon = link.icon;
+
+          return (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={`flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold transition-colors ${
+                isActive ? "text-emerald-700 font-bold" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Icon size={18} />
+              <span className="mt-0.5">{link.name}</span>
+            </NavLink>
+          );
+        })}
+      </nav>
     </div>
   );
 };
 
 export default InstructorLayout;
+
