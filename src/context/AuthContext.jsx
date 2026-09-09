@@ -10,36 +10,69 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const resolveRole = (decoded) => {
+    if (decoded?.role) return decoded.role;
+    if (decoded?.roles?.includes("admin")) return "admin";
+    if (decoded?.roles?.includes("instructor") || decoded?.roles?.includes("teacher"))
+      return "instructor";
+    if (decoded?.roles?.includes("instructor_pending")) return "instructor_pending";
+    return "learner";
+  };
+
   const fetchProfile = async () => {
     try {
       const res = await api.get("/users/me");
-      setUser(res.data);
+      if (res.data) {
+        setUser((prev) => ({
+          ...(prev || {}),
+          ...res.data,
+          role: res.data.role || prev?.role || "learner",
+        }));
+        return res.data;
+      }
     } catch (err) {
       console.error("Error fetching profile:", err);
-      // If profile fetch fails, we still have the decoded JWT user (sub, role etc)
     }
+    return null;
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const refresh = localStorage.getItem("refreshToken");
+    const initAuth = async () => {
+      const token = localStorage.getItem("token");
+      const refresh = localStorage.getItem("refreshToken");
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp * 1000 < Date.now()) {
-          if (!refresh) logout();
-        } else {
-          const userRole = decoded.role || (decoded.roles?.includes("admin") ? "admin" : "learner");
-          setUser({ ...decoded, role: userRole });
-          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          fetchProfile(); // Get full profile with membership
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          if (decoded.exp * 1000 < Date.now()) {
+            if (!refresh) logout();
+          } else {
+            api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            const baseRole = resolveRole(decoded);
+            setUser({ ...decoded, role: baseRole });
+
+            // Fetch live profile from LMS database to get updated role
+            try {
+              const res = await api.get("/users/me");
+              if (res.data) {
+                setUser({
+                  ...decoded,
+                  ...res.data,
+                  role: res.data.role || baseRole,
+                });
+              }
+            } catch (e) {
+              console.warn("Could not sync live profile on init:", e);
+            }
+          }
+        } catch (error) {
+          logout();
         }
-      } catch (error) {
-        logout();
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initAuth();
 
     // Set up Global Axios Interceptor
     const interceptorConfig = api.interceptors.response.use(
@@ -71,7 +104,7 @@ export const AuthProvider = ({ children }) => {
 
             api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
             const decoded = jwtDecode(newToken);
-            const userRole = decoded.role || (decoded.roles?.includes("admin") ? "admin" : "learner");
+            const userRole = resolveRole(decoded);
             setUser({ ...decoded, role: userRole });
             fetchProfile(); // Refresh profile after token refresh
 
@@ -83,7 +116,7 @@ export const AuthProvider = ({ children }) => {
           }
         }
         return Promise.reject(error);
-      },
+      }
     );
 
     return () => {
@@ -91,15 +124,41 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = (token, refreshToken = null) => {
+  const login = async (token, refreshToken = null, initialUser = null) => {
     localStorage.setItem("token", token);
     if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
 
     const decoded = jwtDecode(token);
-    const userRole = decoded.role || (decoded.roles?.includes("admin") ? "admin" : "learner");
-    setUser({ ...decoded, role: userRole });
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    fetchProfile(); // Fetch profile on login
+
+    let effectiveRole = initialUser?.role || resolveRole(decoded);
+    let finalUser = {
+      ...decoded,
+      ...(initialUser || {}),
+      role: effectiveRole,
+    };
+
+    setUser(finalUser);
+
+    // If initialUser was not passed, fetch profile from /users/me
+    if (!initialUser) {
+      try {
+        const res = await api.get("/users/me");
+        if (res.data) {
+          effectiveRole = res.data.role || effectiveRole;
+          finalUser = {
+            ...finalUser,
+            ...res.data,
+            role: effectiveRole,
+          };
+          setUser(finalUser);
+        }
+      } catch (err) {
+        console.error("Error fetching profile on login:", err);
+      }
+    }
+
+    return finalUser;
   };
 
   const logout = () => {
@@ -117,6 +176,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     getToken,
+    fetchProfile,
   };
 
   return (

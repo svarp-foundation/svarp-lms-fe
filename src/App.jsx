@@ -14,6 +14,9 @@ import Submissions from "./pages/admin/Submissions";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
 import Certificates from "./pages/learner/Certificates";
+import InstructorDashboard from "./pages/instructor/Dashboard";
+import InstructorCourseManager from "./pages/instructor/CourseManager";
+import InstructorSubmissions from "./pages/instructor/Submissions";
 import { useAuth } from "./context/AuthContext";
 import PwaInstallBanner from "./components/PwaInstallBanner";
 
@@ -34,8 +37,18 @@ const PrivateRoute = ({ children, roles }) => {
     );
   if (!user) return <Navigate to={redirectTarget} replace />;
   
-  const effectiveRole = user.role || (user.roles?.includes("admin") ? "admin" : "learner");
-  if (roles && !roles.includes(effectiveRole)) return <Navigate to={redirectTarget} replace />;
+  const effectiveRole = user.role || (user.roles?.includes("admin") ? "admin" : (user.roles?.includes("instructor") ? "instructor" : (user.roles?.includes("instructor_pending") ? "instructor_pending" : "learner")));
+  
+  if (roles) {
+    const isAllowed =
+      roles.includes(effectiveRole) ||
+      (roles.includes("learner") && ["learner", "instructor_pending", "instructor", "admin"].includes(effectiveRole)) ||
+      (roles.includes("instructor") && ["instructor", "admin"].includes(effectiveRole));
+
+    if (!isAllowed) {
+      return <Navigate to={redirectTarget} replace />;
+    }
+  }
   return children;
 };
 
@@ -48,10 +61,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+
+        {/* Learner Routes (Accessible by learner, instructor_pending, instructor, admin) */}
         <Route
           path="/dashboard"
           element={
-            <PrivateRoute roles={["learner", "admin"]}>
+            <PrivateRoute roles={["learner"]}>
               <Dashboard />
             </PrivateRoute>
           }
@@ -59,7 +74,7 @@ function App() {
         <Route
           path="/wishlist"
           element={
-            <PrivateRoute roles={["learner", "admin"]}>
+            <PrivateRoute roles={["learner"]}>
               <Wishlist />
             </PrivateRoute>
           }
@@ -67,7 +82,7 @@ function App() {
         <Route
           path="/certificates"
           element={
-            <PrivateRoute roles={["learner", "admin"]}>
+            <PrivateRoute roles={["learner"]}>
               <Certificates />
             </PrivateRoute>
           }
@@ -75,7 +90,7 @@ function App() {
         <Route
           path="/courses-catalog"
           element={
-            <PrivateRoute roles={["learner", "admin"]}>
+            <PrivateRoute roles={["learner"]}>
               <AllCourses />
             </PrivateRoute>
           }
@@ -84,7 +99,7 @@ function App() {
         <Route
           path="/courses/:courseId/pay"
           element={
-            <PrivateRoute roles={["learner", "admin"]}>
+            <PrivateRoute roles={["learner"]}>
               <CoursePayment />
             </PrivateRoute>
           }
@@ -92,11 +107,40 @@ function App() {
         <Route
           path="/courses/:courseId/learn"
           element={
-            <PrivateRoute roles={["learner", "admin"]}>
+            <PrivateRoute roles={["learner"]}>
               <CoursePlayer />
             </PrivateRoute>
           }
         />
+
+        {/* Instructor Studio Routes */}
+        <Route path="/instructor" element={<Navigate to="/instructor/dashboard" replace />} />
+        <Route
+          path="/instructor/dashboard"
+          element={
+            <PrivateRoute roles={["instructor"]}>
+              <InstructorDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/instructor/courses"
+          element={
+            <PrivateRoute roles={["instructor"]}>
+              <InstructorCourseManager />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/instructor/submissions"
+          element={
+            <PrivateRoute roles={["instructor"]}>
+              <InstructorSubmissions />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Admin Routes */}
         <Route
           path="/admin"
           element={

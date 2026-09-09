@@ -16,9 +16,11 @@ const Login = () => {
   useEffect(() => {
     if (user) {
       if (user.role === "admin") {
-        navigate("/admin");
+        navigate("/admin", { replace: true });
+      } else if (user.role === "instructor") {
+        navigate("/instructor/dashboard", { replace: true });
       } else {
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       }
     }
   }, [user, navigate]);
@@ -37,16 +39,21 @@ const Login = () => {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
         },
       );
-      login(response.data.access_token, response.data.refresh_token);
 
-      // Decode token to check role
-      const payload = JSON.parse(
-        atob(response.data.access_token.split(".")[1]),
+      // Login and resolve local LMS database role (instructor/admin/learner)
+      const loggedInUser = await login(
+        response.data.access_token,
+        response.data.refresh_token,
+        response.data.user,
       );
-      if (payload.role === "admin") {
-        navigate("/admin");
+
+      const role = loggedInUser?.role;
+      if (role === "admin") {
+        navigate("/admin", { replace: true });
+      } else if (role === "instructor") {
+        navigate("/instructor/dashboard", { replace: true });
       } else {
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       }
     } catch (err) {
       setError("Invalid email or password");
@@ -74,16 +81,16 @@ const Login = () => {
               </span>
             </div>
             <p className="text-[9px] text-gray-400 font-bold tracking-[0.2em] uppercase mt-2">
-              Learner Portal
+              Learner & Instructor Portal
             </p>
           </div>
 
-          <h2 className="text-lg font-bold text-gray-900 mb-4 text-center leading-tight">
-            Log in to continue your learning journey
+          <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">
+            Sign in to continue
           </h2>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2.5 rounded-2xl text-xs mb-4 text-center animate-pulse">
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-xs mb-6 text-center animate-pulse">
               {error}
             </div>
           )}
@@ -95,7 +102,7 @@ const Login = () => {
               </label>
               <input
                 type="email"
-                placeholder="email@example.com"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent text-gray-800 placeholder-gray-400 font-medium transition-all text-sm shadow-sm"
@@ -104,9 +111,11 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 ml-1">
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-1.5 ml-1">
+                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                  Password
+                </label>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -128,13 +137,13 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full bg-accent text-white py-3.5 rounded-2xl font-bold hover:bg-opacity-90 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md text-center mt-3 text-sm"
+              className="w-full bg-accent text-white py-3.5 rounded-2xl font-bold hover:bg-opacity-90 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md text-center mt-2 text-sm"
             >
-              Continue
+              Sign In
             </button>
           </form>
 
-          <div className="text-center mt-8 pt-5 border-t border-gray-100">
+          <div className="text-center mt-6 pt-4 border-t border-gray-100">
             <p className="text-xs text-gray-600">
               Don't have an account?{" "}
               <a
