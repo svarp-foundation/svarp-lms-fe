@@ -18,7 +18,7 @@ export const StatusBadge = ({ status, customLabel, showDot = true, className = "
     case "passed":
       colorClasses = "text-emerald-700 bg-emerald-50/80 border-emerald-200/60";
       dotColor = "bg-emerald-500";
-      defaultLabel = normalized === "published" ? "Published" : normalized === "approved" ? "Approved" : "Active";
+      defaultLabel = normalized === "published" ? "Published" : normalized === "approved" ? "Approved" : normalized === "completed" ? "Completed" : "Active";
       break;
 
     case "pending":
@@ -29,7 +29,13 @@ export const StatusBadge = ({ status, customLabel, showDot = true, className = "
     case "instructor_pending":
       colorClasses = "text-amber-700 bg-amber-50/80 border-amber-200/60";
       dotColor = "bg-amber-500";
-      defaultLabel = normalized === "draft" ? "Draft" : normalized === "instructor_pending" ? "Pending Review" : "Pending";
+      defaultLabel = normalized === "draft" ? "Draft" : normalized === "in_progress" ? "In Progress" : normalized === "instructor_pending" ? "Pending Review" : "Pending";
+      break;
+
+    case "not_started":
+      colorClasses = "text-slate-600 bg-slate-100 border-slate-200";
+      dotColor = "bg-slate-400";
+      defaultLabel = "Not Started";
       break;
 
     case "rejected":

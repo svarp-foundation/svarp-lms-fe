@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { DataTable, SearchBar, FilterTabs, StatusBadge, Button, EmptyState } from "../common";
 import { useDebounce } from "../../hooks/useDebounce";
-import { Download, BookOpen, IndianRupee, GraduationCap, Award } from "lucide-react";
+import { Download, BookOpen, IndianRupee, GraduationCap, Award, Users, ArrowRight } from "lucide-react";
 
-export const CoursePerformanceTable = ({ courses = [], loading = false }) => {
+export const CoursePerformanceTable = ({ courses = [], loading = false, onSelectCourse }) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const debouncedSearch = useDebounce(search, 200);
@@ -103,9 +103,14 @@ export const CoursePerformanceTable = ({ courses = [], loading = false }) => {
       render: (c) => (
         <div className="min-w-0 py-1">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-900 text-xs truncate max-w-[220px] block">
+            <button
+              type="button"
+              onClick={() => onSelectCourse && onSelectCourse(c.id)}
+              className="text-left font-bold text-slate-900 hover:text-emerald-700 text-xs truncate max-w-[220px] block transition-colors"
+              title="Click to view enrolled learners"
+            >
               {c.title}
-            </span>
+            </button>
             <StatusBadge status={c.status} />
           </div>
           <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
@@ -189,6 +194,22 @@ export const CoursePerformanceTable = ({ courses = [], loading = false }) => {
             {c.average_grade ? `Avg score: ${c.average_grade}%` : "No graded tests"}
           </span>
         </div>
+      ),
+    },
+    {
+      key: "actions",
+      label: "",
+      align: "right",
+      render: (c) => (
+        <Button
+          variant="secondary"
+          size="xs"
+          icon={Users}
+          onClick={() => onSelectCourse && onSelectCourse(c.id)}
+          title="Inspect enrolled learners for this course"
+        >
+          Learners
+        </Button>
       ),
     },
   ];

@@ -9,13 +9,20 @@ import {
   CoursePerformanceTable,
   InstructorPerformanceTable,
   EngagementBreakdown,
+  LearnerPerformanceTable,
+  CourseLearnersModal,
+  LearnerCoursesModal,
 } from "../../components/analytics";
-import { RefreshCw, BarChart3, BookOpen, Users, ClipboardCheck } from "lucide-react";
+import { RefreshCw, BarChart3, BookOpen, Users, GraduationCap, ClipboardCheck } from "lucide-react";
 
 export const Analytics = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Bidirectional Drill-down Modal State
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [selectedLearnerId, setSelectedLearnerId] = useState(null);
 
   const fetchAnalytics = async () => {
     setLoading(true);
@@ -44,6 +51,12 @@ export const Analytics = () => {
       label: "Course Performance",
       icon: BookOpen,
       count: data?.course_analytics?.length,
+    },
+    {
+      id: "learners",
+      label: "Learner Enrollments",
+      icon: GraduationCap,
+      count: data?.learners_analytics?.length,
     },
     {
       id: "instructors",
@@ -109,15 +122,25 @@ export const Analytics = () => {
               summary={data?.summary}
               engagement={data?.engagement}
               loading={loading}
+              onSelectCourse={setSelectedCourseId}
+              onSelectLearner={setSelectedLearnerId}
             />
           </div>
         )}
-
 
         {activeTab === "courses" && (
           <CoursePerformanceTable
             courses={data?.course_analytics || []}
             loading={loading}
+            onSelectCourse={setSelectedCourseId}
+          />
+        )}
+
+        {activeTab === "learners" && (
+          <LearnerPerformanceTable
+            learners={data?.learners_analytics || []}
+            loading={loading}
+            onSelectLearner={setSelectedLearnerId}
           />
         )}
 
@@ -139,12 +162,37 @@ export const Analytics = () => {
               summary={data?.summary}
               engagement={data?.engagement}
               loading={loading}
+              onSelectCourse={setSelectedCourseId}
+              onSelectLearner={setSelectedLearnerId}
             />
           </div>
         )}
       </div>
+
+      {/* Course Learners Drill-Down Modal */}
+      <CourseLearnersModal
+        isOpen={!!selectedCourseId}
+        onClose={() => setSelectedCourseId(null)}
+        courseId={selectedCourseId}
+        onSelectLearner={(userId) => {
+          setSelectedCourseId(null);
+          setSelectedLearnerId(userId);
+        }}
+      />
+
+      {/* Learner Courses Drill-Down Modal */}
+      <LearnerCoursesModal
+        isOpen={!!selectedLearnerId}
+        onClose={() => setSelectedLearnerId(null)}
+        userId={selectedLearnerId}
+        onSelectCourse={(courseId) => {
+          setSelectedLearnerId(null);
+          setSelectedCourseId(courseId);
+        }}
+      />
     </AdminLayout>
   );
 };
 
 export default Analytics;
+

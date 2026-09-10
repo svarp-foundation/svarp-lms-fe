@@ -17,6 +17,8 @@ export const EngagementBreakdown = ({
   summary = {},
   engagement = {},
   loading = false,
+  onSelectCourse,
+  onSelectLearner,
 }) => {
   if (loading) {
     return (
@@ -232,14 +234,16 @@ export const EngagementBreakdown = ({
               top_enrolled_courses.map((c, i) => (
                 <div
                   key={c.id}
-                  className="p-2.5 rounded-lg border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors"
+                  onClick={() => onSelectCourse && onSelectCourse(c.id)}
+                  className={`p-2.5 rounded-lg border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors ${onSelectCourse ? "cursor-pointer" : ""}`}
+                  title="Click to view enrolled learners"
                 >
                   <div className="min-w-0 flex items-center gap-2.5">
                     <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                       {i + 1}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-900 truncate">
+                      <p className="text-xs font-bold text-slate-900 hover:text-emerald-700 truncate">
                         {c.title}
                       </p>
                       <p className="text-[10px] text-slate-400 truncate">
@@ -279,14 +283,16 @@ export const EngagementBreakdown = ({
               top_revenue_courses.map((c, i) => (
                 <div
                   key={c.id}
-                  className="p-2.5 rounded-lg border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors"
+                  onClick={() => onSelectCourse && onSelectCourse(c.id)}
+                  className={`p-2.5 rounded-lg border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors ${onSelectCourse ? "cursor-pointer" : ""}`}
+                  title="Click to view enrolled learners"
                 >
                   <div className="min-w-0 flex items-center gap-2.5">
                     <span className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                       {i + 1}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-900 truncate">
+                      <p className="text-xs font-bold text-slate-900 hover:text-emerald-700 truncate">
                         {c.title}
                       </p>
                       <p className="text-[10px] text-slate-400 truncate">
@@ -326,14 +332,16 @@ export const EngagementBreakdown = ({
               top_active_learners.map((learner, i) => (
                 <div
                   key={learner.user_id}
-                  className="p-2.5 rounded-lg border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors"
+                  onClick={() => onSelectLearner && onSelectLearner(learner.user_id)}
+                  className={`p-2.5 rounded-lg border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors ${onSelectLearner ? "cursor-pointer" : ""}`}
+                  title="Click to view learner enrolled courses"
                 >
                   <div className="min-w-0 flex items-center gap-2.5">
                     <span className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                       {i + 1}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-900 truncate">
+                      <p className="text-xs font-bold text-slate-900 hover:text-indigo-700 truncate">
                         {learner.full_name}
                       </p>
                       <p className="text-[10px] text-slate-400 truncate">
