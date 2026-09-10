@@ -24,7 +24,7 @@ export const CourseDeleteModal = ({
   if (!course) return null;
 
   const isAlreadyDeleted = Boolean(course.is_deleted);
-  const learnerCount = course.enrolled_count ?? course.students_count ?? 0;
+  const learnerCount = course.enrolled_count ?? course.student_count ?? course.students_count ?? 0;
   const hasLearners = learnerCount > 0;
 
   const handleSubmit = (e) => {

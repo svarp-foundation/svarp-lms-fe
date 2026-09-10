@@ -102,7 +102,9 @@ export const CourseTextImporterModal = ({
   onClose,
   onImport,
   importing = false,
+  targetCourse = null,
 }) => {
+  const isUpdateMode = Boolean(targetCourse?.id);
   const [activeTab, setActiveTab] = useState("upload"); // "upload" | "paste"
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
@@ -225,8 +227,16 @@ export const CourseTextImporterModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Upload & Parse Course File"
-      subtitle="Upload a structured .txt course file to automatically create the course, modules, lessons, and assignments"
+      title={
+        isUpdateMode
+          ? "Update Course Curriculum (.txt)"
+          : "Upload & Parse Course File"
+      }
+      subtitle={
+        isUpdateMode
+          ? `Upload or paste a structured .txt course file to replace and update all modules, lessons, and assignments for "${targetCourse.title || "this course"}"`
+          : "Upload a structured .txt course file to automatically create a new course, modules, lessons, and assignments"
+      }
       size="3xl"
     >
       <div className="space-y-4">
@@ -428,7 +438,13 @@ export const CourseTextImporterModal = ({
             loading={importing}
             icon={Upload}
           >
-            {importing ? "Parsing & Creating..." : "Upload & Create Course"}
+            {importing
+              ? isUpdateMode
+                ? "Parsing & Updating..."
+                : "Parsing & Creating..."
+              : isUpdateMode
+              ? "Update Course Curriculum"
+              : "Upload & Create Course"}
           </Button>
         </div>
       </div>

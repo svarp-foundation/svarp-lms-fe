@@ -188,7 +188,7 @@ const InstructorDashboard = () => {
                         {course.title}
                       </p>
                       <p className="text-[11px] text-slate-500 truncate">
-                        {course.enrolled_count ?? 0} students enrolled
+                        {course.enrolled_count ?? course.student_count ?? course.students_count ?? 0} students enrolled
                       </p>
                     </div>
                     <StatusBadge status={course.status || "draft"} />

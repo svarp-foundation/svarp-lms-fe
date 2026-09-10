@@ -205,30 +205,34 @@ const CoursePlayer = () => {
           <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6">
             {activeLesson ? (
               <>
-                {/* Lesson Header Title */}
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Current Lesson
-                    </span>
-                    <h1 className="text-lg sm:text-xl font-bold text-slate-900 mt-0.5 break-words">
+                {/* Lesson Header Title & Completion Action */}
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Current Lesson
+                  </span>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-lg sm:text-xl font-bold text-slate-900 break-words">
                       {activeLesson.title}
                     </h1>
-                  </div>
 
-                  {!isCurrentCompleted && (
-                    <Button
-                      type="button"
-                      variant="primary"
-                      size="sm"
-                      onClick={handleMarkComplete}
-                      loading={completing}
-                      icon={CheckCircle2}
-                      className="whitespace-nowrap flex-shrink-0"
-                    >
-                      Mark as Completed
-                    </Button>
-                  )}
+                    {!isCurrentCompleted ? (
+                      <Button
+                        type="button"
+                        variant="primary"
+                        size="xs"
+                        onClick={handleMarkComplete}
+                        loading={completing}
+                        icon={CheckCircle2}
+                        className="whitespace-nowrap flex-shrink-0 shadow-xs"
+                      >
+                        Mark as Completed
+                      </Button>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <CheckCircle2 size={13} /> Completed
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Video Lesson Type */}

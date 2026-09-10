@@ -312,3 +312,245 @@ body {
     flex-shrink: 0;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────── */
+/* LMS Markdown Lesson Content Typography & Code Theme                      */
+/* ───────────────────────────────────────────────────────────────────────── */
+.markdown-lesson-body {
+  color: #1e293b;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.markdown-lesson-body h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.markdown-lesson-body h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 1.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.markdown-lesson-body h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-lesson-body h4 {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.markdown-lesson-body p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.markdown-lesson-body strong,
+.markdown-lesson-body b {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.markdown-lesson-body em,
+.markdown-lesson-body i {
+  font-style: italic;
+}
+
+.markdown-lesson-body ul {
+  list-style-type: disc;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdown-lesson-body ol {
+  list-style-type: decimal;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdown-lesson-body li {
+  margin-bottom: 0.35rem;
+}
+
+.markdown-lesson-body li > ul,
+.markdown-lesson-body li > ol {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.markdown-lesson-body hr {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 1.75rem 0;
+}
+
+.markdown-lesson-body blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #1f3b45;
+  background-color: #f8fafc;
+  border-radius: 0 0.5rem 0.5rem 0;
+  color: #334155;
+  font-style: italic;
+}
+
+/* Inline Code */
+.markdown-lesson-body code:not(pre code) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  font-weight: 600;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Fenced Pre Code Blocks */
+.markdown-lesson-body pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  border: 1px solid #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-lesson-body pre code {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+/* Markdown Tables */
+.markdown-lesson-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  display: block;
+  overflow-x: auto;
+  border-radius: 0.625rem;
+  border: 1px solid #e2e8f0;
+}
+
+.markdown-lesson-body th {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.markdown-lesson-body td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.markdown-lesson-body tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown-lesson-body tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* LMS Alert Callouts */
+.lms-callout {
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  margin: 1.25rem 0;
+  border-left-width: 4px;
+}
+
+.lms-callout-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.lms-callout-body {
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.lms-callout-note {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.lms-callout-note .lms-callout-title {
+  color: #1d4ed8;
+}
+
+.lms-callout-tip {
+  background-color: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+}
+
+.lms-callout-tip .lms-callout-title {
+  color: #047857;
+}
+
+.lms-callout-important {
+  background-color: #faf5ff;
+  border-color: #a855f7;
+  color: #6b21a8;
+}
+
+.lms-callout-important .lms-callout-title {
+  color: #7e22ce;
+}
+
+.lms-callout-warning {
+  background-color: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.lms-callout-warning .lms-callout-title {
+  color: #b45309;
+}
+
+.lms-callout-caution {
+  background-color: #fff1f2;
+  border-color: #f43f5e;
+  color: #9f1239;
+}
+
+.lms-callout-caution .lms-callout-title {
+  color: #be123c;
+}

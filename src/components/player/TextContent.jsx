@@ -1,7 +1,9 @@
-import React from "react";
-import { sanitizeHtml } from "../../lib/sanitize";
+import React, { useMemo } from "react";
+import { renderMarkdown } from "../../lib/markdown";
 
 export const TextContent = ({ content = "" }) => {
+  const htmlContent = useMemo(() => renderMarkdown(content), [content]);
+
   if (!content) {
     return (
       <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 text-center text-xs text-slate-500">
@@ -13,9 +15,9 @@ export const TextContent = ({ content = "" }) => {
   return (
     <div className="bg-white p-5 sm:p-8 rounded-xl border border-slate-200/90 shadow-xs max-w-none">
       <div
-        className="prose prose-slate max-w-none text-slate-900 text-xs sm:text-sm leading-relaxed [&_*]:text-slate-900 [&_p]:text-slate-900 [&_p]:mb-3 [&_span]:text-slate-900 [&_h1]:text-slate-950 [&_h1]:font-bold [&_h2]:text-slate-950 [&_h2]:font-bold [&_h3]:text-slate-950 [&_h3]:font-bold [&_h4]:text-slate-950 [&_h4]:font-bold [&_ul]:text-slate-900 [&_ol]:text-slate-900 [&_li]:text-slate-900 [&_strong]:text-slate-950 [&_strong]:font-bold [&_b]:text-slate-950 [&_b]:font-bold whitespace-pre-wrap font-normal"
+        className="markdown-lesson-body"
         dangerouslySetInnerHTML={{
-          __html: sanitizeHtml(content),
+          __html: htmlContent,
         }}
       />
     </div>

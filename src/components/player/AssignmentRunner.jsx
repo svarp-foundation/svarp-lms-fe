@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FormTextarea, FileUpload, StatusBadge, Button } from "../common";
 import { getMediaUrl } from "../../config";
 import { ClipboardList, Upload, FileText, ExternalLink, Clock } from "lucide-react";
+import { renderMarkdown } from "../../lib/markdown";
 
 export const AssignmentRunner = ({
   lesson,
@@ -49,9 +50,16 @@ export const AssignmentRunner = ({
           )}
         </div>
 
-        <div className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-          {lesson.assignment_description || lesson.content || "Follow assignment instructions and submit your response below."}
-        </div>
+        <div
+          className="markdown-lesson-body"
+          dangerouslySetInnerHTML={{
+            __html: renderMarkdown(
+              lesson.assignment_description ||
+                lesson.content ||
+                "Follow assignment instructions and submit your response below."
+            ),
+          }}
+        />
       </div>
 
       {/* Existing Submission Status Card */}

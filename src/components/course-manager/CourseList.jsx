@@ -188,11 +188,11 @@ export const CourseList = ({
                     <div className="flex items-center gap-3 pt-2 text-[11px] text-slate-500 border-t border-slate-100">
                       <div className="flex items-center gap-1">
                         <Users size={13} className="text-slate-400" />
-                        <span>{course.enrolled_count ?? course.students_count ?? 0} learners</span>
+                        <span>{course.enrolled_count ?? course.student_count ?? course.students_count ?? 0} learners</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Layers size={13} className="text-slate-400" />
-                        <span>{course.modules_count ?? course.modules?.length ?? 0} modules</span>
+                        <span>{course.modules_count ?? course.module_count ?? course.modules?.length ?? 0} modules</span>
                       </div>
                       <div className="ml-auto font-bold text-slate-900">
                         {course.is_paid && course.price > 0 ? `₹${course.price}` : "Free"}

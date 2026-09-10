@@ -207,7 +207,7 @@ const AdminDashboard = () => {
                           </span>
                         </p>
                         <p className="text-[11px] text-slate-400 truncate">
-                          {course.enrolled_count ?? 0} learners enrolled
+                          {course.enrolled_count ?? course.student_count ?? course.students_count ?? 0} learners enrolled
                         </p>
                       </div>
                       <StatusBadge status={course.status || "draft"} />

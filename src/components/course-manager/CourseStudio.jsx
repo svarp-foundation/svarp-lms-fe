@@ -407,26 +407,47 @@ export const CourseStudio = ({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await api.post(`${apiPrefix}/courses/bulk-create`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      if (selectedCourse?.id) {
+        // Update existing course curriculum
+        const res = await api.post(
+          `${apiPrefix}/courses/${selectedCourse.id}/update-from-file`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-      const newCourseId = res.data.course_id || res.data.id;
-      const courseTitle = res.data.title || "Course";
-
-      alert(`Course "${courseTitle}" successfully parsed and created from file.`);
-      setShowImporterModal(false);
-      await fetchCourses();
-
-      if (newCourseId) {
-        await fetchCourseDetail(newCourseId);
+        const courseTitle = res.data.title || selectedCourse.title || "Course";
+        alert(`Course "${courseTitle}" curriculum updated successfully from file.`);
+        setShowImporterModal(false);
+        await fetchCourses();
+        await fetchCourseDetail(selectedCourse.id);
         setActiveTab("curriculum");
+      } else {
+        // Create new course from scratch
+        const res = await api.post(`${apiPrefix}/courses/bulk-create`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const newCourseId = res.data.course_id || res.data.id;
+        const courseTitle = res.data.title || "Course";
+
+        alert(`Course "${courseTitle}" successfully parsed and created from file.`);
+        setShowImporterModal(false);
+        await fetchCourses();
+
+        if (newCourseId) {
+          await fetchCourseDetail(newCourseId);
+          setActiveTab("curriculum");
+        }
       }
     } catch (err) {
       console.error("Error importing course file:", err);
-      alert(err.response?.data?.detail || "Failed to parse and create course from file.");
+      alert(err.response?.data?.detail || "Failed to parse and process course file.");
     } finally {
       setImportingFile(false);
     }
@@ -551,6 +572,7 @@ export const CourseStudio = ({
         onClose={() => setShowImporterModal(false)}
         onImport={handleBulkImport}
         importing={importingFile}
+        targetCourse={selectedCourse}
       />
 
       {/* Course Delete Modal (Safe Delete & Admin Force Purge) */}
