@@ -17,8 +17,8 @@ export const CourseCard = ({ course, enrolled = false }) => {
     }
   };
 
-  const isCompleted = course.is_completed || (course.progress && course.progress >= 100);
-  const progressPct = course.progress ?? 0;
+  const progressPct = typeof course.progress === "number" ? course.progress : 0;
+  const isCompleted = course.is_completed || progressPct >= 100;
 
   return (
     <>

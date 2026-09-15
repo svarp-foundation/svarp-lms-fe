@@ -114,12 +114,13 @@ const Dashboard = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {featuredCourses.map((course) => {
-                const isEnrolled = enrolledCourses.some((c) => c.id === course.id);
+                const enrolledMatch = enrolledCourses.find((c) => c.id === course.id);
+                const courseData = enrolledMatch ? { ...course, ...enrolledMatch } : course;
                 return (
                   <CourseCard
                     key={course.id}
-                    course={course}
-                    enrolled={isEnrolled}
+                    course={courseData}
+                    enrolled={!!enrolledMatch}
                   />
                 );
               })}

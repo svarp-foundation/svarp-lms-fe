@@ -10,13 +10,18 @@ import { Heart, BookOpen } from "lucide-react";
 const Wishlist = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchWishlist = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/learner/wishlist`);
-      setCourses(res.data || []);
+      const [wishRes, enrRes] = await Promise.all([
+        api.get(`/learner/wishlist`),
+        api.get(`/learner/courses`).catch(() => ({ data: [] })),
+      ]);
+      setCourses(wishRes.data || []);
+      setEnrolledCourses(enrRes.data || []);
     } catch (err) {
       console.error("Error fetching wishlist:", err);
     } finally {
@@ -49,9 +54,17 @@ const Wishlist = () => {
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
+            {courses.map((course) => {
+              const enrolledMatch = enrolledCourses.find((c) => c.id === course.id);
+              const courseData = enrolledMatch ? { ...course, ...enrolledMatch } : course;
+              return (
+                <CourseCard
+                  key={course.id}
+                  course={courseData}
+                  enrolled={!!enrolledMatch}
+                />
+              );
+            })}
           </div>
         )}
       </div>
