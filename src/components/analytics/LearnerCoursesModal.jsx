@@ -209,16 +209,27 @@ export const LearnerCoursesModal = ({
     {
       key: "submissions",
       label: "Grading / Tests",
-      render: (c) => (
-        <div>
-          <span className="text-xs font-semibold text-slate-900 block">
-            {c.submissions_count || 0} / {c.total_assignments_count ?? 0} submitted
-          </span>
-          <span className="text-[10px] text-slate-500">
-            {c.average_grade ? `Avg score: ${c.average_grade}%` : "No grade"}
-          </span>
-        </div>
-      ),
+      render: (c) => {
+        const submitted = c.submissions_count || 0;
+        const total = c.total_assignments_count || 0;
+        const hasScore = c.average_grade !== null && c.average_grade !== undefined;
+        const isPassedOrDone = (submitted > 0 && submitted >= total) || c.progress_status === "completed";
+
+        return (
+          <div>
+            <span className="text-xs font-semibold text-slate-900 block">
+              {submitted} / {total} submitted
+            </span>
+            <span className="text-[10px] text-slate-500">
+              {hasScore
+                ? `Avg score: ${c.average_grade}%`
+                : isPassedOrDone
+                ? "Passed"
+                : "No grade"}
+            </span>
+          </div>
+        );
+      },
     },
     {
       key: "certificate",
