@@ -212,7 +212,7 @@ export const LearnerCoursesModal = ({
       render: (c) => (
         <div>
           <span className="text-xs font-semibold text-slate-900 block">
-            {c.submissions_count || 0} submitted
+            {c.submissions_count || 0} / {c.total_assignments_count ?? 0} submitted
           </span>
           <span className="text-[10px] text-slate-500">
             {c.average_grade ? `Avg score: ${c.average_grade}%` : "No grade"}

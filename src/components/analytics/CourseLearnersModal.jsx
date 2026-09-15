@@ -217,7 +217,7 @@ export const CourseLearnersModal = ({
       render: (l) => (
         <div>
           <span className="text-xs font-semibold text-slate-900 block">
-            {l.submissions_count || 0} submitted
+            {l.submissions_count || 0} / {l.total_assignments_count ?? 0} submitted
           </span>
           <span className="text-[10px] text-slate-500">
             {l.average_grade ? `Avg score: ${l.average_grade}%` : "No grade"}
