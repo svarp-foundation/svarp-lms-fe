@@ -74,7 +74,7 @@ const CoursePlayer = () => {
     }
   }, [activeLesson?.id]);
 
-  const handleMarkComplete = async () => {
+  const handleMarkComplete = async (advance = true) => {
     if (!activeLesson || completing) return;
     setCompleting(true);
 
@@ -101,8 +101,8 @@ const CoursePlayer = () => {
         return prev;
       });
 
-      // Automatically advance to the next lesson if available
-      if (nextLesson) {
+      // Automatically advance to the next lesson if requested
+      if (advance && nextLesson) {
         setActiveLesson(nextLesson);
       }
 
@@ -260,11 +260,15 @@ const CoursePlayer = () => {
                 {activeLesson.lesson_type === "quiz" && (
                   <QuizRunner
                     key={`quiz-${activeLesson.id}`}
+                    courseId={courseId}
+                    lessonId={activeLesson.id}
                     questions={activeLesson.questions || []}
                     passingScore={courseContent?.passing_score ?? 70}
+                    isCompleted={isCurrentCompleted}
                     onCompleteQuiz={({ passed }) => {
-                      if (passed) handleMarkComplete();
+                      if (passed) handleMarkComplete(false);
                     }}
+                    onNextLesson={nextLesson ? () => setActiveLesson(nextLesson) : null}
                   />
                 )}
 
