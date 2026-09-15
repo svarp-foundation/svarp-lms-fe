@@ -26,6 +26,7 @@ const CoursePlayer = () => {
   const [completing, setCompleting] = useState(false);
   const [submittingAssignment, setSubmittingAssignment] = useState(false);
   const [downloadingCert, setDownloadingCert] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const mainContentRef = React.useRef(null);
 
   const fetchCourseContent = React.useCallback(async (isSilent = false) => {
@@ -197,6 +198,8 @@ const CoursePlayer = () => {
           isCertified={courseContent?.certificate_issued}
           onDownloadCertificate={handleDownloadCertificate}
           downloadingCertificate={downloadingCert}
+          isSidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
         />
 
         {/* Player Workspace: Left Content + Right Sidebar */}
@@ -320,12 +323,14 @@ const CoursePlayer = () => {
             )}
           </main>
 
-          {/* Desktop-Only Curriculum Navigation Sidebar */}
+          {/* Curriculum Navigation Sidebar (Desktop + Mobile Drawer) */}
           <PlayerSidebar
             modules={courseContent?.modules || []}
             activeLessonId={activeLesson?.id}
             completedLessonIds={completedLessonIds}
             onSelectLesson={(lesson) => setActiveLesson(lesson)}
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
           />
         </div>
       </div>

@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, Layers } from "lucide-react";
 import { Button } from "../common";
 
 export const PlayerHeader = ({
   courseTitle = "Course",
   progressPercentage = 0,
   courseId,
+  isSidebarOpen = true,
+  onToggleSidebar,
   onDownloadCertificate,
   onClaimCertificate,
   downloadingCertificate = false,
@@ -32,7 +34,7 @@ export const PlayerHeader = ({
             {courseTitle}
           </h2>
           <div className="flex items-center gap-2">
-            <div className="w-24 sm:w-32 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+            <div className="w-20 sm:w-32 bg-slate-100 h-1.5 rounded-full overflow-hidden">
               <div
                 className="bg-emerald-600 h-full rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(100, Math.max(0, progressPercentage))}%` }}
@@ -45,7 +47,7 @@ export const PlayerHeader = ({
         </div>
       </div>
 
-      {/* Right: Certificate */}
+      {/* Right: Certificate & Course Roadmap Toggle */}
       <div className="flex items-center gap-2 flex-shrink-0">
         {progressPercentage >= 100 && handleCertClick && (
           <Button
@@ -57,6 +59,25 @@ export const PlayerHeader = ({
             icon={Download}
           >
             Download Certificate
+          </Button>
+        )}
+
+        {onToggleSidebar && (
+          <Button
+            type="button"
+            variant={isSidebarOpen ? "primary" : "outline"}
+            size="xs"
+            onClick={onToggleSidebar}
+            icon={Layers}
+            className={
+              isSidebarOpen
+                ? "bg-[#1f3b45] text-white hover:bg-[#162b32] border-[#1f3b45]"
+                : "bg-white hover:bg-slate-50 text-slate-700 border-slate-200"
+            }
+            title={isSidebarOpen ? "Hide Course Roadmap" : "Show Course Roadmap"}
+          >
+            <span className="hidden sm:inline">Course Roadmap</span>
+            <span className="sm:hidden">Roadmap</span>
           </Button>
         )}
       </div>
