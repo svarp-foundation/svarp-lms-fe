@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../common";
 import { CheckCircle2, XCircle, HelpCircle, RotateCcw, Award } from "lucide-react";
 
@@ -10,6 +10,13 @@ export const QuizRunner = ({
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+
+  // Reset quiz state when questions change / navigating to a different quiz
+  useEffect(() => {
+    setUserAnswers({});
+    setSubmitted(false);
+    setScore(0);
+  }, [questions]);
 
   const handleSelectOption = (qIndex, optIndex) => {
     if (submitted) return;

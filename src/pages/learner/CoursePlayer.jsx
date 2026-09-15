@@ -215,7 +215,7 @@ const CoursePlayer = () => {
                       {activeLesson.title}
                     </h1>
 
-                    {!isCurrentCompleted ? (
+                    {!isCurrentCompleted && activeLesson.lesson_type !== "quiz" && activeLesson.lesson_type !== "assignment" && (
                       <Button
                         type="button"
                         variant="primary"
@@ -227,7 +227,8 @@ const CoursePlayer = () => {
                       >
                         Mark as Completed
                       </Button>
-                    ) : (
+                    )}
+                    {isCurrentCompleted && (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         <CheckCircle2 size={13} /> Completed
                       </span>
@@ -239,24 +240,26 @@ const CoursePlayer = () => {
                 {activeLesson.lesson_type === "video" && (
                   <div className="space-y-6">
                     <VideoPlayer
+                      key={`video-${activeLesson.id}`}
                       videoUrl={activeLesson.video_url}
                       title={activeLesson.title}
                     />
 
                     {activeLesson.content && (
-                      <TextContent content={activeLesson.content} />
+                      <TextContent key={`video-text-${activeLesson.id}`} content={activeLesson.content} />
                     )}
                   </div>
                 )}
 
                 {/* Text Reading Lesson Type */}
                 {activeLesson.lesson_type === "text" && (
-                  <TextContent content={activeLesson.content} />
+                  <TextContent key={`text-${activeLesson.id}`} content={activeLesson.content} />
                 )}
 
                 {/* Quiz Assessment Lesson Type */}
                 {activeLesson.lesson_type === "quiz" && (
                   <QuizRunner
+                    key={`quiz-${activeLesson.id}`}
                     questions={activeLesson.questions || []}
                     passingScore={courseContent?.passing_score ?? 70}
                     onCompleteQuiz={({ passed }) => {
@@ -268,6 +271,7 @@ const CoursePlayer = () => {
                 {/* Assignment Assessment Lesson Type */}
                 {activeLesson.lesson_type === "assignment" && (
                   <AssignmentRunner
+                    key={`assignment-${activeLesson.id}`}
                     lesson={activeLesson}
                     submission={activeLesson.submission}
                     onSubmitAssignment={handleSubmitAssignment}
