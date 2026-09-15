@@ -15,12 +15,14 @@ import {
   ChevronDown,
   ChevronUp,
   GraduationCap,
+  Download,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import LearnerLayout from "../../components/LearnerLayout";
 import ShareModal from "../../components/ShareModal";
 import { CourseOverviewSkeleton } from "../../components/Skeletons";
-import { CourseThumbnail } from "../../components/common";
+import { CourseThumbnail, Button } from "../../components/common";
+import { downloadCertificatePdf } from "../../utils/certificate";
 
 const CourseOverview = () => {
   const { courseId } = useParams();
@@ -33,8 +35,28 @@ const CourseOverview = () => {
   const [progress, setProgress] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [downloadingCert, setDownloadingCert] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [expandedModules, setExpandedModules] = useState({});
+
+  const handleDownloadCertificate = async () => {
+    if (downloadingCert) return;
+    setDownloadingCert(true);
+    try {
+      const res = await api.post(`/learner/courses/${courseId}/claim-certificate`);
+      const certData = res.data;
+      const pdfUrl = certData.pdf_url || `/media/${certData.certificate_code}.pdf`;
+      await downloadCertificatePdf(pdfUrl, certData.certificate_code);
+    } catch (err) {
+      console.error("Error claiming or downloading certificate:", err);
+      alert(
+        err.response?.data?.detail ||
+          "Unable to download certificate. Please make sure all course requirements are completed."
+      );
+    } finally {
+      setDownloadingCert(false);
+    }
+  };
 
   const toggleModule = (modId) => {
     setExpandedModules((prev) => ({
@@ -239,6 +261,37 @@ const CourseOverview = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column (2 Cols on desktop): Curriculum & Details */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            {/* Congratulatory Completion Banner when completed */}
+            {isEnrolled && progress === 100 && (
+              <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200/90 rounded-xl sm:rounded-2xl shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                    <Award size={22} />
+                  </div>
+                  <div className="space-y-0.5">
+                    <h3 className="text-sm sm:text-base font-bold text-emerald-950">
+                      Congratulations! You Completed This Course
+                    </h3>
+                    <p className="text-xs text-emerald-800/90">
+                      Your official certificate of completion is verified and ready to download.
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={handleDownloadCertificate}
+                  loading={downloadingCert}
+                  icon={Download}
+                  className="w-full sm:w-auto whitespace-nowrap bg-emerald-700 hover:bg-emerald-800 border-emerald-700 text-white font-bold"
+                >
+                  Download Certificate
+                </Button>
+              </div>
+            )}
+
             {/* Overview / About Card */}
             <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-xs">
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3">About this Course</h2>
@@ -432,13 +485,52 @@ const CourseOverview = () => {
               {/* CTA Action Buttons */}
               <div className="space-y-2.5">
                 {isEnrolled ? (
-                  <button
-                    onClick={() => navigate(`/courses/${courseId}/learn`)}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 sm:py-3 rounded-xl font-bold transition shadow-xs flex items-center justify-center gap-2 text-xs sm:text-sm"
-                  >
-                    <CheckCircle size={16} />
-                    {progress === 100 ? "Review Completed Course" : "Continue Learning"}
-                  </button>
+                  <div className="space-y-2.5">
+                    {progress === 100 ? (
+                      <>
+                        {/* Certificate Download Card */}
+                        <div className="p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-xl space-y-2.5 text-left shadow-xs">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                              <Award size={18} />
+                            </div>
+                            <div>
+                              <h4 className="text-xs font-bold text-emerald-950">Official Certificate</h4>
+                              <p className="text-[10px] text-emerald-800/80">Available for instant download</p>
+                            </div>
+                          </div>
+
+                          <Button
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            onClick={handleDownloadCertificate}
+                            loading={downloadingCert}
+                            icon={Download}
+                            className="w-full bg-emerald-700 hover:bg-emerald-800 border-emerald-700 text-white font-bold text-xs"
+                          >
+                            Download Certificate (PDF)
+                          </Button>
+                        </div>
+
+                        <button
+                          onClick={() => navigate(`/courses/${courseId}/learn`)}
+                          className="w-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 py-2.5 rounded-xl font-bold transition shadow-xs flex items-center justify-center gap-2 text-xs"
+                        >
+                          <CheckCircle size={15} className="text-emerald-600" />
+                          <span>Review Completed Course</span>
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => navigate(`/courses/${courseId}/learn`)}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 sm:py-3 rounded-xl font-bold transition shadow-xs flex items-center justify-center gap-2 text-xs sm:text-sm"
+                      >
+                        <CheckCircle size={16} />
+                        <span>Continue Learning</span>
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <button
                     onClick={handleEnrollOrGo}
