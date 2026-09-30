@@ -75,6 +75,8 @@ export const CourseStudio = ({
     require_final_assignment: false,
     is_paid: false,
     price: 0,
+    is_certificate_paid: false,
+    certificate_price: 0,
   });
   const [savingCourse, setSavingCourse] = useState(false);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
@@ -110,6 +112,8 @@ export const CourseStudio = ({
         require_final_assignment: res.data.require_final_assignment ?? false,
         is_paid: res.data.is_paid ?? false,
         price: res.data.price ?? 0,
+        is_certificate_paid: res.data.is_certificate_paid ?? false,
+        certificate_price: res.data.certificate_price ?? 0,
       });
     } catch (err) {
       console.error("Error fetching course detail:", err);
@@ -129,6 +133,8 @@ export const CourseStudio = ({
       require_final_assignment: false,
       is_paid: false,
       price: 0,
+      is_certificate_paid: false,
+      certificate_price: 0,
     });
     setActiveTab("info");
   };

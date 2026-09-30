@@ -35,6 +35,7 @@ const CourseOverview = () => {
   const [progress, setProgress] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [contentInfo, setContentInfo] = useState(null);
   const [downloadingCert, setDownloadingCert] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [expandedModules, setExpandedModules] = useState({});
@@ -49,10 +50,16 @@ const CourseOverview = () => {
       await downloadCertificatePdf(pdfUrl, certData.certificate_code);
     } catch (err) {
       console.error("Error claiming or downloading certificate:", err);
-      alert(
-        err.response?.data?.detail ||
-          "Unable to download certificate. Please make sure all course requirements are completed."
-      );
+      if (err.response?.status === 402) {
+        navigate(`/courses/${courseId}/pay?type=certificate`, {
+          state: { course, paymentType: "certificate" },
+        });
+      } else {
+        alert(
+          err.response?.data?.detail ||
+            "Unable to download certificate. Please make sure all course requirements are completed."
+        );
+      }
     } finally {
       setDownloadingCert(false);
     }
@@ -146,9 +153,17 @@ const CourseOverview = () => {
         if (enrolledCourse) {
           setIsEnrolled(true);
           setProgress(enrolledCourse.progress || 0);
+
+          try {
+            const contentRes = await api.get(`/learner/courses/${courseId}/content`);
+            setContentInfo(contentRes.data);
+          } catch {
+            // Ignored if content not loaded yet
+          }
         } else {
           setIsEnrolled(false);
           setProgress(0);
+          setContentInfo(null);
         }
 
         setIsWishlisted((wishlistRes.data || []).some((c) => c.id === Number(courseId)));
@@ -472,12 +487,21 @@ const CourseOverview = () => {
                       <p className="text-xs text-slate-400 mt-0.5">One-time payment</p>
                     </div>
                   )
+                ) : course.is_certificate_paid && (course.certificate_price || 0) > 0 ? (
+                  <div>
+                    <span className="text-2xl sm:text-3xl font-black text-emerald-600">
+                      Free Access
+                    </span>
+                    <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                      Certificate fee: ₹{course.certificate_price}
+                    </p>
+                  </div>
                 ) : (
                   <div>
                     <span className="text-2xl sm:text-3xl font-black text-emerald-600">
                       Free
                     </span>
-                    <p className="text-xs text-slate-400 mt-0.5">Full lifetime access</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Full lifetime access & certificate</p>
                   </div>
                 )}
               </div>
@@ -488,30 +512,66 @@ const CourseOverview = () => {
                   <div className="space-y-2.5">
                     {progress === 100 ? (
                       <>
-                        {/* Certificate Download Card */}
-                        <div className="p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-xl space-y-2.5 text-left shadow-xs">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                              <Award size={18} />
+                        {/* Certificate Unlock / Download Card */}
+                        {(contentInfo?.certificate_locked_for_payment ||
+                          (course.is_certificate_paid &&
+                            (course.certificate_price || 0) > 0 &&
+                            !contentInfo?.is_certificate_purchased &&
+                            !isMember &&
+                            !contentInfo?.certificate_code)) ? (
+                          <div className="p-3.5 bg-amber-50/90 border border-amber-200 rounded-xl space-y-2.5 text-left shadow-xs">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                                <Award size={18} />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-bold text-amber-950">Official Certificate</h4>
+                                <p className="text-[10px] text-amber-800/90 font-medium">
+                                  Certification fee: ₹{course.certificate_price}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="text-xs font-bold text-emerald-950">Official Certificate</h4>
-                              <p className="text-[10px] text-emerald-800/80">Available for instant download</p>
-                            </div>
-                          </div>
 
-                          <Button
-                            type="button"
-                            variant="primary"
-                            size="sm"
-                            onClick={handleDownloadCertificate}
-                            loading={downloadingCert}
-                            icon={Download}
-                            className="w-full bg-emerald-700 hover:bg-emerald-800 border-emerald-700 text-white font-bold text-xs"
-                          >
-                            Download Certificate (PDF)
-                          </Button>
-                        </div>
+                            <Button
+                              type="button"
+                              variant="primary"
+                              size="sm"
+                              onClick={() =>
+                                navigate(`/courses/${courseId}/pay?type=certificate`, {
+                                  state: { course, paymentType: "certificate" },
+                                })
+                              }
+                              icon={Lock}
+                              className="w-full bg-amber-700 hover:bg-amber-800 border-amber-700 text-white font-bold text-xs"
+                            >
+                              Unlock Certificate — ₹{course.certificate_price}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-xl space-y-2.5 text-left shadow-xs">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                                <Award size={18} />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-bold text-emerald-950">Official Certificate</h4>
+                                <p className="text-[10px] text-emerald-800/80">Available for instant download</p>
+                              </div>
+                            </div>
+
+                            <Button
+                              type="button"
+                              variant="primary"
+                              size="sm"
+                              onClick={handleDownloadCertificate}
+                              loading={downloadingCert}
+                              icon={Download}
+                              className="w-full bg-emerald-700 hover:bg-emerald-800 border-emerald-700 text-white font-bold text-xs"
+                            >
+                              Download Certificate (PDF)
+                            </Button>
+                          </div>
+                        )}
 
                         <button
                           onClick={() => navigate(`/courses/${courseId}/learn`)}

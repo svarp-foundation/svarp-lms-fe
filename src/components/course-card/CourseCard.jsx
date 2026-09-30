@@ -117,6 +117,11 @@ export const CourseCard = ({ course, enrolled = false }) => {
                 <span className="text-sm font-black text-slate-900">
                   {course.is_paid && course.price > 0 ? `₹${course.price}` : "Free"}
                 </span>
+                {!course.is_paid && course.is_certificate_paid && course.certificate_price > 0 && (
+                  <span className="text-[10px] text-slate-500 font-medium">
+                    (Cert: ₹{course.certificate_price})
+                  </span>
+                )}
                 {course.original_price && course.original_price > course.price && (
                   <span className="text-[11px] text-slate-400 line-through">
                     ₹{course.original_price}

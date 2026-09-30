@@ -14,9 +14,15 @@ import {
 
 export default function CoursePayment() {
   const { courseId } = useParams();
-  const { state } = useLocation();
+  const location = useLocation();
+  const { state } = location;
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const searchParams = new URLSearchParams(location.search);
+  const paymentType = searchParams.get("type") || state?.paymentType || "course_enrollment";
+  const isCertificatePayment = paymentType === "certificate";
+
   const [course, setCourse] = useState(state?.course || null);
   const [loading, setLoading] = useState(!state?.course);
   const [paying, setPaying] = useState(false);
@@ -30,6 +36,8 @@ export default function CoursePayment() {
   const [couponError, setCouponError] = useState("");
   const [couponSuccess, setCouponSuccess] = useState("");
 
+  const basePrice = course ? (isCertificatePayment ? (course.certificate_price || 0) : (course.price || 0)) : 0;
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setApplyingCoupon(true);
@@ -39,6 +47,7 @@ export default function CoursePayment() {
       const res = await api.post("/course-payments/validate-coupon", {
         code: couponCode,
         course_id: parseInt(courseId),
+        payment_type: isCertificatePayment ? "certificate" : "course_enrollment",
       });
       if (res.data.valid) {
         setAppliedCoupon({
@@ -121,9 +130,10 @@ export default function CoursePayment() {
       // 1. Create order on backend
       const orderRes = await api.post(`/course-payments/create-order`, {
         course_id: parseInt(courseId),
-        amount: course.price,
+        amount: basePrice,
         currency: "INR",
         coupon_code: appliedCoupon?.code || null,
+        payment_type: isCertificatePayment ? "certificate" : "course_enrollment",
       });
       const orderData = orderRes.data;
 
@@ -133,7 +143,9 @@ export default function CoursePayment() {
         amount: orderData.amount * 100,
         currency: orderData.currency,
         name: orderData.app_name || "SVARP GLOBAL ACADEMY",
-        description: `Course: ${course.title}`,
+        description: isCertificatePayment
+          ? `Verified Certificate: ${course.title}`
+          : `Course: ${course.title}`,
         image: window.location.origin + "/company/svarp-logo.png",
         order_id: orderData.razorpay_order_id,
         handler: async function (response) {
@@ -190,6 +202,12 @@ export default function CoursePayment() {
   };
 
   const isReadyForPayment = !verificationData || verificationData.ready;
+  const isMember = course?.discounted_price === 0;
+  const effectiveBase = isMember ? 0 : basePrice;
+  const discountAmount = appliedCoupon?.discount_amount || 0;
+  const taxableAmount = Math.max(0, effectiveBase - discountAmount);
+  const gstAmount = isMember ? 0 : taxableAmount * 0.18;
+  const totalAmount = isMember ? 0 : taxableAmount + gstAmount;
 
   if (loading) {
     return (
@@ -231,10 +249,12 @@ export default function CoursePayment() {
       <div className="w-full bg-accent text-white page-padding relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col gap-1">
           <h1 className="text-2xl font-bold">
-            Complete Your Enrollment
+            {isCertificatePayment ? "Unlock Your Verified Certificate" : "Complete Your Enrollment"}
           </h1>
           <p className="text-gray-300 text-sm max-w-lg">
-            Secure checkout for lifetime access to course materials and certificates.
+            {isCertificatePayment
+              ? "Secure checkout to unlock and download your official verified certificate."
+              : "Secure checkout for lifetime access to course materials and certificates."}
           </p>
         </div>
       </div>
@@ -272,7 +292,9 @@ export default function CoursePayment() {
                 <li>Do not refresh or close the browser during payment.</li>
                 <li>Ensure your internet connection is stable.</li>
                 <li>
-                  You will be enrolled immediately upon successful payment.
+                  {isCertificatePayment
+                    ? "Your certificate will be immediately unlocked upon payment verification."
+                    : "You will be enrolled immediately upon successful payment."}
                 </li>
               </ul>
             </div>
@@ -349,15 +371,15 @@ export default function CoursePayment() {
             </h2>
             <div className="space-y-4 text-sm text-gray-600">
               <div className="flex justify-between border-b pb-4">
-                <span>Course</span>
+                <span>Item</span>
                 <span className="font-medium text-gray-900 text-right max-w-[60%]">
-                  {course.title}
+                  {isCertificatePayment ? "Official Verified Certificate" : course.title}
                 </span>
               </div>
               <div className="flex justify-between border-b pb-4">
-                <span>Price</span>
+                <span>Fee</span>
                 <span className="font-medium text-gray-900">
-                  ₹{course.price.toFixed(2)}
+                  ₹{basePrice.toFixed(2)}
                 </span>
               </div>
               {appliedCoupon && (
@@ -366,24 +388,21 @@ export default function CoursePayment() {
                   <span>-₹{appliedCoupon.discount_amount.toFixed(2)}</span>
                 </div>
               )}
-              {course.discounted_price === 0 && (
+              {isMember && (
                 <div className="flex justify-between border-b pb-4 text-green-600 font-medium">
                   <span>Member Discount</span>
-                  <span>-₹{course.price.toFixed(2)}</span>
+                  <span>-₹{basePrice.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between border-b pb-4">
                 <span>GST (18%)</span>
                 <span className="font-medium text-gray-900">
-                  ₹
-                  {course.discounted_price === 0
-                    ? "0.00"
-                    : (Math.max(0, course.price - (appliedCoupon?.discount_amount || 0)) * 0.18).toFixed(2)}
+                  ₹{gstAmount.toFixed(2)}
                 </span>
               </div>
               
               {/* Promo Code Input Box */}
-              {course.discounted_price !== 0 && (
+              {!isMember && (
                 <div className="border-b pb-4 flex flex-col gap-2 pt-2">
                   <div className="flex gap-2">
                     <input
@@ -421,18 +440,15 @@ export default function CoursePayment() {
               <div className="flex justify-between pt-2 text-lg font-bold text-gray-900">
                 <span>Total</span>
                 <span>
-                  ₹
-                  {course.discounted_price === 0
-                    ? "0.00"
-                    : (Math.max(0, course.price - (appliedCoupon?.discount_amount || 0)) * 1.18).toFixed(2)}
+                  ₹{totalAmount.toFixed(2)}
                 </span>
               </div>
             </div>
 
-            {/* Payment Action Button moved after details */}
+            {/* Payment Action Button */}
             <button
               onClick={
-                course.discounted_price === 0
+                isMember
                   ? handleFreeEnrollment
                   : handlePayment
               }
@@ -442,9 +458,11 @@ export default function CoursePayment() {
               {paying
                 ? "Processing..."
                 : isReadyForPayment
-                  ? course.discounted_price === 0
-                    ? "Enroll for Free"
-                    : `Pay ₹${(Math.max(0, course.price - (appliedCoupon?.discount_amount || 0)) * 1.18).toFixed(2)}`
+                  ? isMember
+                    ? (isCertificatePayment ? "Unlock Certificate (Member Benefit)" : "Enroll for Free")
+                    : isCertificatePayment
+                      ? `Pay ₹${totalAmount.toFixed(2)} & Unlock Certificate`
+                      : `Pay ₹${totalAmount.toFixed(2)}`
                   : "Complete Profile to Pay"}
             </button>
 
@@ -461,7 +479,7 @@ export default function CoursePayment() {
 
             <div className="mt-4 text-xs text-gray-500 space-y-1">
               <p>✓ Full lifetime access after enrollment</p>
-              <p>✓ Certificate of completion</p>
+              <p>✓ Official verified completion certificate</p>
               <p>✓ Access on all devices</p>
             </div>
           </div>

@@ -260,6 +260,32 @@ export const CourseInfoForm = ({
               label="Require Instructor Assignment Review"
               description="Assignments must be manually evaluated before certification"
             />
+
+            <div className="pt-2 border-t border-slate-100 space-y-3">
+              <ToggleSwitch
+                id="is_certificate_paid"
+                name="is_certificate_paid"
+                checked={!!formData.is_certificate_paid}
+                onChange={() => handleToggle("is_certificate_paid")}
+                label="Paid Certificate"
+                description="Charge a certification fee when learners complete the course"
+              />
+
+              {formData.is_certificate_paid && (
+                <FormInput
+                  label="Certificate Fee (₹)"
+                  name="certificate_price"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={formData.certificate_price ?? 0}
+                  onChange={onChange}
+                  placeholder="e.g. 499"
+                  helperText="Learners must complete payment for this fee before downloading their certificate"
+                  required
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

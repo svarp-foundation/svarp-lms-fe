@@ -139,6 +139,21 @@ const CoursePlayer = () => {
     }
   };
 
+  const handleUnlockCertificate = () => {
+    navigate(`/courses/${courseId}/pay?type=certificate`, {
+      state: {
+        course: {
+          id: courseContent?.id,
+          title: courseContent?.title,
+          is_paid: courseContent?.is_paid,
+          is_certificate_paid: courseContent?.is_certificate_paid,
+          certificate_price: courseContent?.certificate_price,
+        },
+        paymentType: "certificate",
+      },
+    });
+  };
+
   const handleDownloadCertificate = async () => {
     if (downloadingCert) return;
     setDownloadingCert(true);
@@ -150,10 +165,14 @@ const CoursePlayer = () => {
       await downloadCertificatePdf(pdfUrl, certData.certificate_code);
     } catch (err) {
       console.error("Error claiming or downloading certificate:", err);
-      alert(
-        err.response?.data?.detail ||
-          "Unable to download certificate. Please make sure all course requirements are completed."
-      );
+      if (err.response?.status === 402) {
+        handleUnlockCertificate();
+      } else {
+        alert(
+          err.response?.data?.detail ||
+            "Unable to download certificate. Please make sure all course requirements are completed."
+        );
+      }
     } finally {
       setDownloadingCert(false);
     }
@@ -197,6 +216,9 @@ const CoursePlayer = () => {
           progressPercentage={progressPct}
           courseId={courseId}
           isCertified={courseContent?.certificate_issued}
+          isCertificateLocked={courseContent?.certificate_locked_for_payment}
+          certificatePrice={courseContent?.certificate_price}
+          onUnlockCertificate={handleUnlockCertificate}
           onDownloadCertificate={handleDownloadCertificate}
           downloadingCertificate={downloadingCert}
           isSidebarOpen={sidebarOpen}

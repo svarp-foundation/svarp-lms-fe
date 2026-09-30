@@ -18,6 +18,8 @@ Title: Sample Course: Understanding Course Structure
 Description: This course acts as a live template for creating new course content in the SVARP LMS platform.
 Price: 0
 Is Paid: false
+Is Certificate Paid: false
+Certificate Price: 0
 Passing Score: 70
 
 ---MODULE---

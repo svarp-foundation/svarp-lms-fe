@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Layers } from "lucide-react";
+import { ArrowLeft, Download, Layers, Lock } from "lucide-react";
 import { Button } from "../common";
 
 export const PlayerHeader = ({
@@ -11,6 +11,9 @@ export const PlayerHeader = ({
   onToggleSidebar,
   onDownloadCertificate,
   onClaimCertificate,
+  onUnlockCertificate,
+  isCertificateLocked = false,
+  certificatePrice = 0,
   downloadingCertificate = false,
 }) => {
   const navigate = useNavigate();
@@ -49,17 +52,30 @@ export const PlayerHeader = ({
 
       {/* Right: Certificate & Course Roadmap Toggle */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        {progressPercentage >= 100 && handleCertClick && (
-          <Button
-            type="button"
-            variant="emerald"
-            size="xs"
-            onClick={handleCertClick}
-            loading={downloadingCertificate}
-            icon={Download}
-          >
-            Download Certificate
-          </Button>
+        {progressPercentage >= 100 && (
+          isCertificateLocked ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="xs"
+              onClick={onUnlockCertificate}
+              icon={Lock}
+              className="bg-amber-600 hover:bg-amber-700 border-amber-600 text-white font-bold text-xs"
+            >
+              Unlock Certificate {certificatePrice > 0 ? `(₹${certificatePrice})` : ""}
+            </Button>
+          ) : handleCertClick ? (
+            <Button
+              type="button"
+              variant="emerald"
+              size="xs"
+              onClick={handleCertClick}
+              loading={downloadingCertificate}
+              icon={Download}
+            >
+              Download Certificate
+            </Button>
+          ) : null
         )}
 
         {onToggleSidebar && (
