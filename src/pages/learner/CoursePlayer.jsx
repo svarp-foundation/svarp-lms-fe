@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import LearnerLayout from "../../components/LearnerLayout";
 import { downloadCertificatePdf } from "../../utils/certificate";
@@ -18,6 +18,7 @@ import { CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
 
 const CoursePlayer = () => {
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
   const [courseContent, setCourseContent] = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
