@@ -167,29 +167,38 @@ export const LearnerPerformanceTable = ({
           : "bg-slate-100 text-slate-600 border-slate-200";
 
         return (
-          <div className="space-y-1 py-0.5">
+          <div className="space-y-1.5 py-0.5 min-w-[190px]">
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-semibold text-slate-800">
                 {l.submissions_count || 0} tests
               </span>
               {hasScore && (
-                <span className={`inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold border ${scoreColor}`}>
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${scoreColor}`}>
                   {l.average_grade}% Avg
                 </span>
               )}
             </div>
 
             {hasQuestions ? (
-              <div className="flex flex-wrap items-center gap-1 text-[10px]">
-                <span className="text-slate-500 font-medium">
-                  {l.questions_attempted}/{l.total_questions} Qs:
+              <div className="inline-flex items-center bg-slate-50 border border-slate-200 rounded-md text-[10px] divide-x divide-slate-200 overflow-hidden font-medium shadow-2xs whitespace-nowrap">
+                <span
+                  title="Questions Attempted / Total"
+                  className="px-2 py-0.5 text-slate-700 font-semibold bg-slate-100/80"
+                >
+                  {l.questions_attempted}/{l.total_questions} Qs
                 </span>
-                <span className="inline-flex items-center gap-0.5 font-bold text-emerald-700 bg-emerald-50 px-1 rounded border border-emerald-100">
-                  <CheckCircle2 size={9} className="text-emerald-600 inline" />
+                <span
+                  title="Correct Answers"
+                  className="px-2 py-0.5 text-emerald-700 font-bold bg-emerald-50/40 flex items-center gap-1"
+                >
+                  <CheckCircle2 size={10} className="text-emerald-600 inline" />
                   {l.total_correct || 0}
                 </span>
-                <span className="inline-flex items-center gap-0.5 font-bold text-rose-700 bg-rose-50 px-1 rounded border border-rose-100">
-                  <XCircle size={9} className="text-rose-500 inline" />
+                <span
+                  title="Incorrect Answers"
+                  className="px-2 py-0.5 text-rose-700 font-bold bg-rose-50/40 flex items-center gap-1"
+                >
+                  <XCircle size={10} className="text-rose-500 inline" />
                   {l.total_incorrect || 0}
                 </span>
               </div>

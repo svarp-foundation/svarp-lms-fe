@@ -259,69 +259,70 @@ export const LearnerCoursesModal = ({
           : "bg-slate-100 text-slate-600 border-slate-200";
 
         return (
-          <div className="space-y-1.5 py-0.5 min-w-[170px]">
-            {/* Header: Score Badge & Submission count */}
-            <div className="flex items-center gap-1.5">
-              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${scoreColor}`}>
-                {hasScore ? `${c.average_grade}% Avg` : isPassedOrDone ? "Passed" : "No grade"}
-              </span>
-              <span className="text-[11px] font-semibold text-slate-700">
-                {submitted} / {total} tests
-              </span>
+          <div className="space-y-1.5 py-0.5 min-w-[215px] max-w-[260px]">
+            {/* Top Row: Score Badge, Tests Count & Breakdown Trigger */}
+            <div className="flex items-center justify-between gap-1.5">
+              <div className="flex items-center gap-1.5">
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${scoreColor}`}>
+                  {hasScore ? `${c.average_grade}% Avg` : isPassedOrDone ? "Passed" : "No grade"}
+                </span>
+                <span className="text-[11px] font-semibold text-slate-700">
+                  {submitted} / {total} tests
+                </span>
+              </div>
+
+              {c.tests_breakdown && c.tests_breakdown.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedTestBreakdown({
+                      title: `${c.title || "Course"} — Assessment Breakdown`,
+                      subtitle: `Learner: ${user?.full_name || userName || "Learner"} (${user?.email || ""}) • Course ID #${c.course_id}`,
+                      summary: {
+                        total_questions: c.total_questions || 0,
+                        questions_attempted: c.questions_attempted || 0,
+                        total_correct: c.total_correct || 0,
+                        total_incorrect: c.total_incorrect || 0,
+                        total_unattempted: c.total_unattempted || 0,
+                        accuracy_pct: c.accuracy_pct || 0,
+                        average_grade: c.average_grade,
+                      },
+                      tests: c.tests_breakdown,
+                    })
+                  }
+                  className="text-[10px] font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-0.5 hover:underline transition-colors cursor-pointer group whitespace-nowrap"
+                  title="Click to view question attempts and scores for each assessment"
+                >
+                  <span>Breakdown ({c.tests_breakdown.length})</span>
+                  <ArrowRight size={10} className="transition-transform group-hover:translate-x-0.5" />
+                </button>
+              )}
             </div>
 
-            {/* Questions Statistics: Attempted, Correct, Incorrect */}
+            {/* Bottom Row: Unified Segmented Question Metrics Capsule */}
             {hasQuestions && (
-              <div className="flex flex-wrap items-center gap-1">
+              <div className="inline-flex items-center bg-slate-50 border border-slate-200 rounded-md text-[10px] divide-x divide-slate-200 overflow-hidden font-medium shadow-2xs whitespace-nowrap">
                 <span
                   title="Questions Attempted / Total"
-                  className="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded"
+                  className="px-2 py-0.5 text-slate-700 font-semibold bg-slate-100/80"
                 >
                   {c.questions_attempted || 0}/{c.total_questions || 0} Qs
                 </span>
                 <span
                   title="Correct Answers"
-                  className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100"
+                  className="px-2 py-0.5 text-emerald-700 font-bold bg-emerald-50/40 flex items-center gap-1"
                 >
                   <CheckCircle2 size={10} className="text-emerald-600 inline" />
                   {c.total_correct || 0} Correct
                 </span>
                 <span
                   title="Incorrect Answers"
-                  className="inline-flex items-center gap-0.5 text-[10px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100"
+                  className="px-2 py-0.5 text-rose-700 font-bold bg-rose-50/40 flex items-center gap-1"
                 >
                   <XCircle size={10} className="text-rose-500 inline" />
                   {c.total_incorrect || 0} Incorrect
                 </span>
               </div>
-            )}
-
-            {/* View Detailed Breakdown Button */}
-            {c.tests_breakdown && c.tests_breakdown.length > 0 && (
-              <button
-                type="button"
-                onClick={() =>
-                  setSelectedTestBreakdown({
-                    title: `${c.title || "Course"} — Assessment Breakdown`,
-                    subtitle: `Learner: ${user?.full_name || userName || "Learner"} (${user?.email || ""}) • Course ID #${c.course_id}`,
-                    summary: {
-                      total_questions: c.total_questions || 0,
-                      questions_attempted: c.questions_attempted || 0,
-                      total_correct: c.total_correct || 0,
-                      total_incorrect: c.total_incorrect || 0,
-                      total_unattempted: c.total_unattempted || 0,
-                      accuracy_pct: c.accuracy_pct || 0,
-                      average_grade: c.average_grade,
-                    },
-                    tests: c.tests_breakdown,
-                  })
-                }
-                className="text-[10px] font-bold text-teal-700 hover:text-teal-900 underline flex items-center gap-0.5 transition-colors"
-                title="Click to view question attempts and scores for each assessment"
-              >
-                <span>View breakdown ({c.tests_breakdown.length})</span>
-                <ArrowRight size={10} />
-              </button>
             )}
           </div>
         );
