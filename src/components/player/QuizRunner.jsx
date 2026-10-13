@@ -91,6 +91,9 @@ export const QuizRunner = ({
       onCompleteQuiz({
         score: calculatedScore,
         passed,
+        totalQuestions: questions.length,
+        correctCount,
+        userAnswers,
       });
     }
   };

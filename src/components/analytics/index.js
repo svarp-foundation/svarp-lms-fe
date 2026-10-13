@@ -7,4 +7,4 @@ export { default as EngagementBreakdown } from "./EngagementBreakdown";
 export { default as CourseLearnersModal } from "./CourseLearnersModal";
 export { default as LearnerCoursesModal } from "./LearnerCoursesModal";
 export { default as LearnerPerformanceTable } from "./LearnerPerformanceTable";
-
+export { default as TestBreakdownModal } from "./TestBreakdownModal";

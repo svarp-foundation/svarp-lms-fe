@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import api from "../../lib/api";
 import { Modal, DataTable, SearchBar, FilterTabs, StatusBadge, Button, EmptyState } from "../common";
 import { useDebounce } from "../../hooks/useDebounce";
-import { Download, Users, CheckCircle2, Clock, AlertCircle, ArrowRight, BookOpen, IndianRupee, RefreshCw } from "lucide-react";
+import { Download, Users, CheckCircle2, XCircle, Clock, AlertCircle, ArrowRight, BookOpen, IndianRupee, RefreshCw, FileText } from "lucide-react";
+import { TestBreakdownModal } from "./TestBreakdownModal";
 
 export const CourseLearnersModal = ({
   isOpen,
@@ -15,6 +16,7 @@ export const CourseLearnersModal = ({
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedTestBreakdown, setSelectedTestBreakdown] = useState(null);
   const debouncedSearch = useDebounce(search, 200);
 
   const fetchCourseLearners = async () => {
@@ -100,7 +102,14 @@ export const CourseLearnersModal = ({
       "Certificate Code",
       "Certificate Issued Date",
       "Submissions Count",
+      "Total Tests",
       "Average Grade",
+      "Total Questions",
+      "Questions Attempted",
+      "Total Correct",
+      "Total Incorrect",
+      "Total Unattempted",
+      "Accuracy (%)",
       "Payment Status",
       "Amount Paid (INR)",
     ];
@@ -117,7 +126,14 @@ export const CourseLearnersModal = ({
       l.certificate?.code || "-",
       l.certificate?.issued_at ? new Date(l.certificate.issued_at).toLocaleDateString() : "-",
       l.submissions_count || 0,
+      l.total_assignments_count || 0,
       l.average_grade ? `${l.average_grade}%` : "N/A",
+      l.total_questions || 0,
+      l.questions_attempted || 0,
+      l.total_correct || 0,
+      l.total_incorrect || 0,
+      l.total_unattempted || 0,
+      l.accuracy_pct ? `${l.accuracy_pct}%` : "N/A",
       l.payment_status || "N/A",
       l.amount_paid || 0,
     ]);
@@ -219,19 +235,99 @@ export const CourseLearnersModal = ({
         const total = l.total_assignments_count || 0;
         const hasScore = l.average_grade !== null && l.average_grade !== undefined;
         const isPassedOrDone = (submitted > 0 && submitted >= total) || l.progress_status === "completed";
+        const hasTests = submitted > 0 || (l.tests_breakdown && l.tests_breakdown.length > 0);
+        const hasQuestions = (l.total_questions || 0) > 0 || (l.questions_attempted || 0) > 0;
+
+        if (!hasTests && total === 0) {
+          return <span className="text-[11px] text-slate-400 italic">No tests</span>;
+        }
+
+        if (!hasTests && total > 0) {
+          return (
+            <div className="space-y-0.5">
+              <span className="text-xs font-semibold text-slate-700 block">
+                0 / {total} submitted
+              </span>
+              <span className="text-[10px] text-slate-400">Not attempted</span>
+            </div>
+          );
+        }
+
+        const scoreColor = hasScore
+          ? l.average_grade >= 70
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+            : l.average_grade >= 40
+            ? "bg-amber-50 text-amber-700 border-amber-200"
+            : "bg-rose-50 text-rose-700 border-rose-200"
+          : isPassedOrDone
+          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+          : "bg-slate-100 text-slate-600 border-slate-200";
 
         return (
-          <div>
-            <span className="text-xs font-semibold text-slate-900 block">
-              {submitted} / {total} submitted
-            </span>
-            <span className="text-[10px] text-slate-500">
-              {hasScore
-                ? `Avg score: ${l.average_grade}%`
-                : isPassedOrDone
-                ? "Passed"
-                : "No grade"}
-            </span>
+          <div className="space-y-1.5 py-0.5 min-w-[170px]">
+            {/* Header: Score Badge & Submission count */}
+            <div className="flex items-center gap-1.5">
+              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${scoreColor}`}>
+                {hasScore ? `${l.average_grade}% Avg` : isPassedOrDone ? "Passed" : "No grade"}
+              </span>
+              <span className="text-[11px] font-semibold text-slate-700">
+                {submitted} / {total} tests
+              </span>
+            </div>
+
+            {/* Questions Statistics: Attempted, Correct, Incorrect */}
+            {hasQuestions && (
+              <div className="flex flex-wrap items-center gap-1">
+                <span
+                  title="Questions Attempted / Total"
+                  className="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded"
+                >
+                  {l.questions_attempted || 0}/{l.total_questions || 0} Qs
+                </span>
+                <span
+                  title="Correct Answers"
+                  className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100"
+                >
+                  <CheckCircle2 size={10} className="text-emerald-600 inline" />
+                  {l.total_correct || 0} Correct
+                </span>
+                <span
+                  title="Incorrect Answers"
+                  className="inline-flex items-center gap-0.5 text-[10px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100"
+                >
+                  <XCircle size={10} className="text-rose-500 inline" />
+                  {l.total_incorrect || 0} Incorrect
+                </span>
+              </div>
+            )}
+
+            {/* View Detailed Breakdown Button */}
+            {l.tests_breakdown && l.tests_breakdown.length > 0 && (
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedTestBreakdown({
+                    title: `${l.full_name || "Learner"} — Assessment Breakdown`,
+                    subtitle: `${l.email || ""} • Course ID #${courseId}`,
+                    summary: {
+                      total_questions: l.total_questions || 0,
+                      questions_attempted: l.questions_attempted || 0,
+                      total_correct: l.total_correct || 0,
+                      total_incorrect: l.total_incorrect || 0,
+                      total_unattempted: l.total_unattempted || 0,
+                      accuracy_pct: l.accuracy_pct || 0,
+                      average_grade: l.average_grade,
+                    },
+                    tests: l.tests_breakdown,
+                  })
+                }
+                className="text-[10px] font-bold text-teal-700 hover:text-teal-900 underline flex items-center gap-0.5 transition-colors"
+                title="Click to view question attempts and scores for each assessment"
+              >
+                <span>View breakdown ({l.tests_breakdown.length})</span>
+                <ArrowRight size={10} />
+              </button>
+            )}
           </div>
         );
       },
@@ -381,6 +477,18 @@ export const CourseLearnersModal = ({
           emptyDescription="There are no enrolled learners matching your current filter."
         />
       </div>
+
+      {/* Interactive Assessment Breakdown Modal */}
+      {selectedTestBreakdown && (
+        <TestBreakdownModal
+          isOpen={Boolean(selectedTestBreakdown)}
+          onClose={() => setSelectedTestBreakdown(null)}
+          title={selectedTestBreakdown.title}
+          subtitle={selectedTestBreakdown.subtitle}
+          summary={selectedTestBreakdown.summary}
+          tests={selectedTestBreakdown.tests}
+        />
+      )}
     </Modal>
   );
 };

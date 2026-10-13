@@ -76,7 +76,7 @@ const CoursePlayer = () => {
     }
   }, [activeLesson?.id]);
 
-  const handleMarkComplete = async (advance = false, score = null) => {
+  const handleMarkComplete = async (advance = false, score = null, meta = null) => {
     if (!activeLesson) return;
     setCompleting(true);
 
@@ -93,7 +93,12 @@ const CoursePlayer = () => {
         : null;
 
     try {
-      const payload = score !== null && score !== undefined ? { score } : {};
+      const payload = {
+        ...(score !== null && score !== undefined ? { score } : {}),
+        ...(meta?.totalQuestions ? { total_questions: meta.totalQuestions } : {}),
+        ...(meta?.correctCount !== undefined ? { correct_count: meta.correctCount } : {}),
+        ...(meta?.userAnswers ? { answers: meta.userAnswers } : {}),
+      };
       await api.post(`/learner/courses/${courseId}/lessons/${activeLesson.id}/complete`, payload);
       
       // Update local completed state immediately for snappy UI
@@ -292,8 +297,8 @@ const CoursePlayer = () => {
                     questions={activeLesson.questions || []}
                     passingScore={courseContent?.passing_score ?? 70}
                     isCompleted={isCurrentCompleted}
-                    onCompleteQuiz={({ passed, score }) => {
-                      if (passed) handleMarkComplete(false, score);
+                    onCompleteQuiz={({ passed, score, totalQuestions, correctCount, userAnswers }) => {
+                      if (passed) handleMarkComplete(false, score, { totalQuestions, correctCount, userAnswers });
                     }}
                     onNextLesson={nextLesson ? () => setActiveLesson(nextLesson) : null}
                   />

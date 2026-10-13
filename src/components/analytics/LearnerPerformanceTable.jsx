@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { DataTable, SearchBar, FilterTabs, StatusBadge, Button, EmptyState } from "../common";
 import { useDebounce } from "../../hooks/useDebounce";
-import { Download, Users, GraduationCap, Award, ArrowRight } from "lucide-react";
+import { Download, Users, GraduationCap, Award, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 
 export const LearnerPerformanceTable = ({
   learners = [],
@@ -63,6 +63,11 @@ export const LearnerPerformanceTable = ({
       "Completed Lessons",
       "Total Submissions",
       "Average Grade",
+      "Total Questions",
+      "Questions Attempted",
+      "Total Correct",
+      "Total Incorrect",
+      "Accuracy (%)",
     ];
 
     const rows = filteredLearners.map((l) => [
@@ -76,6 +81,11 @@ export const LearnerPerformanceTable = ({
       l.completed_lessons_count || 0,
       l.submissions_count || 0,
       l.average_grade ? `${l.average_grade}%` : "N/A",
+      l.total_questions || 0,
+      l.questions_attempted || 0,
+      l.total_correct || 0,
+      l.total_incorrect || 0,
+      l.accuracy_pct ? `${l.accuracy_pct}%` : "N/A",
     ]);
 
     const csvContent =
@@ -143,17 +153,54 @@ export const LearnerPerformanceTable = ({
     },
     {
       key: "submissions_count",
-      label: "Submissions & Avg Grade",
-      render: (l) => (
-        <div>
-          <span className="text-xs font-medium text-slate-900 block">
-            {l.submissions_count || 0} tests
-          </span>
-          <span className="text-[10px] text-slate-500">
-            {l.average_grade ? `Avg score: ${l.average_grade}%` : "No graded tests"}
-          </span>
-        </div>
-      ),
+      label: "Submissions & Test Results",
+      render: (l) => {
+        const hasScore = l.average_grade !== null && l.average_grade !== undefined;
+        const hasQuestions = (l.total_questions || 0) > 0 || (l.questions_attempted || 0) > 0;
+
+        const scoreColor = hasScore
+          ? l.average_grade >= 70
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+            : l.average_grade >= 40
+            ? "bg-amber-50 text-amber-700 border-amber-200"
+            : "bg-rose-50 text-rose-700 border-rose-200"
+          : "bg-slate-100 text-slate-600 border-slate-200";
+
+        return (
+          <div className="space-y-1 py-0.5">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-semibold text-slate-800">
+                {l.submissions_count || 0} tests
+              </span>
+              {hasScore && (
+                <span className={`inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold border ${scoreColor}`}>
+                  {l.average_grade}% Avg
+                </span>
+              )}
+            </div>
+
+            {hasQuestions ? (
+              <div className="flex flex-wrap items-center gap-1 text-[10px]">
+                <span className="text-slate-500 font-medium">
+                  {l.questions_attempted}/{l.total_questions} Qs:
+                </span>
+                <span className="inline-flex items-center gap-0.5 font-bold text-emerald-700 bg-emerald-50 px-1 rounded border border-emerald-100">
+                  <CheckCircle2 size={9} className="text-emerald-600 inline" />
+                  {l.total_correct || 0}
+                </span>
+                <span className="inline-flex items-center gap-0.5 font-bold text-rose-700 bg-rose-50 px-1 rounded border border-rose-100">
+                  <XCircle size={9} className="text-rose-500 inline" />
+                  {l.total_incorrect || 0}
+                </span>
+              </div>
+            ) : (
+              <span className="text-[10px] text-slate-400 block">
+                {hasScore ? `Avg score: ${l.average_grade}%` : "No graded tests"}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "created_at",
