@@ -258,10 +258,12 @@ export const LearnerCoursesModal = ({
           ? "bg-emerald-50 text-emerald-700 border-emerald-200"
           : "bg-slate-100 text-slate-600 border-slate-200";
 
+        const breakdownTests = c.tests_breakdown || [];
+
         return (
-          <div className="space-y-1.5 py-0.5 min-w-[215px] max-w-[260px]">
+          <div className="space-y-2 py-1 min-w-[280px] max-w-[350px]">
             {/* Top Row: Score Badge, Tests Count & Breakdown Trigger */}
-            <div className="flex items-center justify-between gap-1.5">
+            <div className="flex items-center justify-between gap-1.5 pb-1 border-b border-slate-100">
               <div className="flex items-center gap-1.5">
                 <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${scoreColor}`}>
                   {hasScore ? `${c.average_grade}% Avg` : isPassedOrDone ? "Passed" : "No grade"}
@@ -271,7 +273,7 @@ export const LearnerCoursesModal = ({
                 </span>
               </div>
 
-              {c.tests_breakdown && c.tests_breakdown.length > 0 && (
+              {breakdownTests.length > 0 && (
                 <button
                   type="button"
                   onClick={() =>
@@ -287,43 +289,111 @@ export const LearnerCoursesModal = ({
                         accuracy_pct: c.accuracy_pct || 0,
                         average_grade: c.average_grade,
                       },
-                      tests: c.tests_breakdown,
+                      tests: breakdownTests,
                     })
                   }
                   className="text-[10px] font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-0.5 hover:underline transition-colors cursor-pointer group whitespace-nowrap"
                   title="Click to view question attempts and scores for each assessment"
                 >
-                  <span>Breakdown ({c.tests_breakdown.length})</span>
+                  <span>Breakdown ({breakdownTests.length})</span>
                   <ArrowRight size={10} className="transition-transform group-hover:translate-x-0.5" />
                 </button>
               )}
             </div>
 
-            {/* Bottom Row: Unified Segmented Question Metrics Capsule */}
-            {hasQuestions && (
-              <div className="inline-flex items-center bg-slate-50 border border-slate-200 rounded-md text-[10px] divide-x divide-slate-200 overflow-hidden font-medium shadow-2xs whitespace-nowrap">
+            {/* Separate Assignment-by-Assignment Cards */}
+            {breakdownTests.length > 0 ? (
+              <div className="space-y-1.5">
+                {breakdownTests.map((t, idx) => {
+                  const tScore = t.grade !== null && t.grade !== undefined ? t.grade : null;
+                  const isNotAttempted = t.status === "not_attempted" || (t.attempted === 0 && tScore === null);
+                  const isPassed = tScore !== null ? tScore >= 70 : t.status === "approved";
+
+                  const cardScoreColor = isNotAttempted
+                    ? "bg-slate-100 text-slate-500 border-slate-200"
+                    : tScore !== null
+                    ? isPassed
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-rose-50 text-rose-700 border-rose-200"
+                    : "bg-blue-50 text-blue-700 border-blue-200";
+
+                  return (
+                    <div
+                      key={t.assignment_id || idx}
+                      className="bg-slate-50/90 hover:bg-slate-100/90 rounded-lg p-2 border border-slate-200 transition-all text-[11px] shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="flex-shrink-0 w-4 h-4 rounded bg-teal-100 text-teal-800 font-bold text-[9px] flex items-center justify-center">
+                            {idx + 1}
+                          </span>
+                          <span
+                            className="font-bold text-slate-800 truncate text-[11px]"
+                            title={t.title || `Assessment #${idx + 1}`}
+                          >
+                            {t.title || `Assessment #${idx + 1}`}
+                          </span>
+                        </div>
+
+                        <span className={`px-1.5 py-0.2 rounded font-extrabold text-[9px] border flex-shrink-0 ${cardScoreColor}`}>
+                          {isNotAttempted
+                            ? "Not Attempted"
+                            : tScore !== null
+                            ? `${tScore}%`
+                            : "Submitted"}
+                        </span>
+                      </div>
+
+                      <div className="inline-flex items-center bg-white border border-slate-200 rounded text-[9.5px] divide-x divide-slate-200 overflow-hidden font-medium shadow-2xs w-full">
+                        <span
+                          className="px-1.5 py-0.5 text-slate-700 font-semibold bg-slate-50 flex-1 text-center truncate"
+                          title="Questions Attempted / Total"
+                        >
+                          {t.attempted || 0}/{t.total_questions || 0} Qs
+                        </span>
+                        <span
+                          className="px-1.5 py-0.5 text-emerald-700 font-bold bg-emerald-50/40 flex-1 text-center truncate flex items-center justify-center gap-0.5"
+                          title="Correct Answers"
+                        >
+                          <CheckCircle2 size={9} className="text-emerald-600 inline flex-shrink-0" />
+                          <span>{t.correct || 0} Correct</span>
+                        </span>
+                        <span
+                          className="px-1.5 py-0.5 text-rose-700 font-bold bg-rose-50/40 flex-1 text-center truncate flex items-center justify-center gap-0.5"
+                          title="Incorrect Answers"
+                        >
+                          <XCircle size={9} className="text-rose-500 inline flex-shrink-0" />
+                          <span>{t.incorrect || 0} Incorrect</span>
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : hasQuestions ? (
+              <div className="inline-flex items-center bg-slate-50 border border-slate-200 rounded-md text-[10px] divide-x divide-slate-200 overflow-hidden font-medium shadow-2xs whitespace-nowrap w-full">
                 <span
                   title="Questions Attempted / Total"
-                  className="px-2 py-0.5 text-slate-700 font-semibold bg-slate-100/80"
+                  className="px-2 py-0.5 text-slate-700 font-semibold bg-slate-100/80 flex-1 text-center"
                 >
                   {c.questions_attempted || 0}/{c.total_questions || 0} Qs
                 </span>
                 <span
                   title="Correct Answers"
-                  className="px-2 py-0.5 text-emerald-700 font-bold bg-emerald-50/40 flex items-center gap-1"
+                  className="px-2 py-0.5 text-emerald-700 font-bold bg-emerald-50/40 flex-1 text-center flex items-center justify-center gap-1"
                 >
                   <CheckCircle2 size={10} className="text-emerald-600 inline" />
                   {c.total_correct || 0} Correct
                 </span>
                 <span
                   title="Incorrect Answers"
-                  className="px-2 py-0.5 text-rose-700 font-bold bg-rose-50/40 flex items-center gap-1"
+                  className="px-2 py-0.5 text-rose-700 font-bold bg-rose-50/40 flex-1 text-center flex items-center justify-center gap-1"
                 >
                   <XCircle size={10} className="text-rose-500 inline" />
                   {c.total_incorrect || 0} Incorrect
                 </span>
               </div>
-            )}
+            ) : null}
           </div>
         );
       },

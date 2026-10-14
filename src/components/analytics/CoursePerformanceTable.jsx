@@ -184,16 +184,37 @@ export const CoursePerformanceTable = ({ courses = [], loading = false, onSelect
     },
     {
       key: "submissions_count",
-      label: "Submissions & Avg Grade",
+      label: "Assessments & Avg Grade",
       render: (c) => (
-        <div>
-          <span className="text-xs font-medium text-slate-900 block">
-            {c.submissions_count || 0} reviews
+        <button
+          type="button"
+          onClick={() => onSelectCourse && onSelectCourse(c.id)}
+          className="text-left group cursor-pointer block"
+          title="Click to inspect enrolled learners and their assignment-by-assignment report"
+        >
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-slate-900 group-hover:text-teal-700 transition-colors">
+              {c.submissions_count || 0} reviews
+            </span>
+            {c.average_grade && (
+              <span
+                className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${
+                  c.average_grade >= 70
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : c.average_grade >= 40
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-rose-50 text-rose-700 border-rose-200"
+                }`}
+              >
+                {c.average_grade}%
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] text-teal-700 group-hover:underline flex items-center gap-0.5 mt-0.5 font-medium">
+            <span>Assignment reports</span>
+            <ArrowRight size={9} className="transition-transform group-hover:translate-x-0.5" />
           </span>
-          <span className="text-[10px] text-slate-500">
-            {c.average_grade ? `Avg score: ${c.average_grade}%` : "No graded tests"}
-          </span>
-        </div>
+        </button>
       ),
     },
     {

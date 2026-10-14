@@ -10,6 +10,8 @@ export const DataTable = ({
   emptyDescription = "There are no entries to display right now.",
   onRowClick,
   className = "",
+  renderExpandedRow,
+  isRowExpanded,
 }) => {
   if (loading) {
     return (
@@ -68,22 +70,34 @@ export const DataTable = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {data.map((row, rIdx) => (
-              <tr
-                key={keyExtractor(row, rIdx)}
-                onClick={() => onRowClick && onRowClick(row)}
-                className={`transition-colors hover:bg-slate-50/70 ${onRowClick ? "cursor-pointer" : ""}`}
-              >
-                {columns.map((col, cIdx) => (
-                  <td
-                    key={col.key || cIdx}
-                    className={`py-3.5 px-4 ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"}`}
+            {data.map((row, rIdx) => {
+              const rowKey = keyExtractor(row, rIdx);
+              const expanded = isRowExpanded ? isRowExpanded(row, rIdx) : false;
+              return (
+                <React.Fragment key={rowKey}>
+                  <tr
+                    onClick={() => onRowClick && onRowClick(row)}
+                    className={`transition-colors hover:bg-slate-50/70 ${onRowClick ? "cursor-pointer" : ""} ${expanded ? "bg-slate-50/40" : ""}`}
                   >
-                    {col.render ? col.render(row, rIdx) : row[col.key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
+                    {columns.map((col, cIdx) => (
+                      <td
+                        key={col.key || cIdx}
+                        className={`py-3.5 px-4 ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"}`}
+                      >
+                        {col.render ? col.render(row, rIdx, expanded) : row[col.key]}
+                      </td>
+                    ))}
+                  </tr>
+                  {expanded && renderExpandedRow && (
+                    <tr className="bg-slate-50/60 border-t border-b border-slate-200/80">
+                      <td colSpan={columns.length} className="p-0">
+                        {renderExpandedRow(row, rIdx)}
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>
