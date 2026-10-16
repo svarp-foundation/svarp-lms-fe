@@ -10,6 +10,7 @@ import {
   Users,
   ClipboardList,
   IndianRupee,
+  FileCheck,
 } from "lucide-react";
 
 const ADMIN_NAV_LINKS = [
@@ -49,6 +50,12 @@ const ADMIN_NAV_LINKS = [
     label: "Payments",
     to: "/admin/payments",
     icon: IndianRupee,
+  },
+  {
+    name: "Certificates",
+    label: "Certificates",
+    to: "/admin/certificates",
+    icon: FileCheck,
   },
 ];
 

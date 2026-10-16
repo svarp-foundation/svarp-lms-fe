@@ -12,6 +12,7 @@ import CoursePayment from "./pages/CoursePayment";
 import Users from "./pages/admin/Users";
 import Payments from "./pages/admin/Payments";
 import Submissions from "./pages/admin/Submissions";
+import CertificateCreator from "./pages/admin/CertificateCreator";
 import Wishlist from "./pages/learner/Wishlist";
 import AllCourses from "./pages/learner/AllCourses";
 import Certificates from "./pages/learner/Certificates";
@@ -187,6 +188,14 @@ function App() {
           element={
             <PrivateRoute roles={["admin"]}>
               <Payments />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/certificates"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <CertificateCreator />
             </PrivateRoute>
           }
         />
